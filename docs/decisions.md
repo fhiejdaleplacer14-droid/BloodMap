@@ -20,6 +20,7 @@ choice can be traced. Decided 2026-10-19.
 | 12 | Tailwind config | v3 `tailwind.config.ts` (51:437) vs repo on Tailwind v4 | Same token names in CSS via `@theme` mapped to `var(--…)`; dark mode via `[data-theme="dark"]`. |
 | 13 | Tablet layout | Design System 49:277: sidebar becomes a drawer, Explorer list overlays the map as a side sheet. Handoff 55:252: sidebar collapses to a 72 px icon rail, Explorer splits into a 360 panel plus map | Handoff 55:252 (page 12 is authoritative). |
 | 14 | Dark elevation | Elevation styles (49:233) only have light values | The same shadows apply in both themes. Dark surfaces rely on borders, as the design already does. |
+| 15 | Destructive button fill | Destructive uses status/critical/fg (5:119). In Dark that is #E2626F, and the white label only reaches ~3.4:1 (fails WCAG 1.4.3) | Use bg/brand (identical to the Light value, #B42332 in both themes). Light output is unchanged; Dark reaches ~6:1. |
 
 ## Copy that differs by context
 The demo labels differ by screen ("Sample data", "Demo data", "Demonstration

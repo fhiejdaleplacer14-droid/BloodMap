@@ -29,7 +29,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
     'border border-strong bg-surface text-primary hover:bg-subtle active:border-[var(--text-tertiary)] active:bg-subtle',
   tertiary: 'text-primary hover:bg-subtle active:bg-subtle',
   destructive:
-    'bg-[var(--status-critical-fg)] text-on-brand hover:bg-brand-hover active:bg-brand-pressed',
+    'bg-brand text-on-brand hover:bg-brand-hover active:bg-brand-pressed',
 }
 
 /** Button (5:153): height 40 · padding 10/16 · radius 8 · gap 8. */
