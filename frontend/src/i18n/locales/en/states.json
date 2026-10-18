@@ -1,0 +1,28 @@
+{
+  "noResults": {
+    "title": "No requests match these filters",
+    "body": "Try a nearby municipality or remove a blood-type filter. Requests change often — check back later.",
+    "action": "Clear all filters"
+  },
+  "noSaved": {
+    "title": "You haven’t saved any requests",
+    "body": "Save a request to follow its status. We’ll show updates here — saving doesn’t commit you to anything.",
+    "action": "Explore requests"
+  },
+  "networkError": {
+    "title": "Can’t load requests right now",
+    "body": "You may be offline. We’ll keep what’s on screen; nothing you entered is lost.",
+    "action": "Try again"
+  },
+  "mapUnavailable": {
+    "title": "The map couldn’t load",
+    "body": "The list still works. Map tiles come from OpenStreetMap and may be temporarily unreachable.",
+    "listOnly": "Show list only",
+    "retry": "Retry map"
+  },
+  "requestUnavailable": {
+    "title": "This request is no longer active",
+    "body": "It expired on {{date}} at {{time}} and isn’t accepting responses. Look for active requests nearby instead.",
+    "action": "Find active requests"
+  }
+}

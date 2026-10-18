@@ -5,5 +5,52 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "close": "Close",
+    "dismiss": "Dismiss",
+    "loading": "Loading…",
+    "more": "More actions",
+    "back": "Back",
+    "menu": "Menu",
+    "notifications": "Notifications",
+    "signOut": "Sign out",
+    "save": "Save"
+  },
+  "field": {
+    "showPassword": "Show password",
+    "clearSearch": "Clear search",
+    "optional": "Optional"
+  },
+  "pagination": {
+    "label": "Pagination",
+    "summary": "Showing {{from}}–{{to}} of {{total}} requests",
+    "pageOf": "Page {{page}} of {{last}}",
+    "previous": "Previous page",
+    "next": "Next page",
+    "page": "Page {{page}}"
+  },
+  "filter": {
+    "remove": "Remove filter: {{label}}"
+  },
+  "toast": {
+    "region": "Notifications"
+  },
+  "time": {
+    "updated": {
+      "justNow": "Updated just now",
+      "minutes": "Updated {{count}} min ago",
+      "hours": "Updated {{count}} h ago",
+      "days_one": "Updated {{count}} day ago",
+      "days_other": "Updated {{count}} days ago"
+    },
+    "ago": {
+      "justNow": "just now",
+      "minutes": "{{count}} min ago",
+      "hours": "{{count}} h ago",
+      "days_one": "{{count}} day ago",
+      "days_other": "{{count}} days ago"
+    }
   }
 }

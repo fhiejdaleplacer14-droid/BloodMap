@@ -1,5 +1,8 @@
 import enCommon from './locales/en/common.json'
 import enDev from './locales/en/dev.json'
+import enNav from './locales/en/nav.json'
+import enRequest from './locales/en/request.json'
+import enStates from './locales/en/states.json'
 
 /**
  * All user-facing strings live in locales/<lang>/<namespace>.json.
@@ -9,6 +12,9 @@ import enDev from './locales/en/dev.json'
 export const resources = {
   en: {
     common: enCommon,
+    nav: enNav,
+    request: enRequest,
+    states: enStates,
     dev: enDev,
   },
 } as const

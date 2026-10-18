@@ -1,0 +1,52 @@
+{
+  "status": {
+    "draft": "Draft",
+    "pending_review": "Pending review",
+    "needs_correction": "Needs correction",
+    "active": "Active",
+    "fulfilled": "Fulfilled",
+    "closed": "Closed",
+    "expired": "Expired",
+    "rejected": "Rejected"
+  },
+  "urgency": {
+    "within_24h": "Needed within 24 h",
+    "within_72h": "Needed within 72 h",
+    "scheduled": "Scheduled date"
+  },
+  "bloodType": {
+    "label": "Type",
+    "spoken": {
+      "A+": "A positive",
+      "A-": "A negative",
+      "B+": "B positive",
+      "B-": "B negative",
+      "AB+": "AB positive",
+      "AB-": "AB negative",
+      "O+": "O positive",
+      "O-": "O negative"
+    }
+  },
+  "card": {
+    "expires": "Expires {{when}}",
+    "expired": "Expired {{when}}",
+    "lastUpdated": "Last updated {{date}}",
+    "closedOn": "Closed {{date}}",
+    "reviewed": "Coordinator-reviewed",
+    "notAccepting": "Not accepting responses",
+    "viewDetails": "View details",
+    "expiredSummary": "This request is no longer accepting responses.",
+    "closedSummary": "Closed by the coordinator. No further responses are needed."
+  },
+  "table": {
+    "id": "Request ID",
+    "type": "Type",
+    "location": "Location",
+    "created": "Created",
+    "expires": "Expires",
+    "status": "Status",
+    "updated": "Updated",
+    "actions": "Actions",
+    "rowActions": "Actions for {{id}}"
+  }
+}

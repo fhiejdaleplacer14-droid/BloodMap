@@ -1,0 +1,26 @@
+{
+  "public": {
+    "findRequests": "Find Blood Requests",
+    "howItWorks": "How It Works",
+    "safety": "Safety and Guidelines",
+    "about": "About",
+    "logIn": "Log In",
+    "findARequest": "Find a Request",
+    "createAccount": "Create account",
+    "primary": "Main"
+  },
+  "sidebar": {
+    "workspace": "Workspace",
+    "help": "Help & guidelines",
+    "label": "Workspace navigation"
+  },
+  "role": {
+    "donor": "Donor account",
+    "coordinator": "Coordinator · {{area}}",
+    "admin": "Administrator",
+    "facility_submitter": "Facility submitter · {{desk}}"
+  },
+  "bottom": {
+    "label": "Primary"
+  }
+}
