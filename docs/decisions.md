@@ -18,6 +18,8 @@ choice can be traced. Decided 2026-10-19.
 | 10 | Role change to admin | "needs a second approval" (51:551) vs reason-only (54:311) | Per dialog 39:1074: every role change requires a reason (audited). Promotion to **Administrator** creates a pending change that a *different* administrator must approve. |
 | 11 | Roles | Sidebar shows a fourth role (30:682) | `donor`, `facility_submitter` (bound to one coordination point; creates requests, cannot publish), `coordinator` (bound to an area), `admin`. The nav comes from `/api/me` permissions. |
 | 12 | Tailwind config | v3 `tailwind.config.ts` (51:437) vs repo on Tailwind v4 | Same token names in CSS via `@theme` mapped to `var(--…)`; dark mode via `[data-theme="dark"]`. |
+| 13 | Tablet layout | Design System 49:277: sidebar becomes a drawer, Explorer list overlays the map as a side sheet. Handoff 55:252: sidebar collapses to a 72 px icon rail, Explorer splits into a 360 panel plus map | Handoff 55:252 (page 12 is authoritative). |
+| 14 | Dark elevation | Elevation styles (49:233) only have light values | The same shadows apply in both themes. Dark surfaces rely on borders, as the design already does. |
 
 ## Copy that differs by context
 The demo labels differ by screen ("Sample data", "Demo data", "Demonstration
