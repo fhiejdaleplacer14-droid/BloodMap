@@ -1,0 +1,255 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+@import "./tokens.css";
+
+/*
+ * Dark mode is a single attribute switch on <html>: data-theme="dark".
+ * Components normally don't need this variant — semantic tokens already
+ * swap — but it exists for the rare asset that must change.
+ */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/*
+ * Tailwind theme → semantic tokens only. The default palette is removed so a
+ * raw colour (bg-red-500, #hex) cannot be used by accident. Utilities mirror
+ * the Figma token paths 1:1:
+ *   bg/canvas → bg-canvas · text/secondary → text-secondary
+ *   border/focus → border-focus · status/info/fg → text-status-info
+ */
+@theme inline {
+  --color-*: initial;
+  --background-color-*: initial;
+  --text-color-*: initial;
+  --border-color-*: initial;
+
+  /* bg/* */
+  --background-color-canvas: var(--bg-canvas);
+  --background-color-surface: var(--bg-surface);
+  --background-color-subtle: var(--bg-subtle);
+  --background-color-inverse: var(--bg-inverse);
+  --background-color-inverse-hover: var(--bg-inverse-hover);
+  --background-color-brand: var(--bg-brand);
+  --background-color-brand-hover: var(--bg-brand-hover);
+  --background-color-brand-pressed: var(--bg-brand-pressed);
+  --background-color-brand-soft: var(--bg-brand-soft);
+  --background-color-overlay: var(--bg-overlay);
+
+  /* text/* */
+  --text-color-primary: var(--text-primary);
+  --text-color-secondary: var(--text-secondary);
+  --text-color-tertiary: var(--text-tertiary);
+  --text-color-on-brand: var(--text-on-brand);
+  --text-color-on-inverse: var(--text-on-inverse);
+  --text-color-brand: var(--text-brand);
+  --text-color-link: var(--text-link);
+
+  /* border/* */
+  --border-color-default: var(--border-default);
+  --border-color-strong: var(--border-strong);
+  --border-color-brand: var(--border-brand);
+  --border-color-brand-soft: var(--border-brand-soft);
+  --border-color-focus: var(--border-focus);
+
+  /* status/{tone}/bg → bg-status-*, status/{tone}/fg → text-/border-status-* */
+  --background-color-status-success: var(--status-success-bg);
+  --background-color-status-warning: var(--status-warning-bg);
+  --background-color-status-critical: var(--status-critical-bg);
+  --background-color-status-info: var(--status-info-bg);
+  --background-color-status-neutral: var(--status-neutral-bg);
+  --text-color-status-success: var(--status-success-fg);
+  --text-color-status-warning: var(--status-warning-fg);
+  --text-color-status-critical: var(--status-critical-fg);
+  --text-color-status-info: var(--status-info-fg);
+  --text-color-status-neutral: var(--status-neutral-fg);
+  --border-color-status-success: var(--status-success-fg);
+  --border-color-status-warning: var(--status-warning-fg);
+  --border-color-status-critical: var(--status-critical-fg);
+  --border-color-status-info: var(--status-info-fg);
+  --border-color-status-neutral: var(--status-neutral-fg);
+
+  /* Generic colours (fill/stroke/ring/divide) — semantic only */
+  --color-focus: var(--border-focus);
+  --color-line: var(--border-default);
+  --color-map-land: var(--map-land);
+  --color-map-water: var(--map-water);
+  --color-map-park: var(--map-park);
+  --color-map-road: var(--map-road);
+  --color-map-road-major: var(--map-road-major);
+  --color-map-boundary: var(--map-boundary);
+
+  --font-sans: "Inter Variable", "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
+
+  --shadow-focus: var(--focus-ring);
+}
+
+/*
+ * Radius & elevation (49:209 · 49:233). Static: the variables are always
+ * emitted so components can also use var(--radius-md) etc.
+ */
+@theme static {
+  --radius-*: initial;
+  --radius-xs: 4px; /* tags */
+  --radius-sm: 6px; /* badges, chips */
+  --radius-md: 8px; /* buttons, inputs */
+  --radius-lg: 12px; /* cards */
+  --radius-xl: 16px; /* panels, dialogs */
+
+  --shadow-*: initial;
+  --shadow-raised: 0 1px 2px 0 rgb(16 24 40 / 0.06);
+  --shadow-floating: 0 4px 12px -2px rgb(16 24 40 / 0.08), 0 2px 4px -2px rgb(16 24 40 / 0.04);
+  --shadow-overlay: 0 16px 32px -8px rgb(16 24 40 / 0.16), 0 4px 8px -2px rgb(16 24 40 / 0.06);
+}
+
+/*
+ * Text styles (02 · Typography, 49:64). One utility per Figma style.
+ * Colour is applied separately (text-primary, text-secondary, …).
+ */
+@utility type-display-56 {
+  font-family: var(--font-sans);
+  font-size: 3.5rem;
+  line-height: 3.75rem;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+@utility type-display-48 {
+  font-family: var(--font-sans);
+  font-size: 3rem;
+  line-height: 3.375rem;
+  font-weight: 600;
+  letter-spacing: -0.0417em;
+}
+@utility type-h1 {
+  font-family: var(--font-sans);
+  font-size: 2rem;
+  line-height: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.0375em;
+}
+@utility type-h2 {
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.0333em;
+}
+@utility type-h3 {
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+@utility type-h4 {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.0125em;
+}
+@utility type-body-l {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.625rem;
+  font-weight: 400;
+}
+@utility type-body-m {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+}
+@utility type-body-m-strong {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+}
+@utility type-body-s {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+  font-weight: 400;
+}
+@utility type-label-m {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+}
+@utility type-label-s {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+}
+@utility type-overline {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+@utility type-mono-m {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+  font-weight: 500;
+}
+@utility type-mono-s {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 400;
+}
+
+/* Focus/Ring: 2px border/focus outline + 3px ring (49:439). Never removed. */
+@utility focus-ring {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 0;
+  box-shadow: var(--focus-ring);
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+  }
+
+  *,
+  ::before,
+  ::after {
+    border-color: var(--border-default);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--border-focus);
+    outline-offset: 0;
+    box-shadow: var(--focus-ring);
+  }
+
+  /* All transitions ≤ 250 ms; reduced motion disables them (55:459). */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

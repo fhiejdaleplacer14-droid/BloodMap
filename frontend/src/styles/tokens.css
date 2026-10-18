@@ -1,0 +1,197 @@
+/*
+ * tokens.css — generated from the Figma variables of
+ * "BloodMap NIR — Product Design" (02 · Design System, nodes 48:2 · 49:160).
+ *
+ * The only file allowed to contain raw colour values. Components use the
+ * semantic tokens (via the Tailwind theme in index.css), never primitives.
+ * Light/Dark is a single attribute switch: <html data-theme="dark">.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Primitives (hidden from pickers in Figma)
+ * ------------------------------------------------------------------------- */
+:root {
+  --white: #ffffff;
+
+  --crimson-50: #fcebed;
+  --crimson-100: #f7d3d7;
+  --crimson-200: #eba6ae;
+  --crimson-400: #e2626f;
+  --crimson-600: #b42332;
+  --crimson-700: #8f1d2c;
+  --crimson-800: #6e1622;
+  --crimson-900: #5a1e28;
+  --crimson-950: #33141a;
+
+  --ink-900: #18212f;
+
+  --slate-50: #f7f8fa;
+  --slate-100: #eef1f5;
+  --slate-200: #e2e6ec;
+  --slate-300: #c9d0d9;
+  --slate-400: #8b96a5;
+  --slate-500: #66717f;
+  --slate-600: #5f6b7a;
+  --slate-700: #3e4a59;
+
+  --night-600: #3b4b5c;
+  --night-700: #2c3a49;
+  --night-800: #202c39;
+  --night-900: #17212d;
+  --night-950: #101720;
+
+  --fog-50: #f3f6fa;
+  --fog-300: #a7b2c0;
+
+  --green-50: #e7f3ec;
+  --green-400: #4cb386;
+  --green-700: #16794b;
+  --green-950: #10261c;
+
+  --amber-50: #fbf1e3;
+  --amber-400: #e0a04a;
+  --amber-700: #a86412; /* brief value — fails 4.5:1 on its tint; not used for text */
+  --amber-800: #8f540f;
+  --amber-950: #2b1f0e;
+
+  --blue-50: #eaf0fa;
+  --blue-400: #6e9be0;
+  --blue-700: #2459a9;
+  --blue-950: #13213a;
+
+  --map-light-land: #f1efea;
+  --map-light-water: #d6e3ee;
+  --map-light-park: #e2ecdf;
+  --map-light-road: #ffffff;
+  --map-light-road-major: #f3e3c3;
+  --map-light-boundary: #b9c2cd;
+
+  --map-dark-land: #1b2531;
+  --map-dark-water: #0e1a26;
+  --map-dark-park: #18291f;
+  --map-dark-road: #2a3644;
+  --map-dark-road-major: #3a3424;
+  --map-dark-boundary: #4a5868;
+}
+
+/* ---------------------------------------------------------------------------
+ * Semantic tokens · Light (default)
+ * ------------------------------------------------------------------------- */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg-canvas: var(--slate-50);
+  --bg-surface: var(--white);
+  --bg-subtle: var(--slate-100);
+  --bg-inverse: var(--ink-900);
+  --bg-inverse-hover: var(--slate-700);
+  --bg-brand: var(--crimson-600);
+  --bg-brand-hover: var(--crimson-700);
+  --bg-brand-pressed: var(--crimson-800);
+  --bg-brand-soft: var(--crimson-50);
+  --bg-overlay: var(--ink-900);
+
+  --text-primary: var(--ink-900);
+  --text-secondary: var(--slate-600);
+  --text-tertiary: var(--slate-500);
+  --text-on-brand: var(--white);
+  --text-on-inverse: var(--white);
+  --text-brand: var(--crimson-600);
+  --text-link: var(--blue-700);
+
+  --border-default: var(--slate-200);
+  --border-strong: var(--slate-300);
+  --border-brand: var(--crimson-600);
+  --border-brand-soft: var(--crimson-200);
+  --border-focus: var(--blue-700);
+  /* Focus/Ring: 3px spread of border/focus at 40% (light: #2459A966) */
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--border-focus) 40%, transparent);
+
+  --status-success-fg: var(--green-700);
+  --status-success-bg: var(--green-50);
+  --status-warning-fg: var(--amber-800);
+  --status-warning-bg: var(--amber-50);
+  --status-critical-fg: var(--crimson-600);
+  --status-critical-bg: var(--crimson-50);
+  --status-info-fg: var(--blue-700);
+  --status-info-bg: var(--blue-50);
+  --status-neutral-fg: var(--slate-700);
+  --status-neutral-bg: var(--slate-100);
+
+  --map-land: var(--map-light-land);
+  --map-water: var(--map-light-water);
+  --map-park: var(--map-light-park);
+  --map-road: var(--map-light-road);
+  --map-road-major: var(--map-light-road-major);
+  --map-boundary: var(--map-light-boundary);
+}
+
+/* ---------------------------------------------------------------------------
+ * Semantic tokens · Dark
+ * ------------------------------------------------------------------------- */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg-canvas: var(--night-950);
+  --bg-surface: var(--night-900);
+  --bg-subtle: var(--night-800);
+  --bg-inverse: var(--fog-50);
+  --bg-inverse-hover: var(--fog-300);
+  --bg-brand: var(--crimson-600);
+  --bg-brand-hover: var(--crimson-700);
+  --bg-brand-pressed: var(--crimson-800);
+  --bg-brand-soft: var(--crimson-950);
+  --bg-overlay: var(--night-950);
+
+  --text-primary: var(--fog-50);
+  --text-secondary: var(--fog-300);
+  --text-tertiary: var(--slate-400);
+  --text-on-brand: var(--white);
+  --text-on-inverse: var(--ink-900);
+  --text-brand: var(--crimson-400);
+  --text-link: var(--blue-400);
+
+  --border-default: var(--night-700);
+  --border-strong: var(--night-600);
+  --border-brand: var(--crimson-400);
+  --border-brand-soft: var(--crimson-900);
+  --border-focus: var(--blue-400);
+  /* Focus/Ring: 3px spread of border/focus at 40% (light: #2459A966) */
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--border-focus) 40%, transparent);
+
+  --status-success-fg: var(--green-400);
+  --status-success-bg: var(--green-950);
+  --status-warning-fg: var(--amber-400);
+  --status-warning-bg: var(--amber-950);
+  --status-critical-fg: var(--crimson-400);
+  --status-critical-bg: var(--crimson-950);
+  --status-info-fg: var(--blue-400);
+  --status-info-bg: var(--blue-950);
+  --status-neutral-fg: var(--fog-300);
+  --status-neutral-bg: var(--night-800);
+
+  --map-land: var(--map-dark-land);
+  --map-water: var(--map-dark-water);
+  --map-park: var(--map-dark-park);
+  --map-road: var(--map-dark-road);
+  --map-road-major: var(--map-dark-road-major);
+  --map-boundary: var(--map-dark-boundary);
+}
+
+/* ---------------------------------------------------------------------------
+ * Space (49:165) — theme-independent. Radius and elevation live in the
+ * static Tailwind theme in index.css (--radius-*, --shadow-*).
+ * ------------------------------------------------------------------------- */
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+}

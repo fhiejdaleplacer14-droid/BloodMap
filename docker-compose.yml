@@ -1,0 +1,28 @@
+# Local PostgreSQL for BloodMap NIR.
+# Configured only through DB_* variables (read from ./.env, see .env.example)
+# so any hosted Postgres (e.g. Supabase) can replace it by changing
+# backend/.env alone. Plain PostgreSQL — no PostGIS.
+name: bloodmap
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-bloodmap}
+      POSTGRES_USER: ${DB_USERNAME:-bloodmap}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+      DB_TEST_DATABASE: ${DB_TEST_DATABASE:-bloodmap_testing}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:

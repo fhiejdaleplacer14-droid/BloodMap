@@ -1,0 +1,15 @@
+{
+  "tokens": {
+    "title": "Design tokens",
+    "intro": "Rendered live from tokens.css. Each row shows the Light value and, beside it, the same token inside a Dark-mode frame — compare with 02 · Design System in Figma.",
+    "semantic": "Semantic tokens · Light / Dark",
+    "typography": "Typography",
+    "spacing": "Spacing scale",
+    "radius": "Radius",
+    "elevation": "Elevation",
+    "icons": "Iconography",
+    "focus": "Focus ring",
+    "focusHint": "Press Tab to move focus here",
+    "sample": "The quick brown fox · BM-2026-0012"
+  }
+}
