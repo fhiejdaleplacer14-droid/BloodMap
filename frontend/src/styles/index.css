@@ -212,6 +212,30 @@
   box-shadow: var(--focus-ring);
 }
 
+/*
+ * Native date/time pickers (6:374): the browser indicator is stretched,
+ * invisible, over the trailing icon so the icon opens the native picker.
+ */
+@utility native-picker {
+  &::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 0;
+    width: 2.5rem;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+}
+
+/* Skeleton shimmer (10:547): 1.2 s; disabled by prefers-reduced-motion below. */
+@theme {
+  --animate-shimmer: shimmer 1.2s linear infinite;
+  @keyframes shimmer {
+    from { background-position: 100% 0; }
+    to { background-position: -100% 0; }
+  }
+}
+
 @layer base {
   html {
     font-family: var(--font-sans);
