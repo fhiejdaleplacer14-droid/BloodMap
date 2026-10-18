@@ -2,8 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GithubIcon } from '../../components/ui/GithubIcon'
 import { icons, type IconName } from '../../components/ui/icons'
-import { useTheme } from '../../app/theme/useTheme'
-import type { ThemePreference } from '../../app/theme/theme'
+import { DevThemeSwitch } from './DevThemeSwitch'
 
 /** Token paths as named in Figma (48:236), in the same order. */
 const SEMANTIC_TOKENS = [
@@ -39,7 +38,6 @@ const TYPE_STYLES = [
 const SPACING = [1, 2, 3, 4, 5, 6, 8, 10, 12, 16] as const
 const RADII = ['xs', 'sm', 'md', 'lg', 'xl'] as const
 const ELEVATIONS = ['raised', 'floating', 'overlay'] as const
-const THEME_OPTIONS: ThemePreference[] = ['light', 'dark', 'system']
 
 const cssVar = (path: string) => `var(--${path.replaceAll('/', '-')})`
 
@@ -87,8 +85,6 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export function TokensPage() {
   const { t } = useTranslation('dev')
-  const { t: tc } = useTranslation()
-  const { preference, setPreference } = useTheme()
 
   return (
     <main className="mx-auto flex max-w-[1600px] flex-col gap-10 p-16">
@@ -98,21 +94,7 @@ export function TokensPage() {
           <h1 className="type-display-48 text-primary">{t('tokens.title')}</h1>
           <p className="type-body-l max-w-[1000px] text-secondary">{t('tokens.intro')}</p>
         </div>
-        <fieldset className="flex items-center gap-4 rounded-md border border-default bg-surface px-4 py-2">
-          <legend className="sr-only">{tc('theme.label')}</legend>
-          {THEME_OPTIONS.map((option) => (
-            <label key={option} className="type-label-m flex items-center gap-2 text-primary">
-              <input
-                type="radio"
-                name="theme"
-                value={option}
-                checked={preference === option}
-                onChange={() => setPreference(option)}
-              />
-              {tc(`theme.${option}`)}
-            </label>
-          ))}
-        </fieldset>
+        <DevThemeSwitch />
       </header>
 
       <Section title={t('tokens.semantic')}>
