@@ -96,7 +96,8 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60,
+            // Reset links work once and expire after 30 minutes (23:1456).
+            'expire' => 30,
             'throttle' => 60,
         ],
     ],
