@@ -29,7 +29,7 @@ export function AppSidebar({ roleLabel, roleIcon, items, helpItem, user, onSignO
   const RoleIcon = icons[roleIcon]
 
   return (
-    <aside className={cn('flex h-full w-[264px] flex-col gap-1 border-r border-default bg-canvas px-4 py-5', className)}>
+    <aside className={cn('flex h-full w-66 flex-col gap-1 border-r border-default bg-canvas px-4 py-5', className)}>
       <div className="pb-3 pl-2">
         <Link to={homeTo} className="inline-flex rounded-sm">
           <Logo />

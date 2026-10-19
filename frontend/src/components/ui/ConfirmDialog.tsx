@@ -74,7 +74,7 @@ export function ConfirmDialog({
     <AlertDialog.Root open={open} onOpenChange={handleOpenChange}>
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="fixed inset-0 z-40 bg-overlay/48" />
-        <AlertDialog.Content className="fixed top-1/2 left-1/2 z-50 flex w-[480px] max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 rounded-xl bg-surface p-6 shadow-overlay">
+        <AlertDialog.Content className="fixed top-1/2 left-1/2 z-50 flex w-120 max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 rounded-xl bg-surface p-6 shadow-overlay">
           <div className="flex items-start gap-3">
             <span className={cn('flex size-10 shrink-0 items-center justify-center rounded-md', TONE_TILE[tone])}>
               <Icon aria-hidden size={20} />

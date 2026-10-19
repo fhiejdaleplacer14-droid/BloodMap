@@ -26,9 +26,9 @@ export function RadioGroup({ options, label, className, ...props }: RadioGroupPr
               disabled={option.disabled}
               className={cn(
                 'size-5 shrink-0 rounded-full border border-strong bg-surface',
-                'data-[state=checked]:border-[6px] data-[state=checked]:border-[var(--text-primary)]',
+                'data-[state=checked]:border-[6px] data-[state=checked]:border-(--text-primary)',
                 'disabled:cursor-not-allowed disabled:border-default disabled:bg-subtle',
-                'disabled:data-[state=checked]:border-[var(--text-primary)]',
+                'disabled:data-[state=checked]:border-(--text-primary)',
               )}
             />
             <label

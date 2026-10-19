@@ -24,7 +24,7 @@ function ToastCard({ item }: { item: ToastItem }) {
       type={isError ? 'foreground' : 'background'}
       duration={isError ? Infinity : 5000}
       onOpenChange={(open) => !open && toastStore.dismiss(item.id)}
-      className="flex w-[380px] max-w-full items-start gap-3 rounded-lg border border-default bg-surface p-3 shadow-floating"
+      className="flex w-95 max-w-full items-start gap-3 rounded-lg border border-default bg-surface p-3 shadow-floating"
     >
       <span className={cn('flex size-8 shrink-0 items-center justify-center rounded-md', tone.tile)}>
         <Icon aria-hidden size={18} />

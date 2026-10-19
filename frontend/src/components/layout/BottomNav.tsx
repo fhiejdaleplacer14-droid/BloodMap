@@ -12,7 +12,7 @@ export type BottomNavItem = { to: string; label: string; icon: IconName; end?: b
 export function BottomNav({ items, className }: { items: BottomNavItem[]; className?: string }) {
   const { t } = useTranslation('nav')
   return (
-    <nav aria-label={t('bottom.label')} className={cn('border-t border-default bg-surface px-2 pt-1.5 pb-[18px]', className)}>
+    <nav aria-label={t('bottom.label')} className={cn('border-t border-default bg-surface px-2 pt-1.5 pb-4.5', className)}>
       <ul className="flex justify-between">
         {items.slice(0, 5).map((item) => {
           const Icon = icons[item.icon]
@@ -21,7 +21,7 @@ export function BottomNav({ items, className }: { items: BottomNavItem[]; classN
               <NavLink
                 to={item.to}
                 end={item.end}
-                className="group flex h-14 w-[72px] flex-col items-center justify-center gap-1 rounded-md"
+                className="group flex h-14 w-18 flex-col items-center justify-center gap-1 rounded-md"
               >
                 <span className="flex h-7 w-12 items-center justify-center rounded-md text-secondary group-aria-[current=page]:bg-brand-soft group-aria-[current=page]:text-brand">
                   <Icon aria-hidden size={20} />

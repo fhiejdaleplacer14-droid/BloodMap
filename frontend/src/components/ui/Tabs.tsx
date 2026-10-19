@@ -20,7 +20,7 @@ export function Tab({ children, count, className, ...props }: TabProps) {
     <RadixTabs.Trigger
       className={cn(
         'group type-label-m -mb-px inline-flex h-10 shrink-0 items-center gap-2 whitespace-nowrap border-b-2 border-transparent px-3 text-secondary transition-colors duration-150 hover:bg-subtle',
-        'data-[state=active]:border-[var(--text-primary)] data-[state=active]:text-primary data-[state=active]:hover:bg-transparent',
+        'data-[state=active]:border-(--text-primary) data-[state=active]:text-primary data-[state=active]:hover:bg-transparent',
         'focus-visible:rounded-sm',
         className,
       )}

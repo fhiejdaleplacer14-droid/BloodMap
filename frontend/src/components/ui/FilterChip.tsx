@@ -38,7 +38,7 @@ export function FilterChip({
       aria-label={applied ? t('filter.remove', { label: removeLabel ?? label }) : undefined}
       onClick={() => (applied ? onRemove?.() : onPressedChange?.(!pressed))}
       className={cn(
-        'type-label-m inline-flex h-[34px] shrink-0 items-center gap-1.5 rounded-md border px-3 transition-colors duration-150',
+        'type-label-m inline-flex h-8.5 shrink-0 items-center gap-1.5 rounded-md border px-3 transition-colors duration-150',
         selected
           ? 'border-brand bg-brand-soft text-brand'
           : 'border-default bg-surface text-primary hover:bg-subtle',

@@ -20,7 +20,7 @@ export function BloodTypeTag({ type, size = 'lg', dimmed, className }: BloodType
     <span
       className={cn(
         'inline-flex shrink-0 flex-col items-center justify-center border border-brand-soft bg-brand-soft font-semibold text-brand',
-        size === 'lg' ? 'size-[52px] rounded-md' : 'h-6 w-11 rounded-sm',
+        size === 'lg' ? 'size-13 rounded-md' : 'h-6 w-11 rounded-sm',
         dimmed && 'opacity-50',
         className,
       )}

@@ -83,7 +83,7 @@ export function DemoBadge({ children, className }: { children: ReactNode; classN
   return (
     <span
       className={cn(
-        'type-label-s inline-flex items-center gap-1 rounded-sm bg-status-info py-[3px] pr-2 pl-1.5 text-status-info',
+        'type-label-s inline-flex items-center gap-1 rounded-sm bg-status-info py-0.75 pr-2 pl-1.5 text-status-info',
         className,
       )}
     >
@@ -113,7 +113,7 @@ export function MapKey({ className }: { className?: string }) {
         </li>
         <li className="flex items-center gap-2.5">
           <span aria-hidden className="flex h-7 w-9 items-center justify-center">
-            <span className="flex size-6 items-center justify-center rounded-full border-2 border-[var(--bg-surface)] bg-inverse text-[9px] font-semibold text-on-inverse">
+            <span className="flex size-6 items-center justify-center rounded-full border-2 border-(--bg-surface) bg-inverse text-[9px] font-semibold text-on-inverse">
               8
             </span>
           </span>
@@ -121,7 +121,7 @@ export function MapKey({ className }: { className?: string }) {
         </li>
         <li className="flex items-center gap-2.5">
           <span aria-hidden className="flex h-7 w-9 items-center justify-center">
-            <span className="flex size-6 items-center justify-center rounded-[6px] border-[1.5px] border-[var(--bg-inverse)] bg-surface text-primary">
+            <span className="flex size-6 items-center justify-center rounded-[6px] border-[1.5px] border-(--bg-inverse) bg-surface text-primary">
               <icons.building size={12} />
             </span>
           </span>

@@ -7,10 +7,10 @@ export function controlClassName({ invalid, disabled }: { invalid: boolean; disa
     disabled
       ? 'border border-default bg-subtle px-3 text-tertiary'
       : invalid
-        ? 'border-2 border-status-critical bg-surface px-[11px]'
+        ? 'border-2 border-status-critical bg-surface px-2.75'
         : 'border border-default bg-surface px-3 hover:border-strong',
     !disabled &&
-      'focus-within:border-2 focus-within:border-focus focus-within:px-[11px] focus-within:shadow-focus',
+      'focus-within:border-2 focus-within:border-focus focus-within:px-2.75 focus-within:shadow-focus',
   )
 }
 

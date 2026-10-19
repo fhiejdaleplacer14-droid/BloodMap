@@ -22,7 +22,7 @@ export function Tooltip({ content, children, side = 'top' }: TooltipProps) {
           className="type-label-s z-50 rounded-sm bg-inverse px-2.5 py-1.5 text-on-inverse"
         >
           {content}
-          <RadixTooltip.Arrow width={10} height={6} className="fill-[var(--bg-inverse)]" />
+          <RadixTooltip.Arrow width={10} height={6} className="fill-(--bg-inverse)" />
         </RadixTooltip.Content>
       </RadixTooltip.Portal>
     </RadixTooltip.Root>

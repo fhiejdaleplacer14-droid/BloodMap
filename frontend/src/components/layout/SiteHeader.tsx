@@ -62,7 +62,7 @@ function AccountMenu({ me }: { me: Me }) {
             <p className="type-label-m truncate text-primary">{me.name}</p>
             <p className="type-body-s truncate text-secondary">{me.email}</p>
           </div>
-          <DropdownMenu.Separator className="my-1 h-px bg-[var(--border-default)]" />
+          <DropdownMenu.Separator className="my-1 h-px bg-line" />
           <DropdownMenu.Item
             onSelect={() => logout.mutate(undefined, { onSuccess: () => navigate('/') })}
             className="type-body-m flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-primary outline-none data-[highlighted]:bg-subtle"

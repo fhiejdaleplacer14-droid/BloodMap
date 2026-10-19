@@ -72,7 +72,7 @@ export function Logo({ variant = 'horizontal', tone = 'default', size = 'md', cl
         <span
           className={cn(
             'rounded-xs border font-mono font-medium tracking-[0.06em]',
-            size === 'md' ? 'px-[5px] py-px text-xs leading-4' : 'px-[4.25px] py-[0.85px] text-[10.2px] leading-[13.6px]',
+            size === 'md' ? 'px-1.25 py-px text-xs leading-4' : 'px-[4.25px] py-[0.85px] text-[10.2px] leading-[13.6px]',
             tone === 'default' && 'border-brand-soft text-brand',
             tone === 'inverse' && 'border-strong text-on-inverse',
             tone === 'mono' && 'border-strong text-primary',

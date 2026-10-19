@@ -4,9 +4,9 @@ import { elapsedSince, formatAbsolute, freshnessOf, type Freshness as Level } fr
 import { Tooltip } from '../ui/Tooltip'
 
 const DOT: Record<Level, string> = {
-  fresh: 'bg-[var(--status-success-fg)]',
-  aging: 'bg-[var(--status-warning-fg)]',
-  stale: 'bg-[var(--status-neutral-fg)]',
+  fresh: 'bg-(--status-success-fg)',
+  aging: 'bg-(--status-warning-fg)',
+  stale: 'bg-(--status-neutral-fg)',
 }
 
 type FreshnessProps = {

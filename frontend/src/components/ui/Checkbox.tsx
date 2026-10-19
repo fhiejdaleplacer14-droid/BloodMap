@@ -22,8 +22,8 @@ export function Checkbox({ label, id, className, disabled, ...props }: CheckboxP
         disabled={disabled}
         className={cn(
           'group inline-flex size-5 shrink-0 items-center justify-center rounded-xs border border-strong bg-surface text-on-inverse',
-          'data-[state=checked]:border-[var(--bg-inverse)] data-[state=checked]:bg-inverse',
-          'data-[state=indeterminate]:border-[var(--bg-inverse)] data-[state=indeterminate]:bg-inverse',
+          'data-[state=checked]:border-(--bg-inverse) data-[state=checked]:bg-inverse',
+          'data-[state=indeterminate]:border-(--bg-inverse) data-[state=indeterminate]:bg-inverse',
           'disabled:cursor-not-allowed disabled:border-default disabled:bg-subtle disabled:text-tertiary',
           'disabled:data-[state=checked]:border-default disabled:data-[state=checked]:bg-subtle',
           'disabled:data-[state=indeterminate]:border-default disabled:data-[state=indeterminate]:bg-subtle',

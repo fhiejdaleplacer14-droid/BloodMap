@@ -26,7 +26,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
   brand: 'bg-brand text-on-brand hover:bg-brand-hover active:bg-brand-pressed',
   primary: 'bg-inverse text-on-inverse hover:bg-inverse-hover active:bg-inverse-hover',
   secondary:
-    'border border-strong bg-surface text-primary hover:bg-subtle active:border-[var(--text-tertiary)] active:bg-subtle',
+    'border border-strong bg-surface text-primary hover:bg-subtle active:border-(--text-tertiary) active:bg-subtle',
   tertiary: 'text-primary hover:bg-subtle active:bg-subtle',
   destructive:
     'bg-brand text-on-brand hover:bg-brand-hover active:bg-brand-pressed',

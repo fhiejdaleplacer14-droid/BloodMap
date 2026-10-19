@@ -49,7 +49,7 @@ export function FilterPopover({
     <Popover.Root open={open} onOpenChange={onOpenChange}>
       <Popover.Trigger
         className={cn(
-          'type-label-m inline-flex h-[34px] shrink-0 items-center gap-1.5 rounded-md border pr-2.5 pl-3 transition-colors duration-150 max-lg:min-h-11',
+          'type-label-m inline-flex h-8.5 shrink-0 items-center gap-1.5 rounded-md border pr-2.5 pl-3 transition-colors duration-150 max-lg:min-h-11',
           active ? 'border-brand bg-brand-soft text-brand' : 'border-default bg-surface text-primary hover:bg-subtle',
         )}
       >

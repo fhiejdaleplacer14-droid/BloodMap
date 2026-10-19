@@ -53,7 +53,7 @@ function DetailSkeleton() {
   return (
     <div aria-hidden className="flex flex-col gap-6 p-6">
       <div className="flex gap-4">
-        <Skeleton className="size-[52px] rounded-md" />
+        <Skeleton className="size-13 rounded-md" />
         <div className="flex flex-1 flex-col gap-2 pt-1">
           <Skeleton className="h-3 w-28" />
           <Skeleton className="h-5 w-52" />

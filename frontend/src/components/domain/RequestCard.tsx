@@ -71,7 +71,7 @@ export function RequestCard({
         receded
           ? 'border border-default bg-canvas p-4'
           : selected
-            ? 'border-2 border-brand bg-surface p-[15px] shadow-floating'
+            ? 'border-2 border-brand bg-surface p-3.75 shadow-floating'
             : 'border border-default bg-surface p-4 hover:border-strong hover:shadow-raised',
         className,
       )}
@@ -114,7 +114,7 @@ export function RequestCard({
         )}
       </div>
 
-      <span aria-hidden className="h-px w-full bg-[var(--border-default)]" />
+      <span aria-hidden className="h-px w-full bg-line" />
 
       <div className="flex items-center justify-between gap-2">
         <span className="type-body-s inline-flex items-center gap-1 text-tertiary">

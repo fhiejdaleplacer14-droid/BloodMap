@@ -286,7 +286,7 @@ export function ExplorerPage() {
             aria-label={t('pageTitle')}
             className={cn(
               'relative flex min-h-0 flex-col border-default bg-surface outline-none',
-              mapVisible ? 'w-full shrink-0 border-r md:w-[360px] lg:w-[400px] xl:w-[440px]' : 'mx-auto w-full max-w-[640px] sm:border-x',
+              mapVisible ? 'w-full shrink-0 border-r md:w-90 lg:w-100 xl:w-110' : 'mx-auto w-full max-w-160 sm:border-x',
             )}
           >
             {/* 2 px progress bar while refreshing with results on screen (55:208). */}
@@ -341,7 +341,7 @@ export function ExplorerPage() {
           <div className="relative min-w-0 flex-1">
             <a
               href="#explorer-results"
-              className="type-label-m sr-only z-[1100] rounded-md bg-surface px-3 py-2 text-primary shadow-overlay focus:not-sr-only focus:absolute focus:top-3 focus:left-3"
+              className="type-label-m sr-only z-1100 rounded-md bg-surface px-3 py-2 text-primary shadow-overlay focus:not-sr-only focus:absolute focus:top-3 focus:left-3"
             >
               {t('map.skip')}
             </a>
@@ -362,7 +362,7 @@ export function ExplorerPage() {
               onTileStatus={(status) => setMapFailed(status === 'failed')}
             >
               {/* Overlays sit above Leaflet panes (z 400–1000). */}
-              <div className="pointer-events-none absolute inset-0 z-[1000]">
+              <div className="pointer-events-none absolute inset-0 z-1000">
                 {!isTablet && (
                   <div className="pointer-events-auto absolute top-3 left-3">{viewToggle}</div>
                 )}
@@ -398,7 +398,7 @@ export function ExplorerPage() {
                 {mapFailed && (
                   // Map failed to load (17:2258): the list keeps working.
                   <div className="pointer-events-auto absolute inset-0 flex items-center justify-center bg-canvas/80 p-4">
-                    <div className="w-[360px] max-w-full rounded-lg border border-default bg-surface shadow-overlay">
+                    <div className="w-90 max-w-full rounded-lg border border-default bg-surface shadow-overlay">
                       <EmptyState
                         role="alert"
                         tone="warning"
@@ -430,7 +430,7 @@ export function ExplorerPage() {
             </RequestMap>
             {detailsAsDrawer && (
               // Tablet: detail opens as a 400 px drawer over the map (55:281).
-              <aside className="absolute inset-y-0 right-0 z-[1100] flex w-[400px] max-w-full flex-col border-l border-default bg-surface shadow-overlay">
+              <aside className="absolute inset-y-0 right-0 z-1100 flex w-100 max-w-full flex-col border-l border-default bg-surface shadow-overlay">
                 {details}
               </aside>
             )}

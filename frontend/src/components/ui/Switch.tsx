@@ -20,7 +20,7 @@ export function Switch({ label, id, className, disabled, ...props }: SwitchProps
         id={inputId}
         disabled={disabled}
         className={cn(
-          'group relative inline-flex h-5 w-9 shrink-0 items-center rounded-full bg-[var(--border-strong)] transition-colors duration-150',
+          'group relative inline-flex h-5 w-9 shrink-0 items-center rounded-full bg-(--border-strong) transition-colors duration-150',
           'data-[state=checked]:bg-inverse disabled:cursor-not-allowed disabled:bg-subtle disabled:data-[state=checked]:bg-subtle',
         )}
         {...props}
@@ -28,7 +28,7 @@ export function Switch({ label, id, className, disabled, ...props }: SwitchProps
         <RadixSwitch.Thumb
           className={cn(
             'block size-4 translate-x-0.5 rounded-full bg-surface transition-transform duration-150',
-            'data-[state=checked]:translate-x-[18px] data-[state=checked]:bg-[var(--text-on-inverse)]',
+            'data-[state=checked]:translate-x-4.5 data-[state=checked]:bg-(--text-on-inverse)',
             'group-disabled:bg-surface group-disabled:data-[state=checked]:bg-surface',
           )}
         />

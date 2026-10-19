@@ -87,12 +87,12 @@ export function TokensPage() {
   const { t } = useTranslation('dev')
 
   return (
-    <main className="mx-auto flex max-w-[1600px] flex-col gap-10 p-16">
+    <main className="mx-auto flex max-w-400 flex-col gap-10 p-16">
       <header className="flex flex-wrap items-end justify-between gap-6">
         <div className="flex flex-col gap-2">
           <p className="type-overline text-tertiary">02 — Design System</p>
           <h1 className="type-display-48 text-primary">{t('tokens.title')}</h1>
-          <p className="type-body-l max-w-[1000px] text-secondary">{t('tokens.intro')}</p>
+          <p className="type-body-l max-w-250 text-secondary">{t('tokens.intro')}</p>
         </div>
         <DevThemeSwitch />
       </header>

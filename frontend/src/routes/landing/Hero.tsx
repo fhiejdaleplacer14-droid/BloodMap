@@ -34,16 +34,16 @@ export function Hero({ requests, loading }: { requests: PublicRequest[]; loading
 
   return (
     <section className="border-b border-default bg-canvas px-[clamp(16px,8vw,120px)] py-[clamp(40px,6vw,72px)]">
-      <div className="mx-auto flex max-w-[1200px] items-center gap-16 max-lg:flex-col max-lg:items-stretch max-lg:gap-10">
+      <div className="mx-auto flex max-w-300 items-center gap-16 max-lg:flex-col max-lg:items-stretch max-lg:gap-10">
         <div className="flex min-w-0 flex-1 flex-col gap-6">
           <p className="type-overline flex items-center gap-2 text-brand">
             <span aria-hidden className="size-2 rounded-full bg-brand" />
             {t('hero.eyebrow')}
           </p>
-          <h1 className="type-display-56 max-w-[580px] text-primary max-sm:text-[2.5rem] max-sm:leading-[2.875rem]">
+          <h1 className="type-display-56 max-w-145 text-primary max-sm:text-[2.5rem] max-sm:leading-11.5">
             {t('hero.title')}
           </h1>
-          <p className="type-body-l max-w-[500px] text-secondary">{t('hero.body')}</p>
+          <p className="type-body-l max-w-125 text-secondary">{t('hero.body')}</p>
           <div className="flex flex-wrap gap-3">
             <Button asChild variant="brand">
               <Link to="/requests">
@@ -65,7 +65,7 @@ export function Hero({ requests, loading }: { requests: PublicRequest[]; loading
           </ul>
         </div>
 
-        <div className="relative h-[540px] w-full shrink-0 overflow-hidden rounded-xl border border-default shadow-floating lg:w-[616px] max-sm:h-[480px]">
+        <div className="relative h-135 w-full shrink-0 overflow-hidden rounded-xl border border-default shadow-floating lg:w-154 max-sm:h-120">
           <RequestMap
             className="size-full"
             label={t('hero.mapLabel')}
@@ -75,7 +75,7 @@ export function Hero({ requests, loading }: { requests: PublicRequest[]; loading
             interactive={false}
             onMapReady={setMap}
           >
-            <div className="pointer-events-none absolute inset-0 z-[1000]">
+            <div className="pointer-events-none absolute inset-0 z-1000">
               <form
                 role="search"
                 onSubmit={(event) => {
@@ -83,7 +83,7 @@ export function Hero({ requests, loading }: { requests: PublicRequest[]; loading
                   const q = query.trim()
                   navigate(q ? `/requests?q=${encodeURIComponent(q)}` : '/requests')
                 }}
-                className="pointer-events-auto absolute top-4 left-4 flex h-11 w-[360px] max-w-[calc(100%-32px)] items-center gap-2.5 rounded-[10px] border border-default bg-surface pr-2 pl-3.5 shadow-floating focus-within:border-focus focus-within:shadow-focus"
+                className="pointer-events-auto absolute top-4 left-4 flex h-11 w-90 max-w-[calc(100%-32px)] items-center gap-2.5 rounded-[10px] border border-default bg-surface pr-2 pl-3.5 shadow-floating focus-within:border-focus focus-within:shadow-focus"
               >
                 <icons.search aria-hidden size={18} className="shrink-0 text-secondary" />
                 <label htmlFor="hero-search" className="sr-only">
@@ -98,7 +98,7 @@ export function Hero({ requests, loading }: { requests: PublicRequest[]; loading
                   maxLength={100}
                   className="type-body-m min-w-0 flex-1 bg-transparent text-primary outline-none placeholder:text-tertiary focus-visible:shadow-none focus-visible:outline-none [&::-webkit-search-cancel-button]:hidden"
                 />
-                <span aria-hidden className="h-6 w-px bg-[var(--border-default)]" />
+                <span aria-hidden className="h-6 w-px bg-line" />
                 <Link
                   to="/requests?area=near"
                   aria-label={t('hero.useLocation')}
@@ -109,13 +109,13 @@ export function Hero({ requests, loading }: { requests: PublicRequest[]; loading
                 </Link>
               </form>
 
-              {demo && <DemoBadge className="absolute top-[26px] right-4 max-sm:top-[68px] max-sm:left-4">{t('hero.sampleData')}</DemoBadge>}
+              {demo && <DemoBadge className="absolute top-6.5 right-4 max-sm:top-17 max-sm:left-4">{t('hero.sampleData')}</DemoBadge>}
 
-              <div className="pointer-events-auto absolute bottom-6 left-4 w-[380px] max-w-[calc(100%-32px)]">
+              <div className="pointer-events-auto absolute bottom-6 left-4 w-95 max-w-[calc(100%-32px)]">
                 {featured ? (
                   <RequestCard request={featured} to={`/requests?sel=${encodeURIComponent(featured.id)}`} className="shadow-overlay" />
                 ) : (
-                  loading && <Skeleton className="h-[220px] w-full rounded-lg" />
+                  loading && <Skeleton className="h-55 w-full rounded-lg" />
                 )}
               </div>
             </div>

@@ -34,7 +34,7 @@ export function StatusBadge({ status, className }: { status: RequestStatus; clas
   return (
     <span
       className={cn(
-        'type-label-s inline-flex shrink-0 items-center gap-1 rounded-sm py-[3px] pr-2 pl-1.5 whitespace-nowrap',
+        'type-label-s inline-flex shrink-0 items-center gap-1 rounded-sm py-0.75 pr-2 pl-1.5 whitespace-nowrap',
         TONE[tone],
         className,
       )}

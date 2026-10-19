@@ -20,9 +20,9 @@ export function Footer() {
 
   return (
     <footer className="border-t border-default bg-surface px-[clamp(16px,8vw,120px)] pt-16 pb-8">
-      <div className="mx-auto flex max-w-[1200px] flex-col gap-12">
+      <div className="mx-auto flex max-w-300 flex-col gap-12">
         <div className="flex gap-16 max-lg:flex-col max-lg:gap-10">
-          <div id="about" className="flex w-[360px] max-w-full shrink-0 scroll-mt-20 flex-col gap-4">
+          <div id="about" className="flex w-90 max-w-full shrink-0 scroll-mt-20 flex-col gap-4">
             <Logo />
             <p className="type-body-m text-secondary">{t('footer.overview')}</p>
           </div>
@@ -66,7 +66,7 @@ export function Footer() {
           </div>
         </div>
         <div className="flex justify-between gap-8 border-t border-default pt-6 text-tertiary max-lg:flex-col max-lg:gap-3">
-          <p className="type-body-s max-w-[820px]">{t('footer.disclaimer')}</p>
+          <p className="type-body-s max-w-205">{t('footer.disclaimer')}</p>
           <p className="type-mono-s whitespace-nowrap">{t('footer.copyright')}</p>
         </div>
       </div>

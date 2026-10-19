@@ -19,7 +19,7 @@ const SECTION = 'px-[clamp(16px,8vw,120px)] py-[clamp(56px,7vw,96px)]'
 
 function SectionHead({ eyebrow, title }: { eyebrow: string; title: string }) {
   return (
-    <div className="flex max-w-[720px] flex-col gap-3">
+    <div className="flex max-w-180 flex-col gap-3">
       <p className="type-overline text-tertiary">{eyebrow}</p>
       <h2 className="type-h1 text-primary">{title}</h2>
     </div>
@@ -47,8 +47,8 @@ function Trust() {
   const { t } = useTranslation('landing')
   return (
     <section className={cn(SECTION, 'bg-surface')}>
-      <div className="mx-auto flex max-w-[1200px] flex-col gap-6">
-        <div className="flex max-w-[720px] flex-col gap-3">
+      <div className="mx-auto flex max-w-300 flex-col gap-6">
+        <div className="flex max-w-180 flex-col gap-3">
           <p className="type-overline text-tertiary">{t('trust.eyebrow')}</p>
           <h2 className="type-h1 text-primary">{t('trust.title')}</h2>
           <p className="type-body-l text-secondary">{t('trust.body')}</p>
@@ -85,7 +85,7 @@ function Trust() {
             body={t('trust.privacy.body')}
             proof={
               <span className="type-body-s inline-flex items-center gap-2 text-secondary">
-                <span aria-hidden className="size-[18px] rounded-full border-[1.5px] border-dashed border-brand bg-brand-soft" />
+                <span aria-hidden className="size-4.5 rounded-full border-[1.5px] border-dashed border-brand bg-brand-soft" />
                 {t('trust.privacy.proof')}
               </span>
             }
@@ -105,7 +105,7 @@ function HowItWorks() {
   ]
   return (
     <section id="how-it-works" className={cn(SECTION, 'scroll-mt-16 border-y border-default bg-canvas')}>
-      <div className="mx-auto flex max-w-[1200px] flex-col gap-8">
+      <div className="mx-auto flex max-w-300 flex-col gap-8">
         <SectionHead eyebrow={t('how.eyebrow')} title={t('how.title')} />
         <ol className="flex gap-6 max-lg:flex-col">
           {steps.map(({ key, icon }, index) => {
@@ -114,7 +114,7 @@ function HowItWorks() {
               <li key={key} className="flex flex-1 flex-col gap-4">
                 <div className="flex items-center gap-3">
                   <span className="type-mono-m text-brand">{String(index + 1).padStart(2, '0')}</span>
-                  <span aria-hidden className="h-px flex-1 bg-[var(--border-strong)]" />
+                  <span aria-hidden className="h-px flex-1 bg-(--border-strong)" />
                 </div>
                 <span className="flex size-11 items-center justify-center rounded-[10px] border border-brand-soft bg-brand-soft text-brand">
                   <Icon aria-hidden size={20} />
@@ -156,8 +156,8 @@ function Safety() {
   const { t } = useTranslation('landing')
   return (
     <section id="safety" className={cn(SECTION, 'scroll-mt-16 bg-inverse')}>
-      <div className="mx-auto flex max-w-[1200px] flex-col gap-8">
-        <div className="flex max-w-[760px] flex-col gap-3">
+      <div className="mx-auto flex max-w-300 flex-col gap-8">
+        <div className="flex max-w-190 flex-col gap-3">
           <p className="type-overline text-on-inverse-muted">{t('safety.eyebrow')}</p>
           <h2 className="type-h1 text-on-inverse">{t('safety.title')}</h2>
           <p className="type-body-l text-on-inverse-muted">{t('safety.body')}</p>
@@ -196,7 +196,7 @@ function ClosingCta() {
   const { t } = useTranslation('landing')
   return (
     <section className="bg-canvas px-[clamp(16px,8vw,120px)] py-16">
-      <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-6 rounded-xl border border-default bg-surface px-10 py-8 max-lg:flex-col max-lg:items-start max-sm:px-6">
+      <div className="mx-auto flex max-w-300 items-center justify-between gap-6 rounded-xl border border-default bg-surface px-10 py-8 max-lg:flex-col max-lg:items-start max-sm:px-6">
         <div className="flex flex-col gap-1.5">
           <h2 className="type-h2 text-primary">{t('cta.title')}</h2>
           <p className="type-body-l text-secondary">{t('cta.body')}</p>

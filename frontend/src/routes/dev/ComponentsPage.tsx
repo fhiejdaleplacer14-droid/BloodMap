@@ -147,12 +147,12 @@ export function ComponentsPage() {
   const sections = Object.entries(t('components.sections', { returnObjects: true }) as Record<string, string>)
 
   return (
-    <div className="mx-auto flex max-w-[1600px] flex-col gap-10 p-8 lg:p-16">
+    <div className="mx-auto flex max-w-400 flex-col gap-10 p-8 lg:p-16">
       <header className="flex flex-wrap items-end justify-between gap-6">
         <div className="flex flex-col gap-2">
           <p className="type-overline text-tertiary">03 — Components</p>
           <h1 className="type-display-48 text-primary">{t('components.title')}</h1>
-          <p className="type-body-l max-w-[1000px] text-secondary">{t('components.intro')}</p>
+          <p className="type-body-l max-w-250 text-secondary">{t('components.intro')}</p>
         </div>
         <DevThemeSwitch />
       </header>
@@ -419,7 +419,7 @@ export function ComponentsPage() {
               actions={<Button>{ts('requestUnavailable.action')}</Button>}
             />
           </div>
-          <div aria-busy="true" className="max-w-[392px]">
+          <div aria-busy="true" className="max-w-98">
             <SkeletonRequestCard />
           </div>
         </Showcase>
@@ -476,10 +476,10 @@ export function ComponentsPage() {
             />
           </div>
           <div className="flex flex-wrap items-start gap-6">
-            <div className="w-[390px] overflow-hidden rounded-lg border border-default">
+            <div className="w-97.5 overflow-hidden rounded-lg border border-default">
               <MobileTopBar actions={<IconButton icon="menu" label={tc('actions.menu')} tooltip={false} />} />
             </div>
-            <div className="w-[390px] overflow-hidden rounded-lg border border-default">
+            <div className="w-97.5 overflow-hidden rounded-lg border border-default">
               <MobileTopBar
                 variant="back"
                 title={s('requestDetails')}
@@ -494,7 +494,7 @@ export function ComponentsPage() {
             </div>
           </div>
           <div className="flex flex-wrap items-start gap-6">
-            <div className="h-[640px] overflow-hidden rounded-lg border border-default">
+            <div className="h-160 overflow-hidden rounded-lg border border-default">
               <AppSidebar
                 roleLabel={tn('role.donor')}
                 roleIcon="user"
@@ -511,7 +511,7 @@ export function ComponentsPage() {
                 onSignOut={() => undefined}
               />
             </div>
-            <div className="w-[390px] overflow-hidden rounded-lg border border-default">
+            <div className="w-97.5 overflow-hidden rounded-lg border border-default">
               <BottomNav
                 items={[
                   { to: '/dev/components', label: s('homeShort'), icon: 'home', end: true },

@@ -51,8 +51,8 @@ export function RegionalFocus({ requests }: { requests: PublicRequest[] }) {
 
   return (
     <section className="bg-surface px-[clamp(16px,8vw,120px)] py-[clamp(56px,7vw,96px)]">
-      <div className="mx-auto flex max-w-[1200px] items-center gap-16 max-lg:flex-col max-lg:items-stretch max-lg:gap-10">
-        <div className="flex w-[440px] max-w-full shrink-0 flex-col gap-5">
+      <div className="mx-auto flex max-w-300 items-center gap-16 max-lg:flex-col max-lg:items-stretch max-lg:gap-10">
+        <div className="flex w-110 max-w-full shrink-0 flex-col gap-5">
           <p className="type-overline text-tertiary">{t('landing:region.eyebrow')}</p>
           <h2 className="type-h1 text-primary">{t('landing:region.title')}</h2>
           <p className="type-body-l text-secondary">{t('landing:region.body')}</p>
@@ -98,7 +98,7 @@ export function RegionalFocus({ requests }: { requests: PublicRequest[] }) {
           )}
         </div>
 
-        <div className="relative h-[520px] min-w-0 flex-1 overflow-hidden rounded-xl border border-default max-sm:h-[400px]">
+        <div className="relative h-130 min-w-0 flex-1 overflow-hidden rounded-xl border border-default max-sm:h-100">
           <RequestMap
             className="size-full"
             label={t('landing:region.mapLabel', { area: nameFor(choice) })}
@@ -106,7 +106,7 @@ export function RegionalFocus({ requests }: { requests: PublicRequest[] }) {
             interactive={false}
             onMapReady={setMap}
           >
-            <div className="pointer-events-none absolute inset-0 z-[1000]">
+            <div className="pointer-events-none absolute inset-0 z-1000">
               {demo && <DemoBadge className="absolute top-4 left-4">{t('landing:region.demoChip')}</DemoBadge>}
               {selectedCount !== undefined && (
                 <Link

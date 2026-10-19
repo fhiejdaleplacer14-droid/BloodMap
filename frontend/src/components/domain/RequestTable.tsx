@@ -33,16 +33,16 @@ type RequestTableProps = {
 }
 
 const COLUMNS = [
-  ['id', 'w-[140px]'],
-  ['type', 'w-[72px]'],
-  ['location', 'w-[180px]'],
-  ['created', 'w-[120px]'],
-  ['expires', 'w-[140px]'],
-  ['status', 'w-[156px]'],
-  ['updated', 'w-[120px]'],
+  ['id', 'w-35'],
+  ['type', 'w-18'],
+  ['location', 'w-45'],
+  ['created', 'w-30'],
+  ['expires', 'w-35'],
+  ['status', 'w-39'],
+  ['updated', 'w-30'],
 ] as const
 
-const cell = 'h-[52px] px-3 align-middle'
+const cell = 'h-13 px-3 align-middle'
 
 /**
  * Table Header Row + Request Table Row (9:489 · 9:585). 52 px rows; IDs and
@@ -56,7 +56,7 @@ export function RequestTable({ rows, caption, selectedId, onRowClick, renderActi
 
   return (
     <div className={cn('overflow-x-auto rounded-lg border border-default', className)}>
-      <table className="w-full min-w-[984px] border-collapse text-left">
+      <table className="w-full min-w-246 border-collapse text-left">
         <caption className="sr-only">{caption}</caption>
         <thead className="sticky top-0 z-10">
           <tr className="border-b border-default bg-subtle">
@@ -90,7 +90,7 @@ export function RequestTable({ rows, caption, selectedId, onRowClick, renderActi
                 <td className={cell}>
                   <BloodTypeTag type={row.blood_type} size="sm" />
                 </td>
-                <td className={cn(cell, 'type-body-m max-w-[180px] truncate text-primary')}>{row.municipality}</td>
+                <td className={cn(cell, 'type-body-m max-w-45 truncate text-primary')}>{row.municipality}</td>
                 <td className={cn(cell, 'type-mono-s text-secondary')}>
                   <time dateTime={row.created_at}>{formatDate(row.created_at, locale)}</time>
                 </td>

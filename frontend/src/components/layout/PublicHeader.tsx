@@ -38,7 +38,7 @@ export function PublicHeader({ links, actions, homeTo = '/', className }: Public
                   className={cn(
                     'type-label-m flex h-16 items-center border-b-2 px-3 transition-colors duration-150',
                     link.current
-                      ? 'border-[var(--bg-brand)] text-primary'
+                      ? 'border-(--bg-brand) text-primary'
                       : 'border-transparent text-secondary hover:text-primary',
                   )}
                 >

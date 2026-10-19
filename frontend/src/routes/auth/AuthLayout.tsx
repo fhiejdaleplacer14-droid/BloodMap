@@ -25,11 +25,11 @@ export function AuthLayout({ title, children }: { title: string; children: React
 
   return (
     <div className="flex min-h-dvh bg-canvas">
-      <aside className="relative w-[560px] shrink-0 overflow-hidden border-r border-default max-lg:hidden">
+      <aside className="relative w-140 shrink-0 overflow-hidden border-r border-default max-lg:hidden">
         <div className="absolute inset-0">
           <RequestMap className="size-full" label={t('aside.eyebrow')} requests={[]} interactive={false} />
         </div>
-        <div className="pointer-events-none absolute inset-0 z-[1000] flex flex-col justify-between p-10">
+        <div className="pointer-events-none absolute inset-0 z-1000 flex flex-col justify-between p-10">
           <Link to="/" className="pointer-events-auto w-fit rounded-xl border border-default bg-surface px-5 py-4 shadow-floating">
             <Logo />
           </Link>
@@ -53,7 +53,7 @@ export function AuthLayout({ title, children }: { title: string; children: React
         <Link to="/" className="mb-8 self-start rounded-sm lg:hidden">
           <Logo size="sm" />
         </Link>
-        <div className="flex w-full max-w-[400px] flex-col gap-5">{children}</div>
+        <div className="flex w-full max-w-100 flex-col gap-5">{children}</div>
       </main>
     </div>
   )

@@ -28,7 +28,7 @@ const TILE = {
 export function EmptyState({ icon, tone = 'neutral', title, description, actions, role, className }: EmptyStateProps) {
   const Icon = icons[icon]
   return (
-    <div role={role} className={cn('mx-auto flex w-full max-w-[360px] flex-col items-center gap-3 px-6 py-8 text-center', className)}>
+    <div role={role} className={cn('mx-auto flex w-full max-w-90 flex-col items-center gap-3 px-6 py-8 text-center', className)}>
       <span className={cn('flex size-12 items-center justify-center rounded-lg', TILE[tone])}>
         <Icon aria-hidden size={22} />
       </span>
