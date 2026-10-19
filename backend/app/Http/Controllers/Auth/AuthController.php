@@ -71,6 +71,7 @@ class AuthController extends Controller
         Auth::guard('web')->login($user, (bool) ($credentials['remember'] ?? false));
         $request->session()->regenerate();
         $user->forceFill(['last_active_at' => now()])->saveQuietly();
+        AuditLogger::record($user, 'account.signed_in', $user, meta: ['device' => self::deviceLabel((string) $request->userAgent())]);
 
         return (new MeResource($user->load(['area', 'coordinationPoint'])))->response();
     }
@@ -157,6 +158,29 @@ class AuthController extends Controller
         }
 
         return response()->json(['message' => 'Your password was updated.']);
+    }
+
+    /** "Chrome · Android" — browser family and OS only (My Activity, 29:625). */
+    public static function deviceLabel(string $userAgent): ?string
+    {
+        $browser = match (true) {
+            str_contains($userAgent, 'Edg/') => 'Edge',
+            str_contains($userAgent, 'Firefox/') => 'Firefox',
+            str_contains($userAgent, 'Chrome/') => 'Chrome',
+            str_contains($userAgent, 'Safari/') => 'Safari',
+            default => null,
+        };
+        $os = match (true) {
+            str_contains($userAgent, 'Android') => 'Android',
+            str_contains($userAgent, 'iPhone') || str_contains($userAgent, 'iPad') => 'iOS',
+            str_contains($userAgent, 'Windows') => 'Windows',
+            str_contains($userAgent, 'Mac OS') => 'macOS',
+            str_contains($userAgent, 'Linux') => 'Linux',
+            default => null,
+        };
+        $parts = array_filter([$browser, $os]);
+
+        return $parts === [] ? null : implode(' · ', $parts);
     }
 
     /**

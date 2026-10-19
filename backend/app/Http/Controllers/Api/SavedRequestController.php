@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PublicRequestResource;
 use App\Models\BloodRequest;
 use App\Models\User;
+use App\Services\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -37,7 +38,10 @@ class SavedRequestController extends Controller
     public function store(Request $request, BloodRequest $bloodRequest): Response
     {
         $this->authorize('save', $bloodRequest);
-        $request->user()->savedRequests()->syncWithoutDetaching([$bloodRequest->getKey()]);
+        $changes = $request->user()->savedRequests()->syncWithoutDetaching([$bloodRequest->getKey()]);
+        if ($changes['attached'] !== []) {
+            AuditLogger::record($request->user(), 'request.saved', $bloodRequest);
+        }
 
         return response()->noContent();
     }
@@ -45,7 +49,9 @@ class SavedRequestController extends Controller
     /** DELETE /api/me/saved-requests/{id} — idempotent. */
     public function destroy(Request $request, BloodRequest $bloodRequest): Response
     {
-        $request->user()->savedRequests()->detach($bloodRequest->getKey());
+        if ($request->user()->savedRequests()->detach($bloodRequest->getKey()) > 0) {
+            AuditLogger::record($request->user(), 'request.unsaved', $bloodRequest);
+        }
 
         return response()->noContent();
     }

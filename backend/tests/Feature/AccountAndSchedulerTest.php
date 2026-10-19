@@ -183,4 +183,25 @@ class AccountAndSchedulerTest extends TestCase
         $this->assertStringNotContainsString('0917', $body);
         $this->assertStringNotContainsString('@', $body);
     }
+
+    public function test_activity_records_saves_preferences_and_sign_ins(): void
+    {
+        $request = $this->activeRequest();
+        $donor = User::factory()->create(['password' => 'Correct-horse-9']);
+
+        $this->withHeader('User-Agent', 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/131.0 Mobile Safari/537.36')
+            ->postJson('/login', ['email' => $donor->email, 'password' => 'Correct-horse-9'])->assertOk();
+        $this->postJson("/api/me/saved-requests/{$request->public_id}")->assertNoContent();
+        $this->postJson("/api/me/saved-requests/{$request->public_id}")->assertNoContent(); // idempotent, logged once
+        $this->deleteJson("/api/me/saved-requests/{$request->public_id}")->assertNoContent();
+        $this->patchJson('/api/me/preferences', ['email_expiry_reminder' => true])->assertOk();
+
+        $activity = $this->getJson('/api/me/activity')->assertOk()->json('data');
+        $this->assertSame(
+            ['account.preferences_updated', 'request.unsaved', 'request.saved', 'account.signed_in'],
+            array_column($activity, 'action'),
+        );
+        $this->assertSame('Chrome · Android', $activity[3]['device']);
+        $this->assertSame($request->public_id, $activity[2]['target']);
+    }
 }

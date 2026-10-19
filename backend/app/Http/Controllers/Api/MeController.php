@@ -32,6 +32,7 @@ class MeController extends Controller
         $user = $request->user();
         $user->preferences = array_merge($user->resolvedPreferences(), $validated);
         $user->save();
+        AuditLogger::record($user, 'account.preferences_updated', $user, meta: ['changed' => array_keys($validated)]);
 
         return new MeResource($user->load(['area', 'coordinationPoint']));
     }
@@ -54,6 +55,8 @@ class MeController extends Controller
                 'action' => $log->action,
                 'target_type' => $log->target_type,
                 'target' => $log->meta['target_label'] ?? null,
+                // Coarse "Chrome · Android" for sign-ins; never an IP address.
+                'device' => $log->meta['device'] ?? null,
                 'from' => $log->from,
                 'to' => $log->to,
                 'created_at' => $log->created_at?->toIso8601ZuluString(),
