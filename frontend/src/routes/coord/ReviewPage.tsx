@@ -284,7 +284,7 @@ function Review({ request: r, onRefresh }: { request: ManagedRequest; onRefresh:
             <h2 id="review-preview" className="type-overline text-tertiary">
               {t('review.preview')}
             </h2>
-            <PreviewCard data={preview} id={r.id} footer={r.published_at ? t('manage:detail.published') : t('review.notPublic')} />
+            <PreviewCard data={preview} id={r.id} footer={r.published_at ? t('request:card.reviewed') : t('review.notPublic')} />
             <AreaMap data={preview} className="h-44" />
             <p className="type-body-s flex items-center gap-1.5 text-secondary">
               <ShieldCheck aria-hidden size={14} className="shrink-0" />
