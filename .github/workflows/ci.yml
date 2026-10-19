@@ -31,7 +31,7 @@ jobs:
       - run: npm run build
 
   backend:
-    name: Backend · pint, migrate, tests (PostgreSQL)
+    name: Backend · pint, larastan, migrate + seed, tests (PostgreSQL)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -75,5 +75,7 @@ jobs:
       - run: composer install --no-interaction --prefer-dist --no-progress
       - run: cp .env.example .env && php artisan key:generate
       - run: vendor/bin/pint --test
-      - run: php artisan migrate --force
+      - run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+      # Seeders must keep working against real PostgreSQL.
+      - run: php artisan migrate:fresh --seed --force
       - run: php artisan test
