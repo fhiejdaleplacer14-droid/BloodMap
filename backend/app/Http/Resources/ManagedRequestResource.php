@@ -31,6 +31,7 @@ class ManagedRequestResource extends PublicRequestResource
 
         return [
             ...$base,
+            'municipality_id' => $this->municipality_id,
             'contact_method' => $this->contact_method->value,
             'contact_visible_to' => $this->contact_visible_to->value,
             'created_at' => $this->created_at?->toIso8601ZuluString(),

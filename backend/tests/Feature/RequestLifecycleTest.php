@@ -272,6 +272,7 @@ class RequestLifecycleTest extends TestCase
             ->postJson('/api/requests', $this->draftPayload(['public_summary' => 'Call 0917 123 4567 for Mr. Santos.']))
             ->assertCreated()
             ->assertJsonPath('data.privacy_review.flags', ['possible_phone_number', 'possible_personal_name'])
+            ->assertJsonPath('data.municipality_id', $this->municipality->getKey())
             ->json('data.id');
 
         $this->actingAs($this->coordinator())->getJson("/api/requests/{$id}")->assertJsonMissingPath('data.privacy_review');
