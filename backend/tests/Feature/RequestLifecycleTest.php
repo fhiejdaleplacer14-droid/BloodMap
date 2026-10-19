@@ -311,4 +311,14 @@ class RequestLifecycleTest extends TestCase
 
         $this->assertSame(sprintf('BM-%d-%04d', now()->year, $probe + 3), $id);
     }
+
+    public function test_saving_unchanged_desk_times_is_not_an_edit(): void
+    {
+        $request = $this->activeRequest(['desk_window_start' => '08:00', 'desk_window_end' => '17:00']);
+
+        $this->actingAs($this->submitter)->patchJson("/api/requests/{$request->public_id}", ['desk_window_start' => '08:00', 'desk_window_end' => '17:00'])
+            ->assertOk()->assertJsonPath('data.desk_window', ['08:00', '17:00']);
+
+        $this->assertDatabaseMissing('audit_logs', ['action' => 'request.edited', 'target_id' => $request->getKey()]);
+    }
 }

@@ -55,6 +55,12 @@ class UpsertBloodRequest extends FormRequest
                 $data[$text] = trim((string) $data[$text]);
             }
         }
+        // The columns are TIME: "08:00" must equal the stored "08:00:00", or every save looks like an edit.
+        foreach (['desk_window_start', 'desk_window_end'] as $time) {
+            if (isset($data[$time])) {
+                $data[$time] .= ':00';
+            }
+        }
 
         return $data;
     }
