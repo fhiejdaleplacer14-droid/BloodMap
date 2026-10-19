@@ -175,7 +175,7 @@ export function PublicPreview({ data, withMap }: { data: PreviewData; withMap?: 
             requests={[mapRequest]}
             selectedId={mapRequest.id}
             areaFor={mapRequest}
-            initialView={{ center: [mapRequest.location.point[1], mapRequest.location.point[0]], zoom: 11 }}
+            initialView={{ center: [mapRequest.location.point[1], mapRequest.location.point[0]], zoom: 12 }}
             interactive={false}
           />
         </div>
