@@ -272,7 +272,13 @@ class RequestController extends Controller
             $events[] = [
                 'id' => $log->getKey(),
                 'action' => $log->action,
-                'actor' => $log->actor ? ['name' => $log->actor->name, 'is_me' => $log->actor->is($viewer)] : null,
+                'actor' => $log->actor ? [
+                    // Reviewers see submitter references, never names (35:462).
+                    'name' => $reviewer && ! $log->actor->is($viewer) && $log->actor_id === $bloodRequest->submitter_id
+                        ? ($log->actor->reference ?? $log->actor->name)
+                        : $log->actor->name,
+                    'is_me' => $log->actor->is($viewer),
+                ] : null,
                 'from' => $log->from,
                 'to' => $log->to,
                 'reason' => $log->reason,

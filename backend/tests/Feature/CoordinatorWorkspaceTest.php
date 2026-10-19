@@ -112,7 +112,8 @@ class CoordinatorWorkspaceTest extends TestCase
         $this->activeRequest();
 
         $this->actingAs($this->coordinator)->getJson("/api/requests/{$request->public_id}/history")
-            ->assertJsonPath('meta.submitter', ['approved' => 1, 'corrections' => 1]);
+            ->assertJsonPath('meta.submitter', ['approved' => 1, 'corrections' => 1])
+            ->assertJsonPath('data.0.actor.name', $this->submitter->reference);
         $this->actingAs($this->submitter)->getJson("/api/requests/{$request->public_id}/history")
             ->assertJsonMissingPath('meta.submitter');
     }
