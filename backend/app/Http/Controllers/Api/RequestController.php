@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\BloodType;
 use App\Enums\RequestStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpsertBloodRequest;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -27,20 +29,57 @@ use Illuminate\Validation\ValidationException;
  */
 class RequestController extends Controller
 {
-    /** GET /api/requests/mine */
+    /** My Requests tabs (32:959) → statuses. */
+    public const MINE_TABS = [
+        'needs_action' => ['draft', 'needs_correction'],
+        'active' => ['pending_review', 'active'],
+        'closed' => ['fulfilled', 'closed', 'expired', 'rejected'],
+    ];
+
+    /**
+     * GET /api/requests/mine?q&status&blood_type&created_after&tab — 20 per
+     * page; meta.counts gives each tab's total under the same filters.
+     */
     public function mine(Request $request): AnonymousResourceCollection
     {
-        $request->validate(['status' => ['sometimes', Rule::in(RequestStatus::values())]]);
+        $filters = $request->validate([
+            'q' => ['sometimes', 'nullable', 'string', 'max:100'],
+            'status' => ['sometimes', 'nullable', Rule::in(RequestStatus::values())],
+            'blood_type' => ['sometimes', 'nullable', Rule::in(BloodType::values())],
+            'created_after' => ['sometimes', 'nullable', 'date_format:Y-m-d'],
+            'tab' => ['sometimes', 'nullable', Rule::in(['all', ...array_keys(self::MINE_TABS)])],
+        ]);
 
-        $requests = BloodRequest::query()
+        $base = BloodRequest::query()
             ->where('submitter_id', $request->user()->getKey())
-            ->when($request->input('status'), fn (Builder $q, string $status) => $q->where('status', $status))
+            ->when($filters['q'] ?? null, function (Builder $q, string $term) {
+                $like = '%'.addcslashes($term, '%_\\').'%';
+                $q->where(fn (Builder $w) => $w->where('public_id', 'ilike', $like)
+                    ->orWhereHas('municipality', fn (Builder $m) => $m->where('name', 'ilike', $like)));
+            })
+            ->when($filters['status'] ?? null, fn (Builder $q, string $status) => $q->where('status', $status))
+            ->when($filters['blood_type'] ?? null, fn (Builder $q, string $type) => $q->where('blood_type', $type))
+            ->when($filters['created_after'] ?? null, fn (Builder $q, string $date) => $q->where(
+                'created_at', '>=', Carbon::parse($date, BloodRequest::LOCAL_TIME_ZONE)->startOfDay()->utc()
+            ));
+
+        /** @var array<string, int> $byStatus */
+        $byStatus = (clone $base)->toBase()->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status')->all();
+        $counts = ['all' => array_sum($byStatus)];
+        foreach (self::MINE_TABS as $tab => $statuses) {
+            $counts[$tab] = array_sum(array_intersect_key($byStatus, array_flip($statuses)));
+        }
+        $counts['draft'] = (int) ($byStatus['draft'] ?? 0);
+
+        $tab = $filters['tab'] ?? 'all';
+        $requests = $base
+            ->when($tab !== 'all', fn (Builder $q) => $q->whereIn('status', self::MINE_TABS[$tab]))
             ->with(['municipality', 'coordinationPoint', 'assignedCoordinator'])
             ->latest('updated_at')
-            ->paginate(30)
+            ->paginate(20)
             ->withQueryString();
 
-        return ManagedRequestResource::collection($requests);
+        return ManagedRequestResource::collection($requests)->additional(['meta' => ['counts' => $counts]]);
     }
 
     /** POST /api/requests — creates a draft (decision #7). */

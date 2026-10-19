@@ -276,4 +276,27 @@ class RequestLifecycleTest extends TestCase
 
         $this->actingAs($this->coordinator())->getJson("/api/requests/{$id}")->assertJsonMissingPath('data.privacy_review');
     }
+
+    public function test_my_requests_filters_tabs_and_counts(): void
+    {
+        $this->actingAs($this->submitter)->postJson('/api/requests', $this->draftPayload(['blood_type' => 'A-']))->assertCreated();
+        $this->submittedRequest();
+        $active = $this->activeRequest();
+        $this->actingAs($this->submitter)->postJson("/api/requests/{$active->public_id}/fulfill")->assertOk();
+        BloodRequest::factory()->by(User::factory()->create())->active()->create(); // someone else's
+
+        $this->actingAs($this->submitter)->getJson('/api/requests/mine')
+            ->assertOk()->assertJsonCount(3, 'data')
+            ->assertJsonPath('meta.counts', ['all' => 3, 'needs_action' => 1, 'active' => 1, 'closed' => 1, 'draft' => 1]);
+        $this->actingAs($this->submitter)->getJson('/api/requests/mine?tab=closed')
+            ->assertJsonCount(1, 'data')->assertJsonPath('data.0.status', 'fulfilled');
+        $this->actingAs($this->submitter)->getJson('/api/requests/mine?blood_type=A-')
+            ->assertJsonCount(1, 'data')->assertJsonPath('meta.counts.all', 1);
+        $this->actingAs($this->submitter)->getJson('/api/requests/mine?q='.urlencode($active->public_id))
+            ->assertJsonCount(1, 'data');
+        $this->actingAs($this->submitter)->getJson('/api/requests/mine?q='.urlencode($this->municipality->name))
+            ->assertJsonCount(3, 'data');
+        $this->actingAs($this->submitter)->getJson('/api/requests/mine?created_after='.now('Asia/Manila')->addDay()->toDateString())
+            ->assertJsonCount(0, 'data');
+    }
 }
