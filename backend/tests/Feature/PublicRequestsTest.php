@@ -69,12 +69,39 @@ class PublicRequestsTest extends TestCase
         $this->getJson('/api/requests?q=san%20carlos')->assertJsonCount(2, 'data');
     }
 
+    public function test_status_province_and_posted_range_filters(): void
+    {
+        $this->activeRequest(['published_at' => now()->subDays(10)]);
+        $recent = $this->activeRequest(['published_at' => now()->subDay()]);
+        BloodRequest::factory()->by($this->submitter)->active()->create(['status' => RequestStatus::Fulfilled]);
+        $oldFulfilled = BloodRequest::factory()->by($this->submitter)->active()->create(['status' => RequestStatus::Fulfilled]);
+        $oldFulfilled->forceFill(['updated_at' => now()->subDays(8)])->saveQuietly();
+
+        // "Recently fulfilled" = fulfilled within 7 days; active stays the default.
+        $this->getJson('/api/requests')->assertJsonCount(2, 'data');
+        $this->getJson('/api/requests?status[]=fulfilled')->assertJsonCount(1, 'data')->assertJsonPath('data.0.status', 'fulfilled');
+        $this->getJson('/api/requests?status[]=active&status[]=fulfilled')->assertJsonCount(3, 'data');
+        $this->getJson('/api/requests?status=active')->assertJsonCount(2, 'data');
+
+        $this->getJson('/api/requests?province=Negros%20Occidental')->assertJsonCount(2, 'data');
+        $this->getJson('/api/requests?province=Siquijor')->assertJsonCount(0, 'data');
+
+        $from = now()->subDays(3)->toDateString();
+        $to = now()->toDateString();
+        $this->getJson("/api/requests?posted_after={$from}&posted_before={$to}")
+            ->assertJsonCount(1, 'data')->assertJsonPath('data.0.id', $recent->public_id);
+    }
+
     public function test_invalid_filters_are_422(): void
     {
         $this->getJson('/api/requests?blood_type[]=Z%2B')->assertUnprocessable()->assertJsonValidationErrors('blood_type.0');
         $this->getJson('/api/requests?bbox=200,0,1,1')->assertUnprocessable()->assertJsonValidationErrors('bbox');
         $this->getJson('/api/requests?status=draft')->assertUnprocessable();
         $this->getJson('/api/requests?urgency[]=critical')->assertUnprocessable();
+        $this->getJson('/api/requests?province=Cebu')->assertUnprocessable();
+        // "To must be on or after From" (19:3185) and no future dates.
+        $this->getJson('/api/requests?posted_after=2026-10-12&posted_before=2026-10-10')->assertUnprocessable()->assertJsonValidationErrors('posted_before');
+        $this->getJson('/api/requests?posted_before='.now()->addDays(2)->toDateString())->assertUnprocessable();
     }
 
     public function test_unpublished_requests_are_404_to_the_public(): void

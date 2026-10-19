@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\RequestStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SearchRequestsRequest;
 use App\Http\Resources\ManagedRequestResource;
@@ -24,8 +25,16 @@ class PublicRequestController extends Controller
     {
         $viewer = $request->user();
 
+        $statuses = $request->statuses();
+
         $query = BloodRequest::query()
-            ->publiclyListed()
+            // Status filter (25:599): Active · Recently fulfilled (last 7 days).
+            ->where(fn (Builder $w) => $w
+                ->when(in_array('active', $statuses, true), fn (Builder $q) => $q->orWhere(fn (Builder $a) => $a->publiclyListed()))
+                ->when(in_array('fulfilled', $statuses, true), fn (Builder $q) => $q->orWhere(fn (Builder $f) => $f
+                    ->where('status', RequestStatus::Fulfilled)
+                    ->whereNull('paused_at')
+                    ->where('updated_at', '>=', now()->subDays(SearchRequestsRequest::RECENTLY_FULFILLED_DAYS)))))
             ->with(['municipality', 'coordinationPoint'])
             ->when($viewer, fn (Builder $q) => $q->withExists([
                 'savers as is_saved_by_viewer' => fn (Builder $s) => $s->whereKey($viewer->getKey()),
@@ -34,6 +43,8 @@ class PublicRequestController extends Controller
             ->when($request->input('blood_type'), fn (Builder $q, array $types) => $q->whereIn('blood_type', $types))
             ->when($request->input('urgency'), fn (Builder $q, array $urgencies) => $q->whereIn('urgency', $urgencies))
             ->when($request->input('posted_after'), fn (Builder $q, string $date) => $q->whereDate('published_at', '>=', $date))
+            ->when($request->input('posted_before'), fn (Builder $q, string $date) => $q->whereDate('published_at', '<=', $date))
+            ->when($request->input('province'), fn (Builder $q, string $province) => $q->whereHas('municipality', fn (Builder $m) => $m->where('province', $province)))
             ->when($request->filled('q'), function (Builder $q) use ($request) {
                 $term = '%'.str_replace(['%', '_'], ['\%', '\_'], (string) $request->input('q')).'%';
                 $q->where(fn (Builder $w) => $w

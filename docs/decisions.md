@@ -29,6 +29,7 @@ choice can be traced. Decided 2026-10-19.
 | 21 | In-app notifications | Sidebar "Notifications" and dashboard updates (44:823); no endpoint listed | Added `GET /api/me/notifications` and `POST /api/me/notifications/read` (Laravel database notifications). |
 | 22 | Lookups | Create step 1 needs province/city; step 2 needs the authorized point | Added `GET /api/municipalities` (public, centroids only) and `GET /api/coordination-points` (scoped by role). |
 | 23 | Paused requests | Restriction pauses open requests (55:345) | A paused request disappears from search **and** its detail URL (404) until an admin decision; it is not deleted. |
+| 24 | Explorer filters | Desktop triggers (14:69) and the mobile sheet (25:569) show Status · Date posted (incl. custom range, 19:3128) · Area, which the Handoff API lacks | `status[]` = `active` (default) and/or `fulfilled` ("Recently fulfilled" = within 7 days); `posted_before` alongside `posted_after`; `province` for Area. "Near me" stays in the browser and only sorts (25:643). |
 
 ## Copy that differs by context
 The demo labels differ by screen ("Sample data", "Demo data", "Demonstration
