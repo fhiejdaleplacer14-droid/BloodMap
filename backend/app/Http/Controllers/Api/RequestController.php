@@ -89,14 +89,19 @@ class RequestController extends Controller
 
         /** @var User $user */
         $user = $request->user();
-        $bloodRequest = BloodRequest::create([
-            ...$request->fields(),
-            'submitter_id' => $user->getKey(),
-            'coordination_point_id' => $user->coordination_point_id,
-            'status' => RequestStatus::Draft,
-            'is_demo' => (bool) $user->is_demo,
-        ]);
-        AuditLogger::record($user, 'request.created', $bloodRequest, null, RequestStatus::Draft->value);
+        // One transaction: the row, its public ID and the audit entry land together.
+        $bloodRequest = DB::transaction(function () use ($request, $user) {
+            $bloodRequest = BloodRequest::create([
+                ...$request->fields(),
+                'submitter_id' => $user->getKey(),
+                'coordination_point_id' => $user->coordination_point_id,
+                'status' => RequestStatus::Draft,
+                'is_demo' => (bool) $user->is_demo,
+            ]);
+            AuditLogger::record($user, 'request.created', $bloodRequest, null, RequestStatus::Draft->value);
+
+            return $bloodRequest;
+        });
 
         return $this->managed($bloodRequest)->response()->setStatusCode(201);
     }
