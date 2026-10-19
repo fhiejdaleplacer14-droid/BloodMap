@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
-import { Link, NavLink } from 'react-router'
+import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { cn } from '../../lib/cn'
 import { Logo } from '../domain/Logo'
 
-export type PublicNavLink = { to: string; label: string }
+/** `current` is explicit: section links (/#how-it-works) share a path with Home. */
+export type PublicNavLink = { to: string; label: string; current?: boolean }
 
 type PublicHeaderProps = {
   links: PublicNavLink[]
@@ -31,19 +32,18 @@ export function PublicHeader({ links, actions, homeTo = '/', className }: Public
           <ul className="flex items-center gap-1">
             {links.map((link) => (
               <li key={link.to}>
-                <NavLink
+                <Link
                   to={link.to}
-                  className={({ isActive }) =>
-                    cn(
-                      'type-label-m flex h-16 items-center border-b-2 px-3 transition-colors duration-150',
-                      isActive
-                        ? 'border-[var(--bg-brand)] text-primary'
-                        : 'border-transparent text-secondary hover:text-primary',
-                    )
-                  }
+                  aria-current={link.current ? 'page' : undefined}
+                  className={cn(
+                    'type-label-m flex h-16 items-center border-b-2 px-3 transition-colors duration-150',
+                    link.current
+                      ? 'border-[var(--bg-brand)] text-primary'
+                      : 'border-transparent text-secondary hover:text-primary',
+                  )}
                 >
                   {link.label}
-                </NavLink>
+                </Link>
               </li>
             ))}
           </ul>
