@@ -60,6 +60,19 @@ choice can be traced. Decided 2026-10-19.
 | 51 | Submitted card | 31:1223 frame has a fixed 66 px height (bug) | Card sizes to its content: tag, ID, status, body, "What happens next", actions. |
 | 52 | Submitter bottom nav | No mobile frame for submitters | Home · Requests · Create · Alerts · Profile, same pattern as the donor bottom nav (55:269). |
 | 53 | Public IDs | `BM-YYYY-NNNN` from the row id | Creation steps past IDs already used by seeded/imported requests, and the draft, its ID and the audit entry are written in one transaction. |
+| 54 | Coordinator "Reports" | 35:12 shows a Reports nav item and an "Open reports" card | Both left out until the report flow and endpoint are designed (open item from Phase 3). No placeholder numbers. |
+| 55 | Overview annotations | 35:12 shows "All counts on this page are demonstration data…" and "last 7 days · sample" | Design notes, not UI: every number comes from `GET /api/coordinator/summary`, so neither label is rendered. The demo badge in the top bar still marks demo environments. |
+| 56 | "Expiring in 24 h" note | 35:12 says "Owners already notified" | Owners are reminded 6 h before expiry, so the card says "Owners are reminded 6 h before" — the frame's copy would be untrue for requests 6–24 h out. |
+| 57 | Queue "Assign to me" | 35:462 page action, no target defined | Assigns the oldest unassigned request in the area and opens it. On a request, "Assign to me" sits where "Assigned to" would be. Default tab is Unassigned. |
+| 58 | After a decision | 35:698 shows the queue with a toast after a correction | Approve, correction and reject all return to Queue › Assigned to me with a toast. A 409 (someone else acted first) refreshes the request and says so. |
+| 59 | Reject dialog | No frame | Mirrors the correction dialog (36:935): reason required (min 3), visible to the submitter, kept in the audit log. |
+| 60 | Review detail checks | 36:498 lists only the checks that warn | All five checks are listed with a pass or warning icon (location, phone, name, desk hours, duplicate). Phone-like numbers in the description are underlined and masked ("09•• ••• ••••") even for reviewers. |
+| 61 | Review history | 36:498 shows "Automated checks ran · system" and "auto-assign" | Those steps aren't audited, so they don't appear. Reviewers see submitter references (S-0142), never names. |
+| 62 | Activity log outcomes | 36:1105 shows "Denied" rows | Only completed actions are audited; refused attempts (403) aren't logged, so every row reads Success. Default range is the last 7 days; CSV export follows the filters (max 5 000 rows). Donors' saves never appear. |
+| 63 | Active / Closed Requests | Coordinator sidebar, no frames | The request table (9:489) scoped to the area; a row opens the request page, which offers Extend / Mark as fulfilled / Close for active requests. |
+| 64 | Review activity chart | 35:12 bar chart | Plain markup (no chart library): approved in ink, corrections in warning brown, rejections in grey, with a text list for screen readers. |
+| 65 | Coordinator bottom nav | No mobile frame | Home · Queue · Active · Activity · Profile, same pattern as 55:269. |
+| 66 | Desk-time edits | Activity showed "Changed: desk time window" on every save | Times are normalised to the TIME column format before saving, so unchanged values are no longer logged as edits. |
 
 ## Copy that differs by context
 The demo labels differ by screen ("Sample data", "Demo data", "Demonstration
@@ -75,6 +88,7 @@ records being shown.
   traffic, plus a check that the zoom-13 cap holds.
 
 ## Open items from Phase 5 (workspaces)
+- **Coordinator "Reports"** and the "Open reports" card wait for the report flow (#54).
 - **Submitter "Overview"** (32:841) has no frame; it opens the shared workspace overview (`/app`).
 - **Role chip** shows "Facility submitter · S-0142" (account reference); 32:841 shows "San Carlos desk". A short desk label isn't in the data model yet.
 - **Copy without frames**, kept minimal in `locales/en/manage.json`: empty states, toasts, "Correction requested" banner, "Continue draft", history titles other than those in 32:1978.
