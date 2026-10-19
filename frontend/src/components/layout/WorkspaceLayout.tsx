@@ -4,7 +4,7 @@ import { useLogout, useMe, type Me } from '../../lib/api/auth'
 import { useNotifications } from '../../lib/api/me'
 import { useCoordinatorSummary } from '../../lib/api/coordinator'
 import { useMyRequestCounts } from '../../lib/api/myRequests'
-import { isCoordinator, isSubmitter, workspaceBottomNav, workspaceNav } from '../../lib/workspaceNav'
+import { isAdmin, isReviewer, isSubmitter, workspaceBottomNav, workspaceNav } from '../../lib/workspaceNav'
 import { DemoBadge } from '../map/MapOverlays'
 import { IconButton } from '../ui/IconButton'
 import { icons } from '../ui/icons'
@@ -21,8 +21,10 @@ const ChevronRight = icons['chevron-right']
  * pages, under "Requests" (31:164). `crumb: 'param'` shows the :id.
  */
 export type WorkspaceHandle = {
-  crumb: 'overview' | 'saved' | 'activity' | 'notifications' | 'profile' | 'myRequests' | 'drafts' | 'create' | 'param' | 'queue' | 'active' | 'closed'
-  section?: 'requests' | 'coord'
+  crumb:
+    | 'overview' | 'saved' | 'activity' | 'notifications' | 'profile' | 'myRequests' | 'drafts' | 'create' | 'param'
+    | 'queue' | 'active' | 'closed' | 'users' | 'coordinators' | 'audit' | 'settings'
+  section?: 'requests' | 'coord' | 'admin'
 }
 
 function roleLabel(me: Me, t: ReturnType<typeof useTranslation<'nav'>>['t']): string {
@@ -55,13 +57,13 @@ export function RequireAuth({ children }: { children: (me: Me) => React.ReactNod
 }
 
 function Shell({ me }: { me: Me }) {
-  const { t } = useTranslation(['workspace', 'coord'])
+  const { t } = useTranslation(['workspace', 'coord', 'admin'])
   const { t: tNav } = useTranslation('nav')
   const navigate = useNavigate()
   const logout = useLogout()
   const unread = useNotifications().data?.meta.unread ?? 0
   const counts = useMyRequestCounts(isSubmitter(me)).data
-  const summary = useCoordinatorSummary(isCoordinator(me)).data
+  const summary = useCoordinatorSummary(isReviewer(me)).data
   const matches = useMatches()
   const leaf = matches.at(-1)
   const handle = (leaf?.handle as WorkspaceHandle | undefined) ?? { crumb: 'overview' }
@@ -70,13 +72,17 @@ function Shell({ me }: { me: Me }) {
       ? (leaf?.params.id ?? '')
       : handle.section === 'coord'
         ? t(`coord:crumbs.${handle.crumb}` as 'coord:crumbs.overview')
-        : t(`crumbs.${handle.crumb}` as 'crumbs.overview')
+        : handle.section === 'admin'
+          ? t(`admin:crumbs.${handle.crumb}` as 'admin:crumbs.overview')
+          : t(`crumbs.${handle.crumb}` as 'crumbs.overview')
   const root =
     handle.section === 'requests'
       ? { to: '/requests/mine', label: t('requestsRoot') }
-      : handle.section === 'coord'
-        ? { to: '/coord', label: t('coord:root') }
-        : { to: '/app', label: t('breadcrumbRoot') }
+      : handle.section === 'admin' || (handle.section === 'coord' && isAdmin(me))
+        ? { to: '/admin', label: t('admin:root') }
+        : handle.section === 'coord'
+          ? { to: '/coord', label: t('coord:root') }
+          : { to: '/app', label: t('breadcrumbRoot') }
 
   const signOut = () => logout.mutate(undefined, { onSuccess: () => navigate('/') })
   const bell = (
@@ -94,7 +100,7 @@ function Shell({ me }: { me: Me }) {
       <AppSidebar
         className="max-lg:hidden"
         roleLabel={roleLabel(me, tNav)}
-        roleIcon={isCoordinator(me) ? 'shield-check' : 'user'}
+        roleIcon={isReviewer(me) ? 'shield-check' : 'user'}
         items={workspaceNav(me, t, { unread, active: counts?.active, drafts: counts?.draft, queue: summary?.all_open })}
         helpItem={{ to: '/#safety', label: t('nav.help'), icon: 'help-chat' }}
         user={{ name: me.name, email: me.email, initials: me.initials }}
@@ -154,6 +160,7 @@ export function PageHeader({ title, subtitle, actions }: { title: string; subtit
 export function Panel({
   title,
   titleNote,
+  subtitle,
   action,
   children,
   className,
@@ -161,6 +168,8 @@ export function Panel({
   title: string
   /** Muted qualifier beside the title, e.g. "oldest first" (35:12). */
   titleNote?: string
+  /** Second line under the title, e.g. "Created vs. expired without update · daily" (38:2). */
+  subtitle?: string
   action?: { label: string; to: string }
   children: React.ReactNode
   className?: string
@@ -168,12 +177,15 @@ export function Panel({
   return (
     <section className={`flex flex-col overflow-hidden rounded-lg border border-default bg-surface ${className ?? ''}`}>
       <div className="flex items-center justify-between gap-3 border-b border-default px-5 py-4">
-        <h2 className="type-h4 text-primary">
-          {title}
-          {titleNote && <span className="type-body-s ml-2 font-normal text-tertiary">{titleNote}</span>}
-        </h2>
+        <div className="flex min-w-0 flex-col">
+          <h2 className="type-h4 text-primary">
+            {title}
+            {titleNote && <span className="type-body-s ml-2 font-normal text-tertiary">{titleNote}</span>}
+          </h2>
+          {subtitle && <p className="type-body-s text-tertiary">{subtitle}</p>}
+        </div>
         {action && (
-          <Link to={action.to} className="type-label-m inline-flex items-center gap-0.5 rounded-sm text-link hover:underline">
+          <Link to={action.to} className="type-label-m inline-flex shrink-0 items-center gap-0.5 rounded-sm text-link hover:underline">
             {action.label}
             <ChevronRight aria-hidden size={16} />
           </Link>

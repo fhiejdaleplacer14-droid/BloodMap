@@ -1,3 +1,4 @@
+import enAdmin from './locales/en/admin.json'
 import enAuth from './locales/en/auth.json'
 import enCommon from './locales/en/common.json'
 import enCoord from './locales/en/coord.json'
@@ -27,6 +28,7 @@ export const resources = {
     workspace: enWorkspace,
     manage: enManage,
     coord: enCoord,
+    admin: enAdmin,
     dev: enDev,
   },
 } as const

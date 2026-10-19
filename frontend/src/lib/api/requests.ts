@@ -119,6 +119,7 @@ export type Municipality = {
   province: Province
   /** [lng, lat] centroid. */
   point: [number, number]
+  area: { id: number; name: string; short_name: string }
 }
 
 /** GET /api/municipalities — location search suggestions. */

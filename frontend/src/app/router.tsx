@@ -82,6 +82,37 @@ export const router = createBrowserRouter([
         lazy: async () => ({ Component: (await import('../components/layout/WorkspaceLayout')).WorkspaceLayout }),
         children: [
           {
+            path: 'admin',
+            lazy: async () => ({ Component: (await import('../routes/admin/AdminGate')).AdminGate }),
+            children: [
+              {
+                index: true,
+                handle: { crumb: 'overview', section: 'admin' },
+                lazy: async () => ({ Component: (await import('../routes/admin/AdminOverviewPage')).AdminOverviewPage }),
+              },
+              {
+                path: 'users',
+                handle: { crumb: 'users', section: 'admin' },
+                lazy: async () => ({ Component: (await import('../routes/admin/UsersPage')).UsersPage }),
+              },
+              {
+                path: 'coordinators',
+                handle: { crumb: 'coordinators', section: 'admin' },
+                lazy: async () => ({ Component: (await import('../routes/admin/CoordinatorsPage')).CoordinatorsPage }),
+              },
+              {
+                path: 'audit',
+                handle: { crumb: 'audit', section: 'admin' },
+                lazy: async () => ({ Component: (await import('../routes/admin/AuditLogsPage')).AuditLogsPage }),
+              },
+              {
+                path: 'settings',
+                handle: { crumb: 'settings', section: 'admin' },
+                lazy: async () => ({ Component: (await import('../routes/admin/SettingsPage')).SettingsPage }),
+              },
+            ],
+          },
+          {
             path: 'coord',
             lazy: async () => ({ Component: (await import('../routes/coord/CoordGate')).CoordGate }),
             children: [

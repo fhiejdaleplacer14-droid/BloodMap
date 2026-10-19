@@ -168,7 +168,7 @@
     "readOnly": "read-only",
     "notes": "Previous review notes",
     "noNotes": "No notes on this request yet.",
-    "track": "Submitter {{reference}} has {{approved}} approved requests and {{corrections}} previous corrections.",
+    "track": "Submitter {{reference}} so far: approved {{approved}} · sent back for correction {{corrections}}.",
     "confirmNote": "You’re confirming the listing is accurate and safe to publish — not medical information.",
     "assignedElsewhere": "Assigned to {{name}}. Only they can decide on it.",
     "reject": "Reject",

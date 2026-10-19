@@ -108,6 +108,9 @@ class AdminWorkspaceTest extends TestCase
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.action', 'user.restricted')
             ->assertJsonPath('data.0.resource', 'user/'.$this->submitter->reference);
+        $this->actingAs($this->admin)->postJson("/api/admin/users/{$this->admin->getKey()}/password-reset");
+        $this->actingAs($this->admin)->getJson('/api/admin/audit-logs?action=user.password_reset_sent')
+            ->assertJsonPath('data.0.resource', sprintf('user/%04d', $this->admin->getKey()));
         $this->actingAs($this->admin)->getJson('/api/admin/audit-logs?actor=system')
             ->assertJsonPath('data.0.action', 'request.expired')
             ->assertJsonPath('data.0.actor', null);

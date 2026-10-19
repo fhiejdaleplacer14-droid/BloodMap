@@ -42,6 +42,17 @@ const COORDINATOR: NavEntry[] = [
   { key: 'coord.profile', to: '/app/profile', icon: 'user' },
 ]
 
+/** Administrator sidebar (38:2). Review pages are shared with coordinators. */
+const ADMIN: NavEntry[] = [
+  { key: 'admin.overview', to: '/admin', icon: 'chart', end: true, permission: 'admin.users' },
+  { key: 'admin.users', to: '/admin/users', icon: 'users', permission: 'admin.users' },
+  { key: 'admin.coordinators', to: '/admin/coordinators', icon: 'shield-check', permission: 'admin.coordinators' },
+  { key: 'admin.requests', to: '/coord/active', icon: 'list', permission: 'review.queue' },
+  { key: 'admin.queue', to: '/coord/queue', icon: 'clipboard-check', permission: 'review.queue' },
+  { key: 'admin.audit', to: '/admin/audit', icon: 'file-text', permission: 'admin.audit' },
+  { key: 'admin.settings', to: '/admin/settings', icon: 'sliders', permission: 'admin.settings' },
+]
+
 export type NavCounts = { unread?: number; active?: number; drafts?: number; queue?: number }
 
 const COUNT_FOR: Record<string, keyof NavCounts> = {
@@ -49,26 +60,40 @@ const COUNT_FOR: Record<string, keyof NavCounts> = {
   myRequests: 'active',
   drafts: 'drafts',
   'coord.queue': 'queue',
+  'admin.queue': 'queue',
 }
 
 export function isSubmitter(me: Me): boolean {
   return me.permissions.includes('requests.own')
 }
 
-/** Coordinators and admins review; admins get their own workspace later (09). */
 export function isCoordinator(me: Me): boolean {
   return me.role === 'coordinator'
 }
 
+export function isAdmin(me: Me): boolean {
+  return me.role === 'admin'
+}
+
+/** Coordinators and admins both review (the queue count shows for either). */
+export function isReviewer(me: Me): boolean {
+  return me.permissions.includes('review.queue')
+}
+
 function entriesFor(me: Me): NavEntry[] {
+  if (isAdmin(me)) return ADMIN
   if (isCoordinator(me)) return COORDINATOR
   return isSubmitter(me) ? SUBMITTER : DONOR
 }
 
-export function workspaceNav(me: Me, t: TFunction<['workspace', 'coord']>, counts: NavCounts = {}): SidebarItem[] {
+export function workspaceNav(me: Me, t: TFunction<['workspace', 'coord', 'admin']>, counts: NavCounts = {}): SidebarItem[] {
   return entriesFor(me).filter((entry) => !entry.permission || me.permissions.includes(entry.permission)).map((entry) => ({
     to: entry.to,
-    label: entry.key.startsWith('coord.') ? t(`coord:nav.${entry.key.slice(6)}` as 'coord:nav.overview') : t(`nav.${entry.key}` as 'nav.overview'),
+    label: entry.key.startsWith('coord.')
+      ? t(`coord:nav.${entry.key.slice(6)}` as 'coord:nav.overview')
+      : entry.key.startsWith('admin.')
+        ? t(`admin:nav.${entry.key.slice(6)}` as 'admin:nav.overview')
+        : t(`nav.${entry.key}` as 'nav.overview'),
     icon: entry.icon,
     end: entry.end,
     count: COUNT_FOR[entry.key] ? counts[COUNT_FOR[entry.key]] || undefined : undefined,
@@ -76,7 +101,16 @@ export function workspaceNav(me: Me, t: TFunction<['workspace', 'coord']>, count
 }
 
 /** Bottom navigation below 1024 px (5 items, 55:269). */
-export function workspaceBottomNav(me: Me, t: TFunction<['workspace', 'coord']>): BottomNavItem[] {
+export function workspaceBottomNav(me: Me, t: TFunction<['workspace', 'coord', 'admin']>): BottomNavItem[] {
+  if (isAdmin(me)) {
+    return [
+      { to: '/admin', label: t('admin:bottom.home'), icon: 'chart', end: true },
+      { to: '/admin/users', label: t('admin:bottom.users'), icon: 'users' },
+      { to: '/coord/queue', label: t('admin:bottom.queue'), icon: 'clipboard-check' },
+      { to: '/admin/audit', label: t('admin:bottom.audit'), icon: 'file-text' },
+      { to: '/admin/settings', label: t('admin:bottom.settings'), icon: 'sliders' },
+    ]
+  }
   if (isCoordinator(me)) {
     return [
       { to: '/coord', label: t('coord:bottom.home'), icon: 'home', end: true },

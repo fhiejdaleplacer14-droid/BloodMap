@@ -98,7 +98,13 @@ class AuditLogController extends Controller
             default => 'record',
         };
 
-        return $type.'/'.($log->meta['target_label'] ?? sprintf('%04d', (int) $log->target_id));
+        $label = $log->meta['target_label'] ?? null;
+        // Users are shown by reference or number, never by name (41:1616).
+        if ($type !== 'request' && ! (is_string($label) && preg_match('/^[A-Z]-\d+$/', $label))) {
+            $label = sprintf('%04d', (int) $log->target_id);
+        }
+
+        return $type.'/'.$label;
     }
 
     /** @param  Builder<AuditLog>  $query */

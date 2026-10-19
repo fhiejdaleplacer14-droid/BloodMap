@@ -179,7 +179,11 @@ class AdminController extends Controller
             'api' => ['status' => 'operational'],
             'database' => $database,
             'queue' => ['status' => $failed ? 'degraded' : 'operational', 'failed_24h' => $failed, 'driver' => config('queue.default')],
-            'mail' => ['status' => 'operational', 'driver' => config('mail.default')],
+            // "log" and "array" write mail nowhere a person reads it — not operational for delivery.
+            'mail' => [
+                'status' => in_array(config('mail.default'), ['log', 'array'], true) ? 'degraded' : 'operational',
+                'driver' => config('mail.default'),
+            ],
         ];
     }
 
