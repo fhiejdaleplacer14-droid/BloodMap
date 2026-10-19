@@ -24,12 +24,21 @@ export type ManagedRequest = Omit<PublicRequest, 'can'> & {
   closure_reason: string | null
   /** Owner only: screener flags on the public text, computed live (31:840). */
   privacy_review?: { flags: string[] }
+  /** Reviewers only: automated checks from submission (36:498). */
+  checks?: { flags: string[]; possible_duplicate: boolean }
+  /** Reviewers only: the submitter as a reference, never a name. */
+  submitter?: { reference: string | null; role: string } | null
+  assigned_coordinator: { id: number; name: string; initials: string; is_me: boolean } | null
   can: PublicRequest['can'] & {
     update: boolean
     submit: boolean
     fulfill: boolean
     close: boolean
     extend: boolean
+    assign?: boolean
+    approve?: boolean
+    request_correction?: boolean
+    reject?: boolean
   }
 }
 
@@ -150,6 +159,7 @@ function useRequestMutation<TVars>(fn: (vars: TVars) => Promise<ManagedRequest>)
       void client.invalidateQueries({ queryKey: ['my-requests', 'list'] })
       void client.invalidateQueries({ queryKey: keys.history(request.id) })
       void client.invalidateQueries({ queryKey: ['requests'] })
+      void client.invalidateQueries({ queryKey: ['coordinator'] })
     },
   })
 }

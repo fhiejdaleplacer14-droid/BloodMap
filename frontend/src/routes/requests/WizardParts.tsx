@@ -74,37 +74,102 @@ export type PreviewData = {
   contactVisibleTo: ContactVisibility
 }
 
+/**
+ * Public preview card (31:380 · 36:498): exactly what the public card will
+ * show, plus a footer saying it isn't public yet. `id` is shown once the
+ * reviewer sees it; the submitter's preview keeps the placeholder.
+ */
+export function PreviewCard({ data, id, footer }: { data: PreviewData; id?: string; footer: string }) {
+  const { t, i18n } = useTranslation(['manage', 'request'])
+  const [year] = useState(() => new Date().getFullYear())
+  return (
+    <div className="flex flex-col gap-3 rounded-lg border border-default bg-surface p-4">
+      <div className="flex items-start gap-3">
+        {data.blood_type ? (
+          <BloodTypeTag type={data.blood_type} />
+        ) : (
+          <span aria-hidden className="size-13 shrink-0 rounded-md border border-dashed border-strong" />
+        )}
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <div className="flex items-center justify-between gap-2">
+            <span className="type-mono-m text-secondary">{id ?? t('preview.pendingId', { year })}</span>
+            <StatusBadge status={data.status} />
+          </div>
+          <div className="flex min-w-0 items-center gap-1">
+            <MapPin aria-hidden size={14} className="shrink-0 text-secondary" />
+            <span className={cn('type-label-m truncate', data.municipality ? 'text-primary' : 'text-tertiary')}>
+              {data.municipality ?? t('preview.chooseLocation')}
+            </span>
+            {data.province && <span className="type-body-s shrink-0 text-tertiary">· {data.province}</span>}
+          </div>
+        </div>
+      </div>
+      <p className={cn('type-body-s break-words', data.summary ? 'text-secondary' : 'text-tertiary')}>
+        {data.summary || t('preview.noSummary')}
+      </p>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <UrgencyTag urgency={data.urgency} />
+        {data.expiresAt && (
+          <span className="type-mono-s inline-flex items-center gap-1 text-secondary">
+            <icons.hourglass aria-hidden size={14} className="shrink-0" />
+            {t('request:card.expires', { when: formatShortDateTime(data.expiresAt, i18n.language) })}
+          </span>
+        )}
+      </div>
+      <span aria-hidden className="h-px w-full bg-line" />
+      <span className="type-body-s inline-flex items-center gap-1 text-tertiary">
+        <ShieldCheck aria-hidden size={14} className="shrink-0" />
+        {footer}
+      </span>
+    </div>
+  )
+}
+
+/** Approximate area at the municipal centroid (9:256) — never an address. */
+export function AreaMap({ data, className }: { data: PreviewData; className?: string }) {
+  const { t } = useTranslation('manage')
+  const [updatedAt] = useState(() => new Date().toISOString())
+  if (!data.point || !data.municipality || !data.blood_type) return null
+  const request: PublicRequest = {
+    id: 'preview',
+    blood_type: data.blood_type,
+    units_requested: null,
+    needed_by: null,
+    desk_window: null,
+    urgency: data.urgency,
+    category: null,
+    status: 'active',
+    location: { municipality: data.municipality, province: (data.province ?? '') as Province, point: data.point, precision: 'municipality' },
+    coordination_point: { id: 0, name: '', hours: null },
+    contact: null,
+    public_summary: '',
+    response_instructions: null,
+    published_at: null,
+    updated_at: updatedAt,
+    expires_at: null,
+    is_demo: false,
+    is_saved: false,
+    can: { save: false, report: false },
+  }
+  return (
+    <div className={cn('relative overflow-hidden rounded-lg border border-default', className)}>
+      <RequestMap
+        className="size-full"
+        label={t('preview.mapLabel', { city: data.municipality })}
+        requests={[request]}
+        selectedId={request.id}
+        areaFor={request}
+        initialView={{ center: [data.point[1], data.point[0]], zoom: 12 }}
+        interactive={false}
+      />
+    </div>
+  )
+}
+
 /** "What the public will see" (31:380): preview card, visibility list, and on review the approximate area. */
 export function PublicPreview({ data, withMap }: { data: PreviewData; withMap?: boolean }) {
-  const { t, i18n } = useTranslation(['manage', 'request'])
-  const [now] = useState(() => new Date())
-  const year = now.getFullYear()
+  const { t } = useTranslation(['manage', 'request'])
   const contactKey = data.contactMethod === 'none' ? 'none' : data.contactVisibleTo
-
-  const mapRequest: PublicRequest | null =
-    withMap && data.point && data.municipality && data.blood_type
-      ? {
-          id: 'preview',
-          blood_type: data.blood_type,
-          units_requested: null,
-          needed_by: null,
-          desk_window: null,
-          urgency: data.urgency,
-          category: null,
-          status: 'active',
-          location: { municipality: data.municipality, province: (data.province ?? '') as Province, point: data.point, precision: 'municipality' },
-          coordination_point: { id: 0, name: '', hours: null },
-          contact: null,
-          public_summary: '',
-          response_instructions: null,
-          published_at: null,
-          updated_at: now.toISOString(),
-          expires_at: null,
-          is_demo: false,
-          is_saved: false,
-          can: { save: false, report: false },
-        }
-      : null
 
   return (
     <aside aria-labelledby="public-preview" className="flex flex-col gap-3">
@@ -112,45 +177,7 @@ export function PublicPreview({ data, withMap }: { data: PreviewData; withMap?: 
         {t('preview.heading')}
       </h2>
 
-      <div className="flex flex-col gap-3 rounded-lg border border-default bg-surface p-4">
-        <div className="flex items-start gap-3">
-          {data.blood_type ? (
-            <BloodTypeTag type={data.blood_type} />
-          ) : (
-            <span aria-hidden className="size-13 shrink-0 rounded-md border border-dashed border-strong" />
-          )}
-          <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <div className="flex items-center justify-between gap-2">
-              <span className="type-mono-m text-secondary">{t('preview.pendingId', { year })}</span>
-              <StatusBadge status={data.status} />
-            </div>
-            <div className="flex min-w-0 items-center gap-1">
-              <MapPin aria-hidden size={14} className="shrink-0 text-secondary" />
-              <span className={cn('type-label-m truncate', data.municipality ? 'text-primary' : 'text-tertiary')}>
-                {data.municipality ?? t('preview.chooseLocation')}
-              </span>
-              {data.province && <span className="type-body-s shrink-0 text-tertiary">· {data.province}</span>}
-            </div>
-          </div>
-        </div>
-        <p className={cn('type-body-s break-words', data.summary ? 'text-secondary' : 'text-tertiary')}>
-          {data.summary || t('preview.noSummary')}
-        </p>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <UrgencyTag urgency={data.urgency} />
-          {data.expiresAt && (
-            <span className="type-mono-s inline-flex items-center gap-1 text-secondary">
-              <icons.hourglass aria-hidden size={14} className="shrink-0" />
-              {t('request:card.expires', { when: formatShortDateTime(data.expiresAt, i18n.language) })}
-            </span>
-          )}
-        </div>
-        <span aria-hidden className="h-px w-full bg-line" />
-        <span className="type-body-s inline-flex items-center gap-1 text-tertiary">
-          <ShieldCheck aria-hidden size={14} className="shrink-0" />
-          {t('preview.footer')}
-        </span>
-      </div>
+      <PreviewCard data={data} footer={t('preview.footer')} />
 
       <ul className="flex flex-col gap-2 rounded-lg border border-default bg-surface p-4">
         {(['basics', 'city', 'point'] as const).map((key) => (
@@ -167,19 +194,7 @@ export function PublicPreview({ data, withMap }: { data: PreviewData; withMap?: 
         ))}
       </ul>
 
-      {mapRequest && (
-        <div className="relative h-44 overflow-hidden rounded-lg border border-default">
-          <RequestMap
-            className="size-full"
-            label={t('preview.mapLabel', { city: mapRequest.location.municipality })}
-            requests={[mapRequest]}
-            selectedId={mapRequest.id}
-            areaFor={mapRequest}
-            initialView={{ center: [mapRequest.location.point[1], mapRequest.location.point[0]], zoom: 12 }}
-            interactive={false}
-          />
-        </div>
-      )}
+      {withMap && <AreaMap data={data} className="h-44" />}
     </aside>
   )
 }

@@ -82,6 +82,48 @@ export const router = createBrowserRouter([
         lazy: async () => ({ Component: (await import('../components/layout/WorkspaceLayout')).WorkspaceLayout }),
         children: [
           {
+            path: 'coord',
+            lazy: async () => ({ Component: (await import('../routes/coord/CoordGate')).CoordGate }),
+            children: [
+              {
+                index: true,
+                handle: { crumb: 'overview', section: 'coord' },
+                lazy: async () => ({ Component: (await import('../routes/coord/CoordOverviewPage')).CoordOverviewPage }),
+              },
+              {
+                path: 'queue',
+                handle: { crumb: 'queue', section: 'coord' },
+                lazy: async () => ({ Component: (await import('../routes/coord/QueuePage')).QueuePage }),
+              },
+              {
+                path: 'active',
+                handle: { crumb: 'active', section: 'coord' },
+                lazy: async () => {
+                  const { CoordListPage } = await import('../routes/coord/QueuePage')
+                  return { Component: () => <CoordListPage tab="active" /> }
+                },
+              },
+              {
+                path: 'closed',
+                handle: { crumb: 'closed', section: 'coord' },
+                lazy: async () => {
+                  const { CoordListPage } = await import('../routes/coord/QueuePage')
+                  return { Component: () => <CoordListPage tab="closed" /> }
+                },
+              },
+              {
+                path: 'requests/:id',
+                handle: { crumb: 'param', section: 'coord' },
+                lazy: async () => ({ Component: (await import('../routes/coord/ReviewPage')).ReviewPage }),
+              },
+              {
+                path: 'activity',
+                handle: { crumb: 'activity', section: 'coord' },
+                lazy: async () => ({ Component: (await import('../routes/coord/CoordActivityPage')).CoordActivityPage }),
+              },
+            ],
+          },
+          {
             lazy: async () => ({ Component: (await import('../routes/requests/RequestsGate')).RequestsGate }),
             children: [
               {

@@ -2,8 +2,9 @@ import { Link, Navigate, Outlet, useLocation, useMatches, useNavigate } from 're
 import { useTranslation } from 'react-i18next'
 import { useLogout, useMe, type Me } from '../../lib/api/auth'
 import { useNotifications } from '../../lib/api/me'
+import { useCoordinatorSummary } from '../../lib/api/coordinator'
 import { useMyRequestCounts } from '../../lib/api/myRequests'
-import { isSubmitter, workspaceBottomNav, workspaceNav } from '../../lib/workspaceNav'
+import { isCoordinator, isSubmitter, workspaceBottomNav, workspaceNav } from '../../lib/workspaceNav'
 import { DemoBadge } from '../map/MapOverlays'
 import { IconButton } from '../ui/IconButton'
 import { icons } from '../ui/icons'
@@ -20,8 +21,8 @@ const ChevronRight = icons['chevron-right']
  * pages, under "Requests" (31:164). `crumb: 'param'` shows the :id.
  */
 export type WorkspaceHandle = {
-  crumb: 'overview' | 'saved' | 'activity' | 'notifications' | 'profile' | 'myRequests' | 'drafts' | 'create' | 'param'
-  section?: 'requests'
+  crumb: 'overview' | 'saved' | 'activity' | 'notifications' | 'profile' | 'myRequests' | 'drafts' | 'create' | 'param' | 'queue' | 'active' | 'closed'
+  section?: 'requests' | 'coord'
 }
 
 function roleLabel(me: Me, t: ReturnType<typeof useTranslation<'nav'>>['t']): string {
@@ -54,17 +55,28 @@ export function RequireAuth({ children }: { children: (me: Me) => React.ReactNod
 }
 
 function Shell({ me }: { me: Me }) {
-  const { t } = useTranslation('workspace')
+  const { t } = useTranslation(['workspace', 'coord'])
   const { t: tNav } = useTranslation('nav')
   const navigate = useNavigate()
   const logout = useLogout()
   const unread = useNotifications().data?.meta.unread ?? 0
   const counts = useMyRequestCounts(isSubmitter(me)).data
+  const summary = useCoordinatorSummary(isCoordinator(me)).data
   const matches = useMatches()
   const leaf = matches.at(-1)
   const handle = (leaf?.handle as WorkspaceHandle | undefined) ?? { crumb: 'overview' }
-  const crumbLabel = handle.crumb === 'param' ? (leaf?.params.id ?? '') : t(`crumbs.${handle.crumb}`)
-  const root = handle.section === 'requests' ? { to: '/requests/mine', label: t('requestsRoot') } : { to: '/app', label: t('breadcrumbRoot') }
+  const crumbLabel =
+    handle.crumb === 'param'
+      ? (leaf?.params.id ?? '')
+      : handle.section === 'coord'
+        ? t(`coord:crumbs.${handle.crumb}` as 'coord:crumbs.overview')
+        : t(`crumbs.${handle.crumb}` as 'crumbs.overview')
+  const root =
+    handle.section === 'requests'
+      ? { to: '/requests/mine', label: t('requestsRoot') }
+      : handle.section === 'coord'
+        ? { to: '/coord', label: t('coord:root') }
+        : { to: '/app', label: t('breadcrumbRoot') }
 
   const signOut = () => logout.mutate(undefined, { onSuccess: () => navigate('/') })
   const bell = (
@@ -82,8 +94,8 @@ function Shell({ me }: { me: Me }) {
       <AppSidebar
         className="max-lg:hidden"
         roleLabel={roleLabel(me, tNav)}
-        roleIcon="user"
-        items={workspaceNav(me, t, { unread, active: counts?.active, drafts: counts?.draft })}
+        roleIcon={isCoordinator(me) ? 'shield-check' : 'user'}
+        items={workspaceNav(me, t, { unread, active: counts?.active, drafts: counts?.draft, queue: summary?.all_open })}
         helpItem={{ to: '/#safety', label: t('nav.help'), icon: 'help-chat' }}
         user={{ name: me.name, email: me.email, initials: me.initials }}
         onSignOut={signOut}
@@ -141,11 +153,14 @@ export function PageHeader({ title, subtitle, actions }: { title: string; subtit
 /** White panel with a header row (28:177). */
 export function Panel({
   title,
+  titleNote,
   action,
   children,
   className,
 }: {
   title: string
+  /** Muted qualifier beside the title, e.g. "oldest first" (35:12). */
+  titleNote?: string
   action?: { label: string; to: string }
   children: React.ReactNode
   className?: string
@@ -153,7 +168,10 @@ export function Panel({
   return (
     <section className={`flex flex-col overflow-hidden rounded-lg border border-default bg-surface ${className ?? ''}`}>
       <div className="flex items-center justify-between gap-3 border-b border-default px-5 py-4">
-        <h2 className="type-h4 text-primary">{title}</h2>
+        <h2 className="type-h4 text-primary">
+          {title}
+          {titleNote && <span className="type-body-s ml-2 font-normal text-tertiary">{titleNote}</span>}
+        </h2>
         {action && (
           <Link to={action.to} className="type-label-m inline-flex items-center gap-0.5 rounded-sm text-link hover:underline">
             {action.label}
