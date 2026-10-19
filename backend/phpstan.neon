@@ -1,0 +1,11 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - database
+        - routes
+        - tests
+    # Level 5: unknown classes/methods/properties, wrong argument types.
+    level: 5

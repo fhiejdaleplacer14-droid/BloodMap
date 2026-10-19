@@ -57,6 +57,9 @@ return [
     // The React SPA (links in emails, post-verification redirect).
     'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
 
+    // Password for every seeded demo account (never seeded in production).
+    'demo_password' => env('DEMO_PASSWORD', 'BloodMap-demo-2026!'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

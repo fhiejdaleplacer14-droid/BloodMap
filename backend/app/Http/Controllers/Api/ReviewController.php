@@ -6,7 +6,6 @@ use App\Enums\RequestStatus;
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ManagedRequestResource;
-use App\Http\Resources\PublicRequestResource;
 use App\Models\BloodRequest;
 use App\Models\User;
 use App\Notifications\RequestUpdate;

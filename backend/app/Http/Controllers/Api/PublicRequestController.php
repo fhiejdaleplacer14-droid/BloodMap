@@ -9,6 +9,7 @@ use App\Http\Resources\PublicRequestResource;
 use App\Models\BloodRequest;
 use App\Policies\BloodRequestPolicy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -71,7 +72,7 @@ class PublicRequestController extends Controller
     }
 
     /** GET /api/stats/public — aggregates only, cached 5 min (54:222). */
-    public function stats(): \Illuminate\Http\JsonResponse
+    public function stats(): JsonResponse
     {
         $stats = cache()->remember('stats.public', now()->addMinutes(5), function () {
             $live = BloodRequest::query()->publiclyListed();

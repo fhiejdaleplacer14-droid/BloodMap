@@ -12,8 +12,28 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property Carbon|null $email_verified_at
+ * @property string $password
+ * @property Role $role
+ * @property string|null $reference
+ * @property int|null $area_id
+ * @property int|null $coordination_point_id
+ * @property array<string, bool>|null $preferences
+ * @property Carbon|null $restricted_at
+ * @property string|null $restriction_reason
+ * @property Carbon|null $deletion_requested_at
+ * @property Carbon|null $last_active_at
+ * @property bool $is_demo
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */

@@ -21,6 +21,41 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 /**
  * A blood request. Public identifier BM-<year>-<nnnn>. Location is the
  * coordination point's municipality; only its centroid is ever public.
+ *
+ * @property int $id
+ * @property string|null $public_id
+ * @property int|null $submitter_id
+ * @property int $coordination_point_id
+ * @property int $municipality_id
+ * @property BloodType $blood_type
+ * @property int|null $units_requested
+ * @property Carbon|null $needed_by
+ * @property string|null $desk_window_start
+ * @property string|null $desk_window_end
+ * @property Urgency $urgency
+ * @property RequestCategory|null $category
+ * @property RequestStatus $status
+ * @property string $public_summary
+ * @property string $response_instructions
+ * @property ContactMethod $contact_method
+ * @property ContactVisibility $contact_visible_to
+ * @property list<string>|null $screening_flags
+ * @property bool $possible_duplicate
+ * @property int|null $assigned_coordinator_id
+ * @property int|null $reviewed_by
+ * @property string|null $correction_note
+ * @property string|null $rejection_reason
+ * @property string|null $closure_reason
+ * @property Carbon|null $first_submitted_at
+ * @property Carbon|null $submitted_at
+ * @property Carbon|null $published_at
+ * @property Carbon|null $expires_at
+ * @property Carbon|null $extended_at
+ * @property Carbon|null $expiry_reminder_sent_at
+ * @property Carbon|null $paused_at
+ * @property bool $is_demo
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  */
 class BloodRequest extends Model
 {

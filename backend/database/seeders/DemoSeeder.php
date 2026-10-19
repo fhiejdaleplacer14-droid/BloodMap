@@ -16,7 +16,6 @@ use App\Models\Municipality;
 use App\Models\User;
 use App\Services\AuditLogger;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -31,7 +30,7 @@ class DemoSeeder extends Seeder
 {
     public function run(): void
     {
-        $password = (string) env('DEMO_PASSWORD', 'BloodMap-demo-2026!');
+        $password = (string) config('app.demo_password');
 
         $desk = fn (string $name, string $municipality, ?string $hours, string $phone) => CoordinationPoint::query()->updateOrCreate(
             ['name' => $name],

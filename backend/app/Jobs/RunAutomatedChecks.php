@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Enums\RequestStatus;
 use App\Models\BloodRequest;
 use App\Services\DescriptionScreener;
 use Illuminate\Contracts\Queue\ShouldQueue;

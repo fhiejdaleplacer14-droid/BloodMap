@@ -57,6 +57,7 @@ class SearchRequestsRequest extends FormRequest
         if (! is_string($raw) || ! preg_match('/^-?\d+(\.\d+)?(,-?\d+(\.\d+)?){3}$/', $raw)) {
             return null;
         }
+
         /** @var array{0: float, 1: float, 2: float, 3: float} */
         return array_map('floatval', explode(',', $raw));
     }
