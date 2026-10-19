@@ -239,7 +239,7 @@ class RequestController extends Controller
             ->where('target_type', $bloodRequest->getMorphClass())
             ->where('target_id', $bloodRequest->getKey())
             ->whereNotIn('action', $hidden)
-            ->with('actor:id,name')
+            ->with('actor:id,name,reference')
             ->orderBy('created_at')->orderBy('id')
             ->limit(500)
             ->get();
@@ -274,7 +274,7 @@ class RequestController extends Controller
                 'action' => $log->action,
                 'actor' => $log->actor ? [
                     // Reviewers see submitter references, never names (35:462).
-                    'name' => $reviewer && ! $log->actor->is($viewer) && $log->actor_id === $bloodRequest->submitter_id
+                    'name' => $reviewer && ! $log->actor->is($viewer) && (int) $log->actor_id === (int) $bloodRequest->submitter_id
                         ? ($log->actor->reference ?? $log->actor->name)
                         : $log->actor->name,
                     'is_me' => $log->actor->is($viewer),
