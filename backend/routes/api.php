@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AccountController;
+use App\Http\Controllers\Api\Admin\AdminController;
 use App\Http\Controllers\Api\Admin\AuditLogController;
 use App\Http\Controllers\Api\Admin\RoleChangeController;
 use App\Http\Controllers\Api\Admin\UserController;
@@ -70,7 +71,14 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
 
     // Admin
     Route::middleware('role:admin')->prefix('admin')->group(function () {
+        Route::get('/summary', [AdminController::class, 'summary']);
+        Route::get('/coordinators', [AdminController::class, 'coordinators']);
+        Route::get('/settings', [AdminController::class, 'settings']);
         Route::get('/users', [UserController::class, 'index']);
+        Route::get('/users/export', [UserController::class, 'export']);
+        Route::get('/users/{user}', [UserController::class, 'show']);
+        Route::post('/users/{user}/password-reset', [UserController::class, 'passwordReset']);
+        Route::post('/users/{user}/unrestrict', [UserController::class, 'unrestrict']);
         Route::patch('/users/{user}/role', [UserController::class, 'updateRole']);
         Route::post('/users/{user}/restrict', [UserController::class, 'restrict']);
         Route::post('/role-changes/{roleChange}/approve', [RoleChangeController::class, 'approve']);

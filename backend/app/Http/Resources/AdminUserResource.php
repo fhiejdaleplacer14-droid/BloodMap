@@ -25,6 +25,11 @@ class AdminUserResource extends JsonResource
             'email_verified' => $this->hasVerifiedEmail(),
             'restricted' => $this->isRestricted(),
             'restricted_at' => $this->restricted_at?->toIso8601ZuluString(),
+            'status' => match (true) {
+                $this->isRestricted() => 'restricted',
+                ! $this->hasVerifiedEmail() => 'unverified',
+                default => 'active',
+            },
             'pending_role_change' => $this->pendingRoleChange ? [
                 'id' => $this->pendingRoleChange->getKey(),
                 'to_role' => $this->pendingRoleChange->to_role->value,

@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
+use App\Models\BloodRequest;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,7 +21,8 @@ class AuditLogController extends Controller
     public function index(Request $request): JsonResponse|StreamedResponse
     {
         $filters = $request->validate([
-            'actor' => ['sometimes', 'integer'],
+            'actor' => ['sometimes', 'nullable', 'string', 'max:20'],
+            'resource' => ['sometimes', 'nullable', 'in:request,user'],
             'action' => ['sometimes', 'string', 'max:100'],
             'target' => ['sometimes', 'string', 'max:60'],
             'from' => ['sometimes', 'date_format:Y-m-d'],
@@ -28,7 +32,12 @@ class AuditLogController extends Controller
 
         $query = AuditLog::query()
             ->with('actor:id,name,reference,role')
-            ->when($filters['actor'] ?? null, fn (Builder $q, int $actor) => $q->where('actor_id', $actor))
+            ->when($filters['actor'] ?? null, fn (Builder $q, string $actor) => $actor === 'system'
+                ? $q->whereNull('actor_id')
+                : $q->where('actor_id', (int) $actor))
+            ->when($filters['resource'] ?? null, fn (Builder $q, string $resource) => $q->where(
+                'target_type', $resource === 'request' ? (new BloodRequest)->getMorphClass() : (new User)->getMorphClass()
+            ))
             ->when($filters['action'] ?? null, fn (Builder $q, string $action) => $q->where('action', 'like', $action.'%'))
             ->when($filters['target'] ?? null, fn (Builder $q, string $label) => $q->where('meta->target_label', $label))
             ->when($filters['from'] ?? null, fn (Builder $q, string $from) => $q->where('created_at', '>=', $from))
@@ -40,7 +49,7 @@ class AuditLogController extends Controller
             return $this->csv($query);
         }
 
-        $page = $query->paginate(50)->withQueryString();
+        $page = $query->paginate(25)->withQueryString();
 
         return response()->json([
             'data' => $page->getCollection()->map(fn (AuditLog $log) => $this->row($log)),
@@ -49,6 +58,9 @@ class AuditLogController extends Controller
                 'last_page' => $page->lastPage(),
                 'per_page' => $page->perPage(),
                 'total' => $page->total(),
+                // Staff only — donors appear in the log but aren't offered as a filter.
+                'actors' => User::query()->whereIn('role', [Role::Admin, Role::Coordinator, Role::FacilitySubmitter])
+                    ->orderBy('name')->get(['id', 'name'])->map(fn (User $u) => ['id' => $u->getKey(), 'name' => $u->name]),
             ],
         ]);
     }
@@ -70,7 +82,23 @@ class AuditLogController extends Controller
             'from' => $log->from,
             'to' => $log->to,
             'reason' => $log->reason,
+            // Sanitized context (41:1616): no IP hashes, no free-form payloads.
+            'meta' => collect($log->meta)->only(['fields', 'device', 'paused_requests', 'count', 'changes'])->all(),
+            'resource' => $this->resource($log),
+            'initials' => $log->actor?->initials(),
         ];
+    }
+
+    /** "request/BM-2026-0025", "user/S-0142", "user/0042". */
+    private function resource(AuditLog $log): string
+    {
+        $type = match ($log->target_type) {
+            (new BloodRequest)->getMorphClass() => 'request',
+            (new User)->getMorphClass() => 'user',
+            default => 'record',
+        };
+
+        return $type.'/'.($log->meta['target_label'] ?? sprintf('%04d', (int) $log->target_id));
     }
 
     /** @param  Builder<AuditLog>  $query */

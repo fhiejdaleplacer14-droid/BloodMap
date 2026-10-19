@@ -282,7 +282,7 @@ class RequestLifecycleTest extends TestCase
     {
         $this->actingAs($this->submitter)->postJson('/api/requests', $this->draftPayload(['blood_type' => 'A-']))->assertCreated();
         $this->submittedRequest();
-        $active = $this->activeRequest();
+        $active = $this->activeRequest(['blood_type' => 'O+']);
         $this->actingAs($this->submitter)->postJson("/api/requests/{$active->public_id}/fulfill")->assertOk();
         BloodRequest::factory()->by(User::factory()->create())->active()->create(); // someone else's
 
