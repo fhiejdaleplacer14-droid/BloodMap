@@ -138,6 +138,7 @@ class AccountAndSchedulerTest extends TestCase
         $this->artisan('requests:remind-expiring')->assertSuccessful();
 
         Notification::assertSentToTimes($saver, RequestUpdate::class, 1);
+        Notification::assertSentToTimes($this->submitter, RequestUpdate::class, 1);
         $this->assertNotNull($soon->fresh()->expiry_reminder_sent_at);
     }
 
