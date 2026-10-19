@@ -46,6 +46,37 @@ export const router = createBrowserRouter([
         path: 'reset-password',
         lazy: async () => ({ Component: (await import('../routes/auth/ResetPasswordPage')).ResetPasswordPage }),
       },
+      {
+        path: 'app',
+        lazy: async () => ({ Component: (await import('../components/layout/WorkspaceLayout')).WorkspaceLayout }),
+        children: [
+          {
+            index: true,
+            handle: { crumb: 'overview' },
+            lazy: async () => ({ Component: (await import('../routes/donor/DashboardPage')).DashboardPage }),
+          },
+          {
+            path: 'saved',
+            handle: { crumb: 'saved' },
+            lazy: async () => ({ Component: (await import('../routes/donor/SavedPage')).SavedPage }),
+          },
+          {
+            path: 'activity',
+            handle: { crumb: 'activity' },
+            lazy: async () => ({ Component: (await import('../routes/donor/ActivityPage')).ActivityPage }),
+          },
+          {
+            path: 'notifications',
+            handle: { crumb: 'notifications' },
+            lazy: async () => ({ Component: (await import('../routes/donor/NotificationsPage')).NotificationsPage }),
+          },
+          {
+            path: 'profile',
+            handle: { crumb: 'profile' },
+            lazy: async () => ({ Component: (await import('../routes/donor/ProfilePage')).ProfilePage }),
+          },
+        ],
+      },
       ...devRoutes,
       { path: '*', element: <Navigate to="/" replace /> },
     ],

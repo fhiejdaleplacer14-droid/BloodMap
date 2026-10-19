@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Dialog, DropdownMenu } from 'radix-ui'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
-import { useLogout, useMe, type Me } from '../../lib/api/auth'
+import { homeFor, useLogout, useMe, type Me } from '../../lib/api/auth'
 import { cn } from '../../lib/cn'
 import { Avatar } from '../ui/Avatar'
 import { Button } from '../ui/Button'
@@ -64,8 +64,15 @@ function AccountMenu({ me }: { me: Me }) {
           </div>
           <DropdownMenu.Separator className="my-1 h-px bg-line" />
           <DropdownMenu.Item
+            onSelect={() => navigate(homeFor(me))}
+            className="type-body-m flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-primary outline-none data-highlighted:bg-subtle"
+          >
+            <icons.home aria-hidden size={16} />
+            {t('nav:sidebar.workspace')}
+          </DropdownMenu.Item>
+          <DropdownMenu.Item
             onSelect={() => logout.mutate(undefined, { onSuccess: () => navigate('/') })}
-            className="type-body-m flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-primary outline-none data-[highlighted]:bg-subtle"
+            className="type-body-m flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-primary outline-none data-highlighted:bg-subtle"
           >
             <LogOut aria-hidden size={16} />
             {t('common:actions.signOut')}

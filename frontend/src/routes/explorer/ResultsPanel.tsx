@@ -108,7 +108,7 @@ export function ResultsPanel({
                     <DropdownMenu.RadioItem
                       key={option}
                       value={option}
-                      className="type-body-m flex cursor-pointer items-center justify-between gap-3 rounded-md px-3 py-2 text-primary outline-none data-[highlighted]:bg-subtle"
+                      className="type-body-m flex cursor-pointer items-center justify-between gap-3 rounded-md px-3 py-2 text-primary outline-none data-highlighted:bg-subtle"
                     >
                       {t(`results.sorts.${option}`)}
                       <DropdownMenu.ItemIndicator>

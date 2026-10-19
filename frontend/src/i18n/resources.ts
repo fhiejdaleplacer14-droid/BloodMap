@@ -6,6 +6,7 @@ import enLanding from './locales/en/landing.json'
 import enNav from './locales/en/nav.json'
 import enRequest from './locales/en/request.json'
 import enStates from './locales/en/states.json'
+import enWorkspace from './locales/en/workspace.json'
 
 /**
  * All user-facing strings live in locales/<lang>/<namespace>.json.
@@ -21,6 +22,7 @@ export const resources = {
     landing: enLanding,
     explorer: enExplorer,
     auth: enAuth,
+    workspace: enWorkspace,
     dev: enDev,
   },
 } as const

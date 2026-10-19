@@ -17,7 +17,22 @@ export type Me = {
   preferences: Record<string, boolean>
   permissions: string[]
   member_since: string | null
+  password_changed_at: string | null
   is_demo: boolean
+}
+
+/** Landing route after sign-in, by role (decision #34). */
+export function homeFor(me: Pick<Me, 'role'>): string {
+  switch (me.role) {
+    case 'coordinator':
+      return '/coord'
+    case 'admin':
+      return '/admin'
+    case 'facility_submitter':
+      return '/requests/mine'
+    default:
+      return '/app'
+  }
 }
 
 export const meKey = ['me'] as const

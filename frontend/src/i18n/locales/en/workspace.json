@@ -1,0 +1,240 @@
+{
+  "breadcrumbRoot": "My workspace",
+  "demo": "Demo environment · sample data",
+  "openMenu": "Open navigation",
+  "nav": {
+    "overview": "Overview",
+    "explore": "Explore Requests",
+    "saved": "Saved Requests",
+    "activity": "My Activity",
+    "notifications": "Notifications",
+    "profile": "Profile and Preferences",
+    "help": "Help & guidelines"
+  },
+  "bottom": {
+    "home": "Home",
+    "explore": "Explore",
+    "saved": "Saved",
+    "alerts": "Alerts",
+    "profile": "Profile"
+  },
+  "crumbs": {
+    "overview": "Overview",
+    "saved": "Saved requests",
+    "activity": "My activity",
+    "notifications": "Notifications",
+    "profile": "Profile and preferences"
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Good morning, {{name}}",
+      "afternoon": "Good afternoon, {{name}}",
+      "evening": "Good evening, {{name}}"
+    },
+    "subtitle": "Here’s what changed on requests you follow. Your profile never decides whether you can donate — staff at the facility do.",
+    "savedButton": "Saved requests",
+    "explore": "Explore requests",
+    "updates": "Updates on saved requests",
+    "allNotifications": "All notifications",
+    "noUpdates": "No updates yet. Save a request to follow its status.",
+    "savedPanel": "Saved requests",
+    "viewAll": "View all",
+    "counts": {
+      "active": "Active",
+      "expiringToday": "Expiring today",
+      "inactive": "Inactive"
+    },
+    "recent": "Recently viewed",
+    "openExplorer": "Open explorer",
+    "noRecent": "Requests you open in the Explorer appear here. This list stays on this device.",
+    "guidance": {
+      "title": "Before you visit a desk",
+      "id": "Mention the request ID (e.g. BM-2026-0012) so staff can match you.",
+      "hours": "Check desk hours on the request — they can change.",
+      "screening": "Staff will screen you on-site. Follow their guidance on eligibility.",
+      "place": "Go only to the listed coordination point, never a private address.",
+      "safety": "Read safety guidelines"
+    },
+    "account": "Recent account activity",
+    "myActivity": "My activity",
+    "noActivity": "Nothing yet."
+  },
+  "updates": {
+    "expiring_soon": "{{id}} expires {{when}}",
+    "status_changed": "Coordinator updated {{id}}",
+    "fulfilled": "{{id}} marked fulfilled",
+    "closed": "{{id}} was closed",
+    "expired": "{{id}} has expired",
+    "approved": "{{id}} was approved and published",
+    "needs_correction": "{{id}} needs a correction",
+    "rejected": "{{id}} wasn’t approved",
+    "notActive": "no longer accepting responses",
+    "noFurther": "no further responses needed",
+    "today": "Today · {{time}}"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "Updates on requests you save or submit.",
+    "markRead": "Mark all as read",
+    "unread": "Unread",
+    "empty": "You don’t have any notifications yet.",
+    "emptyBody": "Save a request to follow its status. We’ll show updates here — saving doesn’t commit you to anything."
+  },
+  "saved": {
+    "title": "Saved requests",
+    "subtitle": "Saved requests are private to you. We’ll notify you when one changes status, is updated, or is about to expire.",
+    "tabs": {
+      "all": "All",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "caption": "Saved requests",
+    "summary": "Showing {{from}}–{{to}} of {{total}} saved requests",
+    "note": "Inactive requests stay here for 30 days so you can see how they ended, then they’re removed automatically. Use ⋯ to remove one now.",
+    "viewDetails": "View details",
+    "remove": "Remove from saved",
+    "removed": "Removed from saved"
+  },
+  "activity": {
+    "title": "My activity",
+    "subtitle": "Everything you’ve done in BloodMap. Only you and authorized administrators (for security reviews) can see this.",
+    "download": "Download my data",
+    "action": "Action",
+    "allActions": "All actions",
+    "groups": {
+      "saved": "Saved requests",
+      "preferences": "Notification preferences",
+      "sign_ins": "Sign-ins",
+      "account": "Account",
+      "requests": "Requests"
+    },
+    "from": "From",
+    "to": "To",
+    "columns": {
+      "date": "Date",
+      "action": "Action",
+      "request": "Request",
+      "status": "Status",
+      "detail": "Detail"
+    },
+    "summary": "Showing {{from}}–{{to}} of {{total}} events",
+    "empty": "No activity matches these filters.",
+    "following": "Following updates by email",
+    "turnedOn": "{{name}} turned on",
+    "turnedOff": "{{name}} turned off",
+    "prefs": {
+      "email_saved_status_changes": "Status-change emails",
+      "email_expiry_reminder": "Expiry reminders",
+      "email_weekly_area_summary": "Weekly area summary"
+    },
+    "actions": {
+      "request.saved": "Saved a request",
+      "request.unsaved": "Removed a saved request",
+      "account.preferences_updated": "Changed notification preferences",
+      "account.signed_in": "Signed in",
+      "account.registered": "Created account",
+      "account.updated": "Updated account details",
+      "account.password_changed": "Changed password",
+      "account.password_reset": "Reset password",
+      "account.session_ended": "Signed out another device",
+      "account.data_exported": "Downloaded my data",
+      "account.deactivated": "Deactivated account",
+      "account.reactivated": "Reactivated account",
+      "account.deletion_requested": "Requested account deletion",
+      "request.created": "Created a request",
+      "request.edited": "Edited a request",
+      "request.submitted": "Submitted a request for review",
+      "request.fulfilled": "Marked a request fulfilled",
+      "request.closed": "Closed a request",
+      "request.extended": "Extended a request"
+    }
+  },
+  "profile": {
+    "title": "Profile and preferences",
+    "subtitle": "Control what you share, how we contact you, and your account security.",
+    "sections": "Sections",
+    "account": {
+      "title": "Account",
+      "subtitle": "Basic information used to sign in.",
+      "name": "Full name",
+      "email": "Email",
+      "verified": "Verified",
+      "unverified": "Not verified",
+      "memberSince": "Member since",
+      "role": "Role",
+      "edit": "Edit account details",
+      "editTitle": "Edit account details",
+      "editBody": "If you change your email, we’ll send a link to verify the new address.",
+      "save": "Save changes",
+      "saved": "Account details updated"
+    },
+    "visibility": {
+      "title": "Who can see what",
+      "subtitle": "BloodMap only collects what it needs. Nothing about you is ever shown on public pages.",
+      "information": "Information",
+      "public": "Public visitors",
+      "coordinators": "Coordinators",
+      "administrators": "Administrators",
+      "rows": {
+        "name": "Name",
+        "email": "Email",
+        "saved": "Saved requests",
+        "activity": "Activity log"
+      },
+      "never": "Never",
+      "support": "For account support",
+      "security": "Security events only",
+      "note": "Your contact details are only used for the notifications you choose. They’re never shared with requesters or facilities."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Email only in this version. You can turn any of these off at any time.",
+      "status": "Email me when a saved request changes status",
+      "expiry": "Remind me 6 hours before a saved request expires",
+      "weekly": "Weekly summary of active requests in my area",
+      "saved": "Preference saved"
+    },
+    "privacy": {
+      "title": "Privacy",
+      "subtitle": "These settings only affect what happens on this device and in your account.",
+      "location": "Use my location to sort requests by distance (this device only, never stored)",
+      "recent": "Keep a list of requests I’ve recently viewed",
+      "clear": "Clear recently viewed"
+    },
+    "security": {
+      "title": "Sessions & security",
+      "thisDevice": "This device",
+      "unknownDevice": "Unknown browser",
+      "now": "now",
+      "signOut": "Sign out",
+      "password": "Password",
+      "lastChanged": "Last changed {{when}}",
+      "neverChanged": "Not changed since you joined",
+      "change": "Change password",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm new password",
+      "changeBody": "You’ll be signed out on other devices after the change.",
+      "update": "Update password",
+      "updated": "Your password was updated."
+    },
+    "close": {
+      "title": "Close account",
+      "subtitle": "Choose what fits — you can come back after deactivating, but deletion can’t be undone.",
+      "deactivate": "Deactivate",
+      "deactivateBody": "Hides your account and stops all emails. Sign in again within 90 days to restore it.",
+      "deactivateButton": "Deactivate account",
+      "deactivateConfirm": "Deactivate your account?",
+      "delete": "Request deletion",
+      "deleteBody": "Saved requests and preferences are erased within 30 days. Security log entries are kept for 1 year with your name removed.",
+      "deleteButton": "Request account deletion",
+      "dialogTitle": "Delete your account?",
+      "dialogBody": "This permanently removes your saved requests, preferences and notification settings within 30 days. You won’t be able to recover them.",
+      "confirmLabel": "Type your email to confirm",
+      "confirmHelper": "This prevents accidental deletion.",
+      "mismatch": "Type your account email exactly to confirm.",
+      "keep": "Keep my account",
+      "confirmDelete": "Delete account"
+    }
+  }
+}

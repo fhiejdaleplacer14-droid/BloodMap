@@ -36,6 +36,7 @@ import {
 } from '../../lib/explorer/params'
 import { distanceKm, locateOnce, useDebouncedCallback, useGeolocation, useMinWidth, useOnline } from '../../lib/hooks'
 import { displayBloodType, RECEDED_STATUSES, type PublicRequest } from '../../lib/request'
+import { useDevicePref } from '../../lib/devicePrefs'
 import { useDocumentTitle } from '../../lib/useDocumentTitle'
 import { RequestDetailsPanel } from './RequestDetailsPanel'
 import { ResultsPanel } from './ResultsPanel'
@@ -73,7 +74,9 @@ export function ExplorerPage() {
   // Search this area is automatic on tablet/desktop, a button on mobile.
   const autoSearch = isTablet
   const mapVisible = isTablet ? params.view !== 'list' : params.view === 'map' && params.sel === null
-  const nearMe = params.area === 'near'
+  // Area "Near me" or the device-only Profile preference (29:1157); never sent to the API.
+  const locationSort = useDevicePref('locationSort')
+  const nearMe = params.area === 'near' || locationSort
   const geo = useGeolocation(nearMe)
 
   // ── Results ────────────────────────────────────────────────────────────

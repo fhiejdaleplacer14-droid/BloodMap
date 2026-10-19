@@ -44,6 +44,8 @@ const COLUMNS = [
 
 const cell = 'h-13 px-3 align-middle'
 
+const INACTIVE: ReadonlySet<RequestStatus> = new Set(['fulfilled', 'closed', 'expired', 'rejected'])
+
 /**
  * Table Header Row + Request Table Row (9:489 · 9:585). 52 px rows; IDs and
  * timestamps in JetBrains Mono. Hover = bg/canvas, selected = bg/brand-soft.
@@ -73,6 +75,8 @@ export function RequestTable({ rows, caption, selectedId, onRowClick, renderActi
         <tbody>
           {rows.map((row) => {
             const updated = elapsedSince(row.updated_at, now)
+            // Inactive rows recede (28:733): 50 % tag, 70 % text, never read as live.
+            const inactive = INACTIVE.has(row.status)
             return (
               <tr
                 key={row.id}
@@ -88,19 +92,19 @@ export function RequestTable({ rows, caption, selectedId, onRowClick, renderActi
                   {row.id}
                 </th>
                 <td className={cell}>
-                  <BloodTypeTag type={row.blood_type} size="sm" />
+                  <BloodTypeTag type={row.blood_type} size="sm" dimmed={inactive} />
                 </td>
-                <td className={cn(cell, 'type-body-m max-w-45 truncate text-primary')}>{row.municipality}</td>
-                <td className={cn(cell, 'type-mono-s text-secondary')}>
+                <td className={cn(cell, 'type-body-m max-w-45 truncate text-primary', inactive && 'opacity-70')}>{row.municipality}</td>
+                <td className={cn(cell, 'type-mono-s text-secondary', inactive && 'opacity-70')}>
                   <time dateTime={row.created_at}>{formatDate(row.created_at, locale)}</time>
                 </td>
-                <td className={cn(cell, 'type-mono-s text-secondary')}>
+                <td className={cn(cell, 'type-mono-s text-secondary', inactive && 'opacity-70')}>
                   {row.expires_at ? <time dateTime={row.expires_at}>{formatShortDateTime(row.expires_at, locale)}</time> : '—'}
                 </td>
                 <td className={cell}>
                   <StatusBadge status={row.status} />
                 </td>
-                <td className={cn(cell, 'type-mono-s text-secondary')}>
+                <td className={cn(cell, 'type-mono-s text-secondary', inactive && 'opacity-70')}>
                   <time dateTime={row.updated_at} title={formatAbsolute(row.updated_at, locale)}>
                     {tc(`time.ago.${updated.unit}`, { count: updated.count })}
                   </time>

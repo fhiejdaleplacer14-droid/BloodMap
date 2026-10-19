@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { BloodTypeTag } from '../../components/domain/BloodTypeTag'
@@ -15,6 +15,7 @@ import { toast } from '../../components/ui/toast'
 import { useMe } from '../../lib/api/auth'
 import { errorStatus } from '../../lib/api/client'
 import { useRequestDetail, useRequestSearch, useToggleSaved } from '../../lib/api/requests'
+import { devicePrefs } from '../../lib/devicePrefs'
 import {
   elapsedSince,
   formatCalendarDate,
@@ -101,6 +102,12 @@ export function RequestDetailsPanel({ id, resultCount, onBack, hrefFor, onFindNe
   const detail = useRequestDetail(id)
   const toggleSaved = useToggleSaved(id)
   const request = detail.data
+  const loadedId = request?.id
+
+  // "Recently viewed" stays in this browser only (29:1153).
+  useEffect(() => {
+    if (loadedId) devicePrefs.recordView(loadedId)
+  }, [loadedId])
 
   const backLabel =
     resultCount === null ? t('detail.backToRequests') : t('detail.backToResults', { count: resultCount })

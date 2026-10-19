@@ -7,7 +7,7 @@ import { Button } from '../../components/ui/Button'
 import { Checkbox } from '../../components/ui/Checkbox'
 import { TextField } from '../../components/ui/TextField'
 import { icons } from '../../components/ui/icons'
-import { useLogin } from '../../lib/api/auth'
+import { homeFor, useLogin } from '../../lib/api/auth'
 import { errorBody, errorStatus } from '../../lib/api/client'
 import { AuthHeading, AuthLayout, Banner } from './AuthLayout'
 import { safeNext } from './authUtils'
@@ -19,7 +19,7 @@ export function LoginPage() {
   const { t } = useTranslation('auth')
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const next = safeNext(searchParams.get('next'))
+  const next = searchParams.get('next')
   const login = useLogin()
 
   const schema = z.object({
@@ -35,7 +35,7 @@ export function LoginPage() {
   })
 
   const onSubmit = form.handleSubmit((values) =>
-    login.mutate(values, { onSuccess: () => navigate(next, { replace: true }) }),
+    login.mutate(values, { onSuccess: (me) => navigate(safeNext(next, homeFor(me)), { replace: true }) }),
   )
 
   // 422 = wrong email or password (generic, no enumeration); 429 locked out; 403 restricted.
