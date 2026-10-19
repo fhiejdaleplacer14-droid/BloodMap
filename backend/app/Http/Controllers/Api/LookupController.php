@@ -34,6 +34,29 @@ class LookupController extends Controller
     }
 
     /**
+     * GET /api/coordination-points/public — facility markers on the public
+     * map. Desks are public institutions shown at their published location
+     * (55:249, decision #6); never a phone, email or anything about a request.
+     */
+    public function publicCoordinationPoints(): JsonResponse
+    {
+        $points = cache()->remember('lookup.coordination-points.public', now()->addMinutes(10), fn () => CoordinationPoint::query()
+            ->with('municipality:id,name,province')
+            ->orderBy('name')
+            ->get()
+            ->map(fn (CoordinationPoint $p) => [
+                'id' => $p->getKey(),
+                'name' => $p->name,
+                'municipality' => $p->municipality->name,
+                'province' => $p->municipality->province,
+                'point' => [$p->lng, $p->lat],
+                'is_demo' => $p->is_demo,
+            ]));
+
+        return response()->json(['data' => $points]);
+    }
+
+    /**
      * GET /api/coordination-points — the points the user may submit for
      * (submitters: their one authorized desk; coordinators/admins: all).
      */

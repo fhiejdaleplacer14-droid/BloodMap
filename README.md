@@ -105,7 +105,7 @@ PostgreSQL, with no PostGIS.
 | Where      | Command |
 |------------|---------|
 | frontend   | `npm run lint` · `npm run typecheck` · `npm run build` |
-| backend    | `vendor/bin/pint --test` · `vendor/bin/phpstan analyse` · `php artisan test` (uses the `bloodmap_testing` database) |
+| backend    | `vendor/bin/pint --test` · `vendor/bin/phpstan analyse --memory-limit=1G` · `php artisan test` (uses the `bloodmap_testing` database) |
 
 CI runs the same checks on every push to `main` and on every pull request.
 The backend job runs against a PostgreSQL service container.

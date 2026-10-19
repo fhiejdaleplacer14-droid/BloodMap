@@ -95,6 +95,12 @@ class PublicRequestController extends Controller
                     ->select('blood_type', DB::raw('count(*) as total'))
                     ->groupBy('blood_type')
                     ->pluck('total', 'blood_type'),
+                // Landing "Regional focus" area selector (21:3655).
+                'by_province' => (clone $live)
+                    ->join('municipalities', 'municipalities.id', '=', 'blood_requests.municipality_id')
+                    ->select('municipalities.province', DB::raw('count(*) as total'))
+                    ->groupBy('municipalities.province')
+                    ->pluck('total', 'municipalities.province'),
                 'is_demo' => (clone $live)->where('is_demo', true)->exists(),
             ];
         });

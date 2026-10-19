@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/requests', [PublicRequestController::class, 'index'])->middleware('throttle:public');
 Route::get('/stats/public', [PublicRequestController::class, 'stats']);
 Route::get('/municipalities', [LookupController::class, 'municipalities']);
+Route::get('/coordination-points/public', [LookupController::class, 'publicCoordinationPoints']);
 
 // ── Signed in ───────────────────────────────────────────────────────────
 Route::middleware(['auth:sanctum', 'account.active'])->group(function () {

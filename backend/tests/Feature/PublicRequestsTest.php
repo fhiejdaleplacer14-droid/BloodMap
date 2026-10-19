@@ -174,7 +174,21 @@ class PublicRequestsTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.active_requests', 2)
             ->assertJsonPath('data.by_blood_type.O+', 2)
+            ->assertJsonPath('data.by_province.Negros Occidental', 2)
             ->assertJsonPath('data.is_demo', true);
+    }
+
+    public function test_public_coordination_points_carry_no_contact_details(): void
+    {
+        $response = $this->getJson('/api/coordination-points/public')->assertOk();
+
+        $response->assertJsonPath('data.0.municipality', 'San Carlos City')
+            ->assertJsonPath('data.0.province', 'Negros Occidental');
+        $this->assertCount(2, $response->json('data.0.point'));
+        $json = $response->getContent();
+        foreach (['phone', 'email', '0917', 'hours'] as $forbidden) {
+            $this->assertStringNotContainsString($forbidden, $json);
+        }
     }
 
     public function test_status_enum_values_match_the_contract(): void
