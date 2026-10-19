@@ -68,6 +68,10 @@ class AccountAndSchedulerTest extends TestCase
         $this->actingAs($user)->getJson('/api/me/saved-requests')
             ->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.status', 'expired');
 
+        // Inactive saved requests drop off after 30 days (28:856).
+        $request->forceFill(['updated_at' => now()->subDays(31)])->saveQuietly();
+        $this->actingAs($user)->getJson('/api/me/saved-requests')->assertJsonCount(0, 'data');
+
         $this->actingAs($user)->deleteJson("/api/me/saved-requests/{$request->public_id}")->assertNoContent();
         $this->actingAs($user)->deleteJson("/api/me/saved-requests/{$request->public_id}")->assertNoContent();
         $this->assertSame(0, $user->savedRequests()->count());

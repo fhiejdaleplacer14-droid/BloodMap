@@ -26,6 +26,8 @@ class SavedRequestController extends Controller
 
         $saved = $user->savedRequests()
             ->whereIn('status', ['active', 'fulfilled', 'closed', 'expired'])
+            // "Inactive requests stay here for 30 days … then they're removed" (28:856).
+            ->where(fn ($q) => $q->where('status', 'active')->orWhere('blood_requests.updated_at', '>=', now()->subDays(30)))
             ->with(['municipality', 'coordinationPoint'])
             ->orderByPivot('created_at', 'desc')
             ->get()
