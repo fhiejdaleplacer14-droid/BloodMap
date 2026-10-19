@@ -300,4 +300,15 @@ class RequestLifecycleTest extends TestCase
         $this->actingAs($this->submitter)->getJson('/api/requests/mine?created_after='.now('Asia/Manila')->addDay()->toDateString())
             ->assertJsonCount(0, 'data');
     }
+
+    public function test_public_ids_skip_ids_already_taken_by_seeded_requests(): void
+    {
+        $probe = (int) $this->activeRequest()->getKey();
+        // Next row gets $probe + 1 and claims the ID the row after it would get.
+        $this->activeRequest(['public_id' => sprintf('BM-%d-%04d', now()->year, $probe + 2)]);
+
+        $id = $this->actingAs($this->submitter)->postJson('/api/requests', $this->draftPayload())->assertCreated()->json('data.id');
+
+        $this->assertSame(sprintf('BM-%d-%04d', now()->year, $probe + 3), $id);
+    }
 }

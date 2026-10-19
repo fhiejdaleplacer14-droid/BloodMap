@@ -114,7 +114,12 @@ class BloodRequest extends Model
 
         static::created(function (BloodRequest $request) {
             if (! $request->public_id) {
-                $request->public_id = sprintf('BM-%d-%04d', $request->created_at->year, $request->getKey());
+                // Seeded/imported requests carry their own IDs; step past any that are taken.
+                $n = (int) $request->getKey();
+                do {
+                    $candidate = sprintf('BM-%d-%04d', $request->created_at->year, $n++);
+                } while (static::query()->where('public_id', $candidate)->exists());
+                $request->public_id = $candidate;
                 $request->saveQuietly();
             }
         });
