@@ -1,0 +1,217 @@
+/*
+ * Leaflet, styled with the map/* and semantic tokens (Map Canvas · NIR 13:682,
+ * Map Marker 9:254, Map Area 9:256). Raster tiles are muted so markers keep
+ * the contrast budget; in Dark they are inverted to the dark map palette.
+ */
+
+.leaflet-container {
+  background: var(--map-water);
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+}
+
+.leaflet-tile-pane {
+  filter: saturate(0.35) contrast(0.95) brightness(1.03);
+}
+
+[data-theme="dark"] .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) saturate(0.3) brightness(0.85) contrast(0.9);
+}
+
+/* Attribution: always visible (14:579). */
+.leaflet-control-attribution.leaflet-control {
+  margin: 0;
+  border-top-left-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--bg-surface) 90%, transparent);
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.leaflet-control-attribution a {
+  color: var(--text-link);
+}
+
+/* ── Markers ─────────────────────────────────────────────────────────── */
+
+.bm-marker-host {
+  background: none;
+  border: 0;
+}
+
+.bm-marker-host:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.bm-marker,
+.bm-facility,
+.bm-caption {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -100%);
+  cursor: pointer;
+}
+
+.bm-marker__label {
+  display: block;
+  margin-bottom: -1px;
+  border: 2px solid var(--border-brand);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  padding: 2px 8px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--text-brand);
+  box-shadow: var(--shadow-raised);
+  transition: background-color 150ms, color 150ms;
+}
+
+.bm-marker__tail {
+  display: block;
+  width: 10px;
+  height: 10px;
+  margin-top: -6px;
+  transform: rotate(45deg);
+  border-right: 2px solid var(--border-brand);
+  border-bottom: 2px solid var(--border-brand);
+  background: var(--bg-surface);
+}
+
+.bm-marker__tail--ink {
+  border-color: var(--bg-inverse);
+}
+
+.bm-marker[data-selected="true"] .bm-marker__label {
+  background: var(--bg-brand);
+  border-color: var(--bg-brand);
+  color: var(--text-on-brand);
+  box-shadow: var(--shadow-floating);
+}
+
+.bm-marker[data-selected="true"] .bm-marker__tail {
+  background: var(--bg-brand);
+  border-color: var(--bg-brand);
+}
+
+/* Selected / highlighted markers rise above their neighbours (55:213). */
+.leaflet-marker-icon:has(.bm-marker[data-selected="true"]) {
+  z-index: 1000 !important;
+}
+
+.bm-marker-host:focus-visible .bm-marker__label,
+.bm-marker-host:focus-visible .bm-facility__tile,
+.bm-marker-host:focus-visible .bm-cluster {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  box-shadow: var(--focus-ring);
+}
+
+.bm-cluster {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--bg-surface);
+  border-radius: 9999px;
+  background: var(--bg-inverse);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  color: var(--text-on-inverse);
+  box-shadow: var(--shadow-floating);
+}
+
+/* Drawn beside the shared centroid so it never covers a request label. */
+.bm-facility {
+  transform: translate(calc(-50% + 34px), -100%);
+  cursor: default;
+}
+
+.bm-facility__tile {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: -1px;
+  border: 2px solid var(--bg-inverse);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-raised);
+}
+
+.bm-marker-host--static {
+  pointer-events: none;
+}
+
+.bm-caption {
+  transform: translate(-50%, -50%);
+  border-radius: var(--radius-xs);
+  background: var(--bg-surface);
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--text-brand);
+  cursor: default;
+}
+
+/* Map Area · Approximate (9:256): ~2.5 km dashed circle, 10 % fill. */
+.bm-area {
+  stroke: var(--border-brand);
+  stroke-width: 1.5px;
+  stroke-dasharray: 4 4;
+  fill: var(--bg-brand);
+  fill-opacity: 0.1;
+}
+
+/* Popup · request (14:499) — a non-interactive card above the marker. */
+.leaflet-tooltip.bm-popup {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  padding: 10px 12px;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-floating);
+  white-space: nowrap;
+}
+
+.leaflet-tooltip.bm-popup::before {
+  display: none;
+}
+
+.leaflet-tooltip.bm-name {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-raised);
+}
+
+.leaflet-tooltip.bm-name::before {
+  display: none;
+}
+
+/* Cluster animation from Leaflet.markercluster honours reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .leaflet-cluster-anim .leaflet-marker-icon,
+  .leaflet-cluster-anim .leaflet-marker-shadow,
+  .leaflet-zoom-anim .leaflet-zoom-animated {
+    transition: none !important;
+  }
+}

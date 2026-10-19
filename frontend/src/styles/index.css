@@ -2,6 +2,9 @@
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/jetbrains-mono";
 @import "./tokens.css";
+@import "leaflet/dist/leaflet.css";
+@import "react-leaflet-cluster/dist/assets/MarkerCluster.css";
+@import "./map.css";
 
 /*
  * Dark mode is a single attribute switch on <html>: data-theme="dark".
@@ -41,6 +44,8 @@
   --text-color-tertiary: var(--text-tertiary);
   --text-color-on-brand: var(--text-on-brand);
   --text-color-on-inverse: var(--text-on-inverse);
+  /* Secondary copy on bg/inverse (Safety 21:3766): text/tertiary there is ~3.4:1, below AA. */
+  --text-color-on-inverse-muted: color-mix(in srgb, var(--text-on-inverse) 72%, transparent);
   --text-color-brand: var(--text-brand);
   --text-color-link: var(--text-link);
 
@@ -230,6 +235,12 @@
 /* Skeleton shimmer (10:547): 1.2 s; disabled by prefers-reduced-motion below. */
 @theme {
   --animate-shimmer: shimmer 1.2s linear infinite;
+  /* Indeterminate 2 px progress bar while refetching (55:208). */
+  --animate-progress: progress 1.2s ease-in-out infinite;
+  @keyframes progress {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(300%); }
+  }
   @keyframes shimmer {
     from { background-position: 100% 0; }
     to { background-position: -100% 0; }
