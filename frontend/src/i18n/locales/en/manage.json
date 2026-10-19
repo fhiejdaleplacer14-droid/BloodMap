@@ -1,0 +1,289 @@
+{
+  "steps": {
+    "label": "Progress",
+    "info": "Request information",
+    "coordination": "Coordination",
+    "review": "Review & submit",
+    "done": "{{label}} (completed)",
+    "current": "{{label}} (current step)"
+  },
+  "create": {
+    "title": "Create blood request",
+    "subtitle": "Requests are reviewed by a coordinator before they appear publicly. Only include what responders need.",
+    "coordinationSubtitle": "Tell responders where to go and how to reach the right desk — never a private number.",
+    "reviewTitle": "Review and submit",
+    "reviewSubtitle": "Check the public version carefully. A coordinator will review it before it’s published.",
+    "editTitle": "Edit {{id}}",
+    "correctionTitle": "Correction requested",
+    "notEditable": "This request can’t be edited any more.",
+    "notEditableBody": "Only drafts and requests sent back for correction can be edited here.",
+    "cancel": "Cancel",
+    "back": "Back",
+    "saveDraft": "Save draft",
+    "draftSaved": "Draft saved",
+    "draftSavedBody": "{{id}} is saved in Drafts. It isn’t public.",
+    "saveFailed": "Couldn’t save the draft",
+    "saveFailedBody": "Check your connection and try again. Nothing was lost on this page.",
+    "fixErrors": "Check the highlighted fields",
+    "toCoordination": "Continue to coordination",
+    "toReview": "Continue to review",
+    "submit": "Submit for review",
+    "resubmit": "Resubmit for review",
+    "submitFailed": "Couldn’t submit the request",
+    "loading": "Loading request…"
+  },
+  "fields": {
+    "bloodType": "Blood type",
+    "chooseBloodType": "Choose a blood type",
+    "units": "Units requested",
+    "unitsHelp": "Enter only if confirmed by the facility.",
+    "neededBy": "Needed by",
+    "neededByHelp": "Shown publicly as a date only.",
+    "deskWindow": "Desk time window",
+    "deskFrom": "Desk opens",
+    "deskTo": "Desk closes",
+    "province": "Province",
+    "municipality": "City or municipality",
+    "chooseMunicipality": "Choose a city or municipality",
+    "municipalityHelp": "We never ask for a street or home address.",
+    "category": "Request category",
+    "chooseCategory": "Choose a category",
+    "summary": "Short public description",
+    "summaryHelp": "Don’t include patient names, diagnoses, room numbers or personal phone numbers.",
+    "count": "{{count}} / {{max}}",
+    "point": "Authorized coordination point",
+    "pointHelp": "Missing a point? An administrator must approve new coordination points.",
+    "contactMethod": "Contact method",
+    "visibility": "Who can see the contact details",
+    "visibilityHelp": "Applies to the desk phone or email only.",
+    "instructions": "Instructions for responding",
+    "instructionsHelp": "Shown publicly. Avoid personal names and numbers.",
+    "instructionsPlaceholder": "Visit the blood services desk during desk hours and mention the request ID."
+  },
+  "options": {
+    "category": {
+      "scheduled_procedure": "Scheduled procedure"
+    },
+    "contactMethod": {
+      "desk_phone": "Facility desk phone (from the approved coordination point)",
+      "desk_email": "Facility desk email",
+      "none": "No direct contact — responders visit during desk hours"
+    },
+    "contactShort": {
+      "desk_phone": "Facility desk phone",
+      "desk_email": "Facility desk email",
+      "none": "No direct contact"
+    },
+    "visibility": {
+      "signed_in": "Signed-in users only (recommended)",
+      "public": "Anyone viewing the request",
+      "coordinators": "Coordinators only"
+    },
+    "visibilityShort": {
+      "signed_in": "signed-in users only",
+      "public": "anyone viewing the request",
+      "coordinators": "coordinators only"
+    },
+    "visibilityFact": {
+      "signed_in": "Signed-in users only",
+      "public": "Anyone viewing the request",
+      "coordinators": "Coordinators only"
+    }
+  },
+  "errors": {
+    "bloodType": "Choose a blood type.",
+    "municipality": "Choose a city or municipality.",
+    "neededBy": "Choose the date the blood is needed by.",
+    "pastDate": "Date can’t be in the past.",
+    "units": "Enter a whole number from 1 to 50.",
+    "window": "Enter both times, with the desk closing after it opens.",
+    "summary": "Add a short public description.",
+    "tooLong": "Keep it to {{max}} characters.",
+    "confirm": "Confirm the details before you submit."
+  },
+  "warning": "BloodMap does not assess medical need or donor eligibility. Describe the request, not the patient.",
+  "pointPanel": {
+    "title": "Coordination point",
+    "body": "Responders are always directed to an authorized facility or desk.",
+    "noPoint": "Your account isn’t linked to an approved coordination point yet. An administrator must approve one before you can submit."
+  },
+  "preview": {
+    "heading": "What the public will see",
+    "pendingId": "BM-{{year}}-····",
+    "footer": "Preview · not yet public",
+    "noSummary": "Your short public description will appear here.",
+    "chooseLocation": "Choose a location",
+    "visible": {
+      "basics": "Blood type, units, needed-by date",
+      "city": "City / municipality (not an address)",
+      "point": "Coordination point & desk hours"
+    },
+    "contact": {
+      "signed_in": "Desk contact — signed-in users only",
+      "public": "Desk contact — anyone viewing",
+      "coordinators": "Desk contact — coordinators only",
+      "none": "No direct contact shown"
+    },
+    "account": "Your name and account — never public",
+    "visibleLabel": "Shown publicly",
+    "hiddenLabel": "Not shown publicly",
+    "mapLabel": "Approximate area of {{city}}",
+    "approxArea": "Approx. area"
+  },
+  "review": {
+    "summary": "Summary",
+    "edit": "Edit",
+    "editField": "Edit {{field}}",
+    "location": "Location",
+    "contact": "Contact",
+    "expires": "Expires",
+    "expiresValue": "Automatically on {{date}} · {{time}} unless extended",
+    "neededByValue": "{{date}} · desk {{from}}–{{to}}",
+    "notSet": "Not set",
+    "privacy": "Privacy review",
+    "checks": {
+      "address": "No street address or exact coordinates",
+      "personal": "No patient name or diagnosis detected in the description",
+      "personalFlagged": "Possible personal details in the description or instructions — check before submitting",
+      "desk": "Contact limited to an approved desk"
+    },
+    "confirm": "I confirm these details were confirmed with the facility and contain no personal information about the patient.",
+    "roleNote": "Your role (Facility submitter) can submit for review. Coordinators see “Publish” here instead — the server decides which action is allowed."
+  },
+  "submitted": {
+    "title": "Request submitted",
+    "body": "Thanks — your request is in the review queue. It isn’t public yet. You’ll get an email when a coordinator approves it or asks for a correction.",
+    "next": "What happens next",
+    "steps": {
+      "submitted": "Submitted",
+      "submittedMeta": "{{date}} · by {{name}}",
+      "review": "Coordinator review",
+      "reviewMeta": "Usually within a few hours during desk hours",
+      "published": "Published on the map — or sent back with a note",
+      "publishedMeta": "You’ll be notified either way",
+      "expires": "Expires automatically",
+      "expiresMeta": "{{when}}, unless you extend or close it",
+      "expiresUnknown": "When the desk window closes on the needed-by date, unless you extend or close it"
+    },
+    "view": "View request",
+    "back": "Back to my requests"
+  },
+  "mine": {
+    "title": "My requests",
+    "subtitle": "Everything submitted from {{desk}}.",
+    "subtitleNoDesk": "Everything you have submitted.",
+    "draftsTitle": "Drafts",
+    "draftsSubtitle": "Requests you started but haven’t submitted. Drafts are never public.",
+    "create": "Create request",
+    "search": "Search",
+    "searchPlaceholder": "Request ID or city",
+    "status": "Status",
+    "allStatuses": "All statuses",
+    "bloodType": "Blood type",
+    "anyType": "Any type",
+    "createdAfter": "Created after",
+    "tabs": {
+      "all": "All",
+      "needs_action": "Needs action",
+      "active": "Active",
+      "closed": "Closed & expired"
+    },
+    "caption": "My requests",
+    "summary": "Showing {{from}}–{{to}} of {{total}} requests",
+    "empty": {
+      "title": "No requests yet",
+      "body": "Requests you create appear here, from draft to closed.",
+      "filteredTitle": "No requests match these filters",
+      "filteredBody": "Try another status, blood type or date.",
+      "clear": "Clear filters",
+      "draftsTitle": "No drafts",
+      "draftsBody": "Drafts you save while creating a request appear here."
+    }
+  },
+  "actions": {
+    "view": "View details",
+    "edit": "Edit details",
+    "continueDraft": "Continue draft",
+    "editLocked": "Active requests can’t be edited. Ask a coordinator or close and resubmit.",
+    "extend": "Extend expiry",
+    "fulfill": "Mark as fulfilled",
+    "close": "Close request",
+    "closeMenu": "Close request…",
+    "extended": "Expiry extended",
+    "extendedBody": "{{id}} now expires {{when}}.",
+    "fulfilled": "Marked as fulfilled",
+    "fulfilledBody": "{{id}} is off the public map and list.",
+    "closed": "Request closed",
+    "closedBody": "{{id}} is off the public map and list.",
+    "failed": "Couldn’t update the request",
+    "failedBody": "It may have changed in the meantime. Refresh and try again.",
+    "closeTitle": "Close request {{id}}?",
+    "closeBody": "It will disappear from the public map and list immediately. Donors who saved it will see it as Closed. This can’t be undone — you’d need to submit a new request.",
+    "closeReason": "Reason for closing",
+    "closeReasonHelp": "Kept in the request history. Not shown publicly.",
+    "closeReasonRequired": "Add a short reason (at least 3 characters).",
+    "cancel": "Cancel"
+  },
+  "detail": {
+    "published": "Published details",
+    "details": "Request details",
+    "history": "History",
+    "historyNote": "Read-only · from audit log",
+    "historyEmpty": "No history yet.",
+    "historyFailed": "Couldn’t load the history.",
+    "notFound": "Request not found",
+    "notFoundBody": "It may have been removed, or it belongs to another account.",
+    "back": "Back to my requests",
+    "contactVisibility": "Contact visibility",
+    "publicDescription": "Public description",
+    "instructions": "Instructions for responding",
+    "expiresIn": "{{when}} ({{relative}})",
+    "notYet": "Set when a coordinator publishes it",
+    "correction": "A coordinator asked for a correction",
+    "rejected": "This request was not published",
+    "closedReason": "Closure reason",
+    "relative": {
+      "minutes": "in {{count}} min",
+      "hours_one": "in {{count}} hour",
+      "hours_other": "in {{count}} hours",
+      "days_one": "in {{count}} day",
+      "days_other": "in {{count}} days"
+    }
+  },
+  "history": {
+    "request.created": "Draft created",
+    "request.submitted": "Submitted for review",
+    "request.resubmitted": "Resubmitted with changes",
+    "request.correction_requested": "Correction requested",
+    "request.approved": "Approved and published",
+    "request.rejected": "Not published",
+    "request.assigned": "Assigned to a coordinator",
+    "request.edited": "Details updated",
+    "request.edited_material": "Edited — back in review",
+    "request.extended": "Expiry extended",
+    "request.fulfilled": "Marked as fulfilled",
+    "request.closed": "Closed",
+    "request.expired": "Expired",
+    "request.contact_revealed": "Contact details revealed",
+    "other": "Updated",
+    "system": "System",
+    "you": "You",
+    "approvedNote": "Submitted details confirmed — not a medical verification.",
+    "changed": "Changed: {{fields}}",
+    "extendedTo": "Now expires {{when}}"
+  },
+  "fieldNames": {
+    "blood_type": "blood type",
+    "units_requested": "units requested",
+    "needed_by": "needed-by date",
+    "desk_window_start": "desk time window",
+    "desk_window_end": "desk time window",
+    "municipality_id": "location",
+    "category": "category",
+    "public_summary": "public description",
+    "coordination_point_id": "coordination point",
+    "contact_method": "contact method",
+    "contact_visible_to": "contact visibility",
+    "response_instructions": "instructions"
+  }
+}

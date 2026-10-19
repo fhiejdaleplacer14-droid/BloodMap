@@ -9,21 +9,29 @@
     "activity": "My Activity",
     "notifications": "Notifications",
     "profile": "Profile and Preferences",
-    "help": "Help & guidelines"
+    "help": "Help & guidelines",
+    "myRequests": "My Requests",
+    "createRequest": "Create Request",
+    "drafts": "Drafts"
   },
   "bottom": {
     "home": "Home",
     "explore": "Explore",
     "saved": "Saved",
     "alerts": "Alerts",
-    "profile": "Profile"
+    "profile": "Profile",
+    "requests": "Requests",
+    "create": "Create"
   },
   "crumbs": {
     "overview": "Overview",
     "saved": "Saved requests",
     "activity": "My activity",
     "notifications": "Notifications",
-    "profile": "Profile and preferences"
+    "profile": "Profile and preferences",
+    "myRequests": "My Requests",
+    "drafts": "Drafts",
+    "create": "Create Request"
   },
   "dashboard": {
     "greeting": {
@@ -236,5 +244,6 @@
       "keep": "Keep my account",
       "confirmDelete": "Delete account"
     }
-  }
+  },
+  "requestsRoot": "Requests"
 }

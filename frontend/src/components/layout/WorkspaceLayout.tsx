@@ -2,7 +2,8 @@ import { Link, Navigate, Outlet, useLocation, useMatches, useNavigate } from 're
 import { useTranslation } from 'react-i18next'
 import { useLogout, useMe, type Me } from '../../lib/api/auth'
 import { useNotifications } from '../../lib/api/me'
-import { workspaceBottomNav, workspaceNav } from '../../lib/workspaceNav'
+import { useMyRequestCounts } from '../../lib/api/myRequests'
+import { isSubmitter, workspaceBottomNav, workspaceNav } from '../../lib/workspaceNav'
 import { DemoBadge } from '../map/MapOverlays'
 import { IconButton } from '../ui/IconButton'
 import { icons } from '../ui/icons'
@@ -14,8 +15,14 @@ import { SkipLink } from './SiteHeader'
 
 const ChevronRight = icons['chevron-right']
 
-/** Route handle: the breadcrumb key under "My workspace" (28:151). */
-export type WorkspaceHandle = { crumb: 'overview' | 'saved' | 'activity' | 'notifications' | 'profile' }
+/**
+ * Route handle: the breadcrumb under "My workspace" (28:151) or, for request
+ * pages, under "Requests" (31:164). `crumb: 'param'` shows the :id.
+ */
+export type WorkspaceHandle = {
+  crumb: 'overview' | 'saved' | 'activity' | 'notifications' | 'profile' | 'myRequests' | 'drafts' | 'create' | 'param'
+  section?: 'requests'
+}
 
 function roleLabel(me: Me, t: ReturnType<typeof useTranslation<'nav'>>['t']): string {
   switch (me.role) {
@@ -52,8 +59,12 @@ function Shell({ me }: { me: Me }) {
   const navigate = useNavigate()
   const logout = useLogout()
   const unread = useNotifications().data?.meta.unread ?? 0
+  const counts = useMyRequestCounts(isSubmitter(me)).data
   const matches = useMatches()
-  const crumb = (matches.at(-1)?.handle as WorkspaceHandle | undefined)?.crumb ?? 'overview'
+  const leaf = matches.at(-1)
+  const handle = (leaf?.handle as WorkspaceHandle | undefined) ?? { crumb: 'overview' }
+  const crumbLabel = handle.crumb === 'param' ? (leaf?.params.id ?? '') : t(`crumbs.${handle.crumb}`)
+  const root = handle.section === 'requests' ? { to: '/requests/mine', label: t('requestsRoot') } : { to: '/app', label: t('breadcrumbRoot') }
 
   const signOut = () => logout.mutate(undefined, { onSuccess: () => navigate('/') })
   const bell = (
@@ -72,7 +83,7 @@ function Shell({ me }: { me: Me }) {
         className="max-lg:hidden"
         roleLabel={roleLabel(me, tNav)}
         roleIcon="user"
-        items={workspaceNav(me, t, { unread })}
+        items={workspaceNav(me, t, { unread, active: counts?.active, drafts: counts?.draft })}
         helpItem={{ to: '/#safety', label: t('nav.help'), icon: 'help-chat' }}
         user={{ name: me.name, email: me.email, initials: me.initials }}
         onSignOut={signOut}
@@ -83,15 +94,15 @@ function Shell({ me }: { me: Me }) {
           <nav aria-label="Breadcrumb">
             <ol className="flex items-center gap-2">
               <li>
-                <Link to="/app" className="type-body-m rounded-sm text-tertiary hover:text-primary">
-                  {t('breadcrumbRoot')}
+                <Link to={root.to} className="type-body-m rounded-sm text-tertiary hover:text-primary">
+                  {root.label}
                 </Link>
               </li>
               <li aria-hidden>
                 <ChevronRight size={14} className="text-tertiary" />
               </li>
               <li aria-current="page" className="type-label-m text-primary">
-                {t(`crumbs.${crumb}`)}
+                {crumbLabel}
               </li>
             </ol>
           </nav>
@@ -103,7 +114,7 @@ function Shell({ me }: { me: Me }) {
         <main id="main" className="min-h-0 flex-1 overflow-y-auto">
           <Outlet />
         </main>
-        <BottomNav className="lg:hidden" items={workspaceBottomNav(t)} />
+        <BottomNav className="lg:hidden" items={workspaceBottomNav(me, t)} />
       </div>
     </div>
   )

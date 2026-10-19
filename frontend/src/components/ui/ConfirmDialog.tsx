@@ -26,7 +26,7 @@ type ConfirmDialogProps = {
   confirmVariant?: ButtonVariant
   confirmIcon?: IconName
   /** Reason fields are required for reject/correction and stored in the audit log. */
-  requireReason?: { label: string; placeholder?: string; helperText?: string; requiredMessage: string }
+  requireReason?: { label: string; placeholder?: string; helperText?: string; requiredMessage: string; minLength?: number }
   onConfirm: (reason?: string) => void
   loading?: boolean
 }
@@ -63,7 +63,7 @@ export function ConfirmDialog({
   }
 
   const confirm = () => {
-    if (requireReason && reason.trim() === '') {
+    if (requireReason && reason.trim().length < (requireReason.minLength ?? 1)) {
       setReasonError(requireReason.requiredMessage)
       return
     }

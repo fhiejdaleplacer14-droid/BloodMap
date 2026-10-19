@@ -77,6 +77,42 @@ export const router = createBrowserRouter([
           },
         ],
       },
+      {
+        // Owner request pages share the workspace shell (07 · Request Management).
+        lazy: async () => ({ Component: (await import('../components/layout/WorkspaceLayout')).WorkspaceLayout }),
+        children: [
+          {
+            lazy: async () => ({ Component: (await import('../routes/requests/RequestsGate')).RequestsGate }),
+            children: [
+              {
+                path: 'requests/new',
+                handle: { crumb: 'create', section: 'requests' },
+                lazy: async () => ({ Component: (await import('../routes/requests/CreateRequestPage')).CreateRequestPage }),
+              },
+              {
+                path: 'requests/mine',
+                handle: { crumb: 'myRequests', section: 'requests' },
+                lazy: async () => ({ Component: (await import('../routes/requests/MyRequestsPage')).MyRequestsPage }),
+              },
+              {
+                path: 'requests/drafts',
+                handle: { crumb: 'drafts', section: 'requests' },
+                lazy: async () => ({ Component: (await import('../routes/requests/MyRequestsPage')).DraftsPage }),
+              },
+              {
+                path: 'requests/mine/:id',
+                handle: { crumb: 'param', section: 'requests' },
+                lazy: async () => ({ Component: (await import('../routes/requests/OwnerDetailPage')).OwnerDetailPage }),
+              },
+              {
+                path: 'requests/mine/:id/submitted',
+                handle: { crumb: 'myRequests', section: 'requests' },
+                lazy: async () => ({ Component: (await import('../routes/requests/SubmittedPage')).SubmittedPage }),
+              },
+            ],
+          },
+        ],
+      },
       ...devRoutes,
       { path: '*', element: <Navigate to="/" replace /> },
     ],
