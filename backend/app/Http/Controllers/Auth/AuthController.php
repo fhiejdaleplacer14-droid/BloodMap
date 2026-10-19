@@ -68,6 +68,11 @@ class AuthController extends Controller
         }
 
         RateLimiter::clear($key);
+        // Signing in within 90 days restores a deactivated account (29:1215).
+        if ($user->deactivated_at !== null) {
+            $user->forceFill(['deactivated_at' => null])->save();
+            AuditLogger::record($user, 'account.reactivated', $user);
+        }
         Auth::guard('web')->login($user, (bool) ($credentials['remember'] ?? false));
         $request->session()->regenerate();
         $user->forceFill(['last_active_at' => now()])->saveQuietly();

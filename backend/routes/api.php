@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\Admin\AuditLogController;
 use App\Http\Controllers\Api\Admin\RoleChangeController;
 use App\Http\Controllers\Api\Admin\UserController;
@@ -27,7 +28,13 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
     Route::get('/me', [MeController::class, 'show']);
     Route::patch('/me/preferences', [MeController::class, 'updatePreferences']);
     Route::delete('/me', [MeController::class, 'destroy']);
-    Route::get('/me/activity', [MeController::class, 'activity']);
+    Route::patch('/me', [AccountController::class, 'update']);
+    Route::put('/me/password', [AccountController::class, 'updatePassword']);
+    Route::get('/me/sessions', [AccountController::class, 'sessions']);
+    Route::delete('/me/sessions/{session}', [AccountController::class, 'destroySession']);
+    Route::post('/me/deactivate', [AccountController::class, 'deactivate']);
+    Route::get('/me/activity', [AccountController::class, 'activity']);
+    Route::get('/me/export', [AccountController::class, 'export']);
     Route::get('/me/notifications', [LookupController::class, 'notifications']);
     Route::post('/me/notifications/read', [LookupController::class, 'markNotificationsRead']);
 

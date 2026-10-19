@@ -202,6 +202,8 @@ class AccountAndSchedulerTest extends TestCase
             array_column($activity, 'action'),
         );
         $this->assertSame('Chrome · Android', $activity[3]['device']);
-        $this->assertSame($request->public_id, $activity[2]['target']);
+        $this->assertSame($request->public_id, $activity[2]['request']);
+        $this->assertSame('active', $activity[2]['request_status']);
+        $this->assertSame(['email_expiry_reminder' => true], $activity[0]['changes']);
     }
 }

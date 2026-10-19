@@ -29,6 +29,8 @@ use Illuminate\Support\Facades\DB;
  * @property Carbon|null $restricted_at
  * @property string|null $restriction_reason
  * @property Carbon|null $deletion_requested_at
+ * @property Carbon|null $deactivated_at
+ * @property Carbon|null $password_changed_at
  * @property Carbon|null $last_active_at
  * @property bool $is_demo
  * @property Carbon|null $created_at
@@ -62,6 +64,8 @@ class User extends Authenticatable implements MustVerifyEmail
             'preferences' => 'array',
             'restricted_at' => 'datetime',
             'deletion_requested_at' => 'datetime',
+            'deactivated_at' => 'datetime',
+            'password_changed_at' => 'datetime',
             'last_active_at' => 'datetime',
             'is_demo' => 'boolean',
         ];

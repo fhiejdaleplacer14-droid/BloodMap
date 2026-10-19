@@ -49,6 +49,7 @@ class MeResource extends JsonResource
             'preferences' => $this->resolvedPreferences(),
             'permissions' => $this->isRestricted() ? [] : self::permissionsFor($this->role),
             'member_since' => $this->created_at?->toIso8601ZuluString(),
+            'password_changed_at' => $this->password_changed_at?->toIso8601ZuluString(),
             'is_demo' => $this->is_demo,
         ];
     }

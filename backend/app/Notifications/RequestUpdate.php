@@ -38,7 +38,10 @@ class RequestUpdate extends Notification implements ShouldQueue
         $preference = self::SAVER_PREFERENCE[$this->kind] ?? null;
         $email = $isOwner || ($preference && ($notifiable->resolvedPreferences()[$preference] ?? false));
 
-        return $email && $notifiable->deletion_requested_at === null ? ['database', 'mail'] : ['database'];
+        // Deactivated accounts get no email (29:1215).
+        $reachable = $notifiable->deletion_requested_at === null && $notifiable->deactivated_at === null;
+
+        return $email && $reachable ? ['database', 'mail'] : ['database'];
     }
 
     public function toMail(User $notifiable): MailMessage

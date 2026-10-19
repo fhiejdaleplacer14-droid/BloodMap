@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MeResource;
-use App\Models\AuditLog;
 use App\Models\User;
 use App\Services\AuditLogger;
 use Illuminate\Http\JsonResponse;
@@ -32,42 +31,9 @@ class MeController extends Controller
         $user = $request->user();
         $user->preferences = array_merge($user->resolvedPreferences(), $validated);
         $user->save();
-        AuditLogger::record($user, 'account.preferences_updated', $user, meta: ['changed' => array_keys($validated)]);
+        AuditLogger::record($user, 'account.preferences_updated', $user, meta: ['changes' => $validated]);
 
         return new MeResource($user->load(['area', 'coordinationPoint']));
-    }
-
-    /**
-     * GET /api/me/activity — the user's own actions (My Activity, 29:625),
-     * newest first.
-     */
-    public function activity(Request $request): JsonResponse
-    {
-        $logs = AuditLog::query()
-            ->where('actor_id', $request->user()->getKey())
-            ->latest('created_at')
-            ->latest('id')
-            ->paginate(30);
-
-        return response()->json([
-            'data' => $logs->getCollection()->map(fn (AuditLog $log) => [
-                'id' => $log->getKey(),
-                'action' => $log->action,
-                'target_type' => $log->target_type,
-                'target' => $log->meta['target_label'] ?? null,
-                // Coarse "Chrome · Android" for sign-ins; never an IP address.
-                'device' => $log->meta['device'] ?? null,
-                'from' => $log->from,
-                'to' => $log->to,
-                'created_at' => $log->created_at?->toIso8601ZuluString(),
-            ]),
-            'meta' => [
-                'current_page' => $logs->currentPage(),
-                'last_page' => $logs->lastPage(),
-                'per_page' => $logs->perPage(),
-                'total' => $logs->total(),
-            ],
-        ]);
     }
 
     /**
