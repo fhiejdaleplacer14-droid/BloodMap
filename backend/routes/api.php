@@ -52,6 +52,7 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
     Route::post('/requests/{bloodRequest}/fulfill', [RequestController::class, 'fulfill']);
     Route::post('/requests/{bloodRequest}/close', [RequestController::class, 'close']);
     Route::post('/requests/{bloodRequest}/extend', [RequestController::class, 'extend']);
+    Route::get('/requests/{bloodRequest}/history', [RequestController::class, 'history']);
 
     // Coordinator (area) / admin
     Route::middleware('role:coordinator,admin')->group(function () {

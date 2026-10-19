@@ -6,13 +6,15 @@ use App\Enums\RequestStatus;
 use App\Models\BloodRequest;
 use App\Models\User;
 use App\Policies\BloodRequestPolicy;
+use App\Services\DescriptionScreener;
 use Illuminate\Http\Request;
 
 /**
  * The request as seen by its submitter or a reviewing coordinator/admin:
  * public fields plus workflow state and policy-driven `can` flags that
  * decide which buttons render. Screening results and the submitter
- * reference are for reviewers only.
+ * reference are for reviewers only; the owner gets a live privacy review of
+ * their public text for the submit step (31:840).
  *
  * @mixin BloodRequest
  */
@@ -42,6 +44,9 @@ class ManagedRequestResource extends PublicRequestResource
             'checks' => $this->when($reviewer, fn () => [
                 'flags' => $this->screening_flags ?? [],
                 'possible_duplicate' => $this->possible_duplicate,
+            ]),
+            'privacy_review' => $this->when($policy->owns($viewer, $this->resource), fn () => [
+                'flags' => app(DescriptionScreener::class)->screen($this->public_summary."\n".$this->response_instructions),
             ]),
             'submitter' => $this->when($reviewer, fn () => $this->submitter ? [
                 'reference' => $this->submitter->reference,

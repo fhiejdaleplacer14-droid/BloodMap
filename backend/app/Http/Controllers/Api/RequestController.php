@@ -7,9 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpsertBloodRequest;
 use App\Http\Resources\ManagedRequestResource;
 use App\Jobs\RunAutomatedChecks;
+use App\Models\AuditLog;
 use App\Models\BloodRequest;
 use App\Models\User;
 use App\Notifications\RequestUpdate;
+use App\Policies\BloodRequestPolicy;
 use App\Services\AuditLogger;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -173,6 +175,69 @@ class RequestController extends Controller
         );
 
         return $this->managed($bloodRequest);
+    }
+
+    /**
+     * GET /api/requests/{id}/history — read-only timeline from the audit log
+     * for the owner or a reviewer (32:1978). Saves are donors' business and
+     * never shown; contact reveals only to reviewers. Edits made while a
+     * correction is open are folded into the resubmission ("Changed: …").
+     */
+    public function history(Request $request, BloodRequest $bloodRequest, BloodRequestPolicy $policy): JsonResponse
+    {
+        /** @var User $viewer */
+        $viewer = $request->user();
+        $reviewer = $policy->reviews($viewer, $bloodRequest);
+        abort_unless($reviewer || $policy->owns($viewer, $bloodRequest), 404);
+
+        $hidden = ['request.saved', 'request.unsaved', ...($reviewer ? [] : ['request.contact_revealed'])];
+        $logs = AuditLog::query()
+            ->where('target_type', $bloodRequest->getMorphClass())
+            ->where('target_id', $bloodRequest->getKey())
+            ->whereNotIn('action', $hidden)
+            ->with('actor:id,name')
+            ->orderBy('created_at')->orderBy('id')
+            ->limit(500)
+            ->get();
+
+        $events = [];
+        $status = null;
+        $pendingFields = [];
+        foreach ($logs as $log) {
+            if ($log->action === 'request.edited') {
+                /** @var list<string> $fields */
+                $fields = $log->meta['fields'] ?? [];
+                if ($status === RequestStatus::NeedsCorrection->value) {
+                    $pendingFields = array_values(array_unique([...$pendingFields, ...$fields]));
+
+                    continue;
+                }
+                if ($status === null || $status === RequestStatus::Draft->value) {
+                    continue; // drafting isn't history
+                }
+            }
+
+            $fields = $log->action === 'request.resubmitted' ? $pendingFields : ($log->meta['fields'] ?? []);
+            if ($log->action === 'request.resubmitted') {
+                $pendingFields = [];
+            }
+            if ($log->action !== 'request.extended' && $log->to !== null) {
+                $status = $log->to;
+            }
+
+            $events[] = [
+                'id' => $log->getKey(),
+                'action' => $log->action,
+                'actor' => $log->actor ? ['name' => $log->actor->name, 'is_me' => $log->actor->is($viewer)] : null,
+                'from' => $log->from,
+                'to' => $log->to,
+                'reason' => $log->reason,
+                'fields' => $fields,
+                'created_at' => $log->created_at?->toIso8601ZuluString(),
+            ];
+        }
+
+        return response()->json(['data' => $events]);
     }
 
     private function managed(BloodRequest $bloodRequest): ManagedRequestResource

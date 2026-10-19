@@ -240,4 +240,40 @@ class RequestLifecycleTest extends TestCase
         $this->actingAs(User::factory()->create())->getJson('/api/coordinator/queue')->assertForbidden();
         $this->actingAs(User::factory()->coordinator()->create())->getJson('/api/coordinator/queue')->assertJsonCount(0, 'data');
     }
+
+    public function test_history_is_for_the_owner_and_reviewers_and_folds_correction_edits(): void
+    {
+        $request = $this->submittedRequest();
+        $coordinator = $this->coordinator();
+        $this->actingAs($coordinator)->postJson("/api/requests/{$request->public_id}/request-correction", ['reason' => 'Add the desk hours.'])->assertOk();
+        $this->actingAs($this->submitter)->patchJson("/api/requests/{$request->public_id}", ['desk_window_start' => '09:00'])->assertOk();
+        $this->actingAs($this->submitter)->postJson("/api/requests/{$request->public_id}/submit")->assertOk();
+        $this->actingAs($coordinator)->postJson("/api/requests/{$request->public_id}/approve")->assertOk();
+        $donor = User::factory()->create();
+        $this->actingAs($donor)->postJson("/api/me/saved-requests/{$request->public_id}")->assertSuccessful();
+
+        $history = $this->actingAs($this->submitter)->getJson("/api/requests/{$request->public_id}/history")->assertOk();
+        $this->assertSame(
+            ['request.created', 'request.submitted', 'request.correction_requested', 'request.resubmitted', 'request.approved'],
+            array_column($history->json('data'), 'action'),
+        );
+        $history->assertJsonPath('data.0.actor.is_me', true)
+            ->assertJsonPath('data.2.reason', 'Add the desk hours.')
+            ->assertJsonPath('data.2.actor.name', $coordinator->name)
+            ->assertJsonPath('data.3.fields', ['desk_window_start']);
+
+        $this->actingAs($coordinator)->getJson("/api/requests/{$request->public_id}/history")->assertOk();
+        $this->actingAs($donor)->getJson("/api/requests/{$request->public_id}/history")->assertNotFound();
+    }
+
+    public function test_owner_sees_a_live_privacy_review_of_the_public_text(): void
+    {
+        $id = $this->actingAs($this->submitter)
+            ->postJson('/api/requests', $this->draftPayload(['public_summary' => 'Call 0917 123 4567 for Mr. Santos.']))
+            ->assertCreated()
+            ->assertJsonPath('data.privacy_review.flags', ['possible_phone_number', 'possible_personal_name'])
+            ->json('data.id');
+
+        $this->actingAs($this->coordinator())->getJson("/api/requests/{$id}")->assertJsonMissingPath('data.privacy_review');
+    }
 }
