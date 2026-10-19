@@ -21,6 +21,14 @@ choice can be traced. Decided 2026-10-19.
 | 13 | Tablet layout | Design System 49:277: sidebar becomes a drawer, Explorer list overlays the map as a side sheet. Handoff 55:252: sidebar collapses to a 72 px icon rail, Explorer splits into a 360 panel plus map | Handoff 55:252 (page 12 is authoritative). |
 | 14 | Dark elevation | Elevation styles (49:233) only have light values | The same shadows apply in both themes. Dark surfaces rely on borders, as the design already does. |
 | 15 | Destructive button fill | Destructive uses status/critical/fg (5:119). In Dark that is #E2626F, and the white label only reaches ~3.4:1 (fails WCAG 1.4.3) | Use bg/brand (identical to the Light value, #B42332 in both themes). Light output is unchanged; Dark reaches ~6:1. |
+| 16 | Urgency source | The Create wizard (31:204) has no urgency field, yet cards show "Needed within 72 h" (0012: published Oct 15, needed Oct 18) | Urgency is **derived** on submit from needed-by + desk-window end (≤ 24 h, ≤ 72 h, otherwise scheduled). It is stored, so it stays the requester-stated window and is never re-triaged. |
+| 17 | Request category | 31:270 shows only "Scheduled procedure" | Enum `scheduled_procedure` only. **Open: the full category list is needed.** |
+| 18 | Expiry | 31:899 "Automatically on Oct 18, 2026 · 17:00" | `expires_at` = needed-by date + desk-window end (default 17:00), Asia/Manila, set on approval. |
+| 19 | Contact | Handoff speaks of a contact phone; step 2 (31:572) offers desk phone · desk email · "No direct contact" | `contact_method` on the request; the value always comes from the approved coordination point. Requests never store a phone number. |
+| 20 | Queue assignment | Handoff 51:530 "409 if assigned elsewhere" but lists no assign endpoint; queue 35:462 has "Assign to me" and tabs | Added `POST /api/requests/{id}/assign`; queue tabs `unassigned · mine · needs_correction · all_open` with counts. Submitters appear as references (`S-0142`), not names. |
+| 21 | In-app notifications | Sidebar "Notifications" and dashboard updates (44:823); no endpoint listed | Added `GET /api/me/notifications` and `POST /api/me/notifications/read` (Laravel database notifications). |
+| 22 | Lookups | Create step 1 needs province/city; step 2 needs the authorized point | Added `GET /api/municipalities` (public, centroids only) and `GET /api/coordination-points` (scoped by role). |
+| 23 | Paused requests | Restriction pauses open requests (55:345) | A paused request disappears from search **and** its detail URL (404) until an admin decision; it is not deleted. |
 
 ## Copy that differs by context
 The demo labels differ by screen ("Sample data", "Demo data", "Demonstration
@@ -34,3 +42,9 @@ records being shown.
 - **Map tiles:** development uses `tile.openstreetmap.org` (configured through
   `VITE_MAP_TILE_URL`). Production needs a provider whose terms allow the
   traffic, plus a check that the zoom-13 cap holds.
+
+## Open items from Phase 3 (backend)
+- **Request categories:** only "Scheduled procedure" exists in Figma (#17).
+- **Reports:** the coordinator sidebar shows "Reports" and the resource has `can.report`, but no frame defines the report flow or endpoint yet.
+- **Weekly area summary email:** the preference exists (29:1149, off by default); the digest itself isn't designed, so it isn't sent yet.
+- **Email copy:** notification emails use plain, factual copy (`backend/lang/en/notifications.php`) because Figma has no email frames. Review it with blood-service staff along with the rest of the copy (56:258).

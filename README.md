@@ -49,8 +49,10 @@ cd backend
 composer install
 cp .env.example .env
 php artisan key:generate
-php artisan migrate
+php artisan migrate --seed      # NIR geography + fictional demo data
 php artisan serve
+php artisan queue:work          # second terminal: emails & automated checks
+php artisan schedule:work       # third terminal: expiry every 5 min, reminders
 
 # 3. SPA  → http://localhost:5173
 cd frontend
@@ -58,6 +60,38 @@ npm ci
 cp .env.example .env.local
 npm run dev
 ```
+
+Re-run `php artisan migrate:fresh --seed` at any time to reset the demo.
+Seed dates are relative to now, so the demo always has live requests. In
+development, emails go to `storage/logs/laravel.log` (`MAIL_MAILER=log`).
+
+### Demo accounts
+
+All demo records are fictional and carry `is_demo = true`. Every account
+uses the password in `DEMO_PASSWORD` (default `BloodMap-demo-2026!`).
+
+| Email | Role | Notes |
+|-------|------|-------|
+| `juan.demo@example.org` | Donor | Has saved requests, one of them expired |
+| `ana.desk@example.org` | Facility submitter `S-0142` | San Carlos Blood Services Desk (demo) |
+| `m.coord@example.org` | Coordinator | Negros Occidental (North) review queue |
+| `lina.t@example.org` | Coordinator | Negros Oriental |
+| `admin@example.org` | Administrator | |
+| `admin2@example.org` | Administrator | Second admin for promotions to Administrator |
+
+## API
+
+Sanctum SPA cookie auth: the SPA calls `GET /sanctum/csrf-cookie`, then
+`POST /login`. Every other endpoint lives under `/api`. Run
+`php artisan route:list --except-vendor` for the full list. The contracts
+follow Figma's *Handoff · API & data* frame plus `docs/decisions.md`.
+
+- Policies decide every action; resources decide every field.
+- Public responses carry the municipality centroid only, never an address
+  or a facility's coordinates.
+- The desk contact is gated by `contact_visible_to`. Coordinators see it
+  masked until they reveal it, and each reveal is audited.
+- `audit_logs` is insert-only: a database trigger rejects UPDATE and DELETE.
 
 ## Using a hosted Postgres (for example Supabase)
 
@@ -71,7 +105,7 @@ PostgreSQL, with no PostGIS.
 | Where      | Command |
 |------------|---------|
 | frontend   | `npm run lint` · `npm run typecheck` · `npm run build` |
-| backend    | `vendor/bin/pint --test` · `php artisan test` (uses the `bloodmap_testing` database) |
+| backend    | `vendor/bin/pint --test` · `vendor/bin/phpstan analyse` · `php artisan test` (uses the `bloodmap_testing` database) |
 
 CI runs the same checks on every push to `main` and on every pull request.
 The backend job runs against a PostgreSQL service container.
