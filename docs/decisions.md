@@ -31,6 +31,19 @@ choice can be traced. Decided 2026-10-19.
 | 23 | Paused requests | Restriction pauses open requests (55:345) | A paused request disappears from search **and** its detail URL (404) until an admin decision; it is not deleted. |
 | 24 | Explorer filters | Desktop triggers (14:69) and the mobile sheet (25:569) show Status · Date posted (incl. custom range, 19:3128) · Area, which the Handoff API lacks | `status[]` = `active` (default) and/or `fulfilled` ("Recently fulfilled" = within 7 days); `posted_before` alongside `posted_after`; `province` for Area. "Near me" stays in the browser and only sorts (25:643). |
 
+| 25 | Explorer URL keys beyond 55:191 | Status, Date posted, Area and paging have no URL keys | `status=active,fulfilled` (omitted when Active only), `posted=today\|3d\|7d` or `from`/`to` (YYYY-MM-DD, Manila), `area=occidental\|oriental\|siquijor\|near`, `page`. `c` is written at 2 dp (≈1 km, as in 55:191), so a shared link never carries a precise position. Invalid values are dropped. |
+| 26 | Sort labels | Only "Most recent" appears (14:113) | `-updated_at` "Most recent", `urgency` "Needed soonest", `expires_at` "Expiring soonest", `-published_at` "Newest posted"; "Near me" shows "Nearest to me" and sorts in the browser. **Open: confirm the labels.** |
+| 27 | Pages with no frames | Header/footer link to About, Privacy notice, Terms of use, Data retention, Contact support, Report a problem; "Read the full guide" | How It Works → `/#how-it-works`, Safety → `/#safety`, About → the footer product overview (`/#about`), "Read the full guide" → `/#safety`, Project documentation / GitHub → the repository. The rest render as plain text (not dead links) until written. Unknown routes redirect to `/`. |
+| 28 | Report action | Detail shows Report (15:731, 15:859); no flow or endpoint exists | Hidden until the report flow is designed (open item below). |
+| 29 | Facility markers | Map key and frames show coordination points; the API had no public source | `GET /api/coordination-points/public` (name, municipality, published point — no phone/email/hours). Demo desks sit on their municipality centroid, so the tile is drawn beside the request label; coordinates are unchanged. |
+| 30 | Regional focus map | 21:3755 outlines the selected province | No province boundaries exist (no PostGIS/GeoJSON), so the map frames the province's municipalities and a labelled chip links to the Explorer. Counts come from `by_province` on `/api/stats/public`. |
+| 31 | Map controls | "Map layers" (14:527) has no frame | Toggles the Map key. |
+| 32 | Search this area | 14:538 button vs. 55:206 auto-refetch | Tablet/desktop refetch automatically (300 ms debounce); on mobile auto-search is off and the button appears after a pan. |
+| 33 | Location search | Search box filters by `q`, but results are also bounded by the map | A `q` matching one municipality moves the map there (zoom 12); any other text resets the view to all of NIR so the search covers the region. Choosing a province in Area frames it. |
+| 34 | After sign-in | No frame defines the landing route | `?next=` (same-site paths only), otherwise `/requests` until the workspaces exist (Phase 5). |
+| 35 | Approximate area | 9:256 at every zoom | Drawn from zoom 10 up; below that a 2.5 km circle is a few pixels wide. The selected request is drawn outside clusters so it never hides in one. |
+| 36 | Safety section contrast | 21:3770 uses text/tertiary on bg/inverse (~3.4:1, fails 1.4.3) | Secondary copy there uses on-inverse at 72 % (`text-on-inverse-muted`), ≥ 4.5:1. |
+
 ## Copy that differs by context
 The demo labels differ by screen ("Sample data", "Demo data", "Demonstration
 map · fictional requests", "Demo environment · sample data"). Each screen uses
@@ -43,6 +56,11 @@ records being shown.
 - **Map tiles:** development uses `tile.openstreetmap.org` (configured through
   `VITE_MAP_TILE_URL`). Production needs a provider whose terms allow the
   traffic, plus a check that the zoom-13 cap holds.
+
+## Open items from Phase 4 (public site)
+- **Copy without frames**, kept minimal and in `locales/en`: sort labels (#26), "This request isn't available" (404 detail), "Couldn't update saved requests", "Removed from saved", "We couldn't get your location", the cluster/facility marker labels, and the Register/Login "Enter your full name." / "Enter your password." messages.
+- **Mobile Explorer**: List/Map toggle and full-screen detail work now; the bottom sheet (peek 160 · half · full) and the full-screen filter sheet arrive with Phase 6 (page 10 frames).
+- **Assistant launcher** (14:581) is Phase 6.
 
 ## Open items from Phase 3 (backend)
 - **Request categories:** only "Scheduled procedure" exists in Figma (#17).
