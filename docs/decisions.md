@@ -40,9 +40,26 @@ choice can be traced. Decided 2026-10-19.
 | 31 | Map controls | "Map layers" (14:527) has no frame | Toggles the Map key. |
 | 32 | Search this area | 14:538 button vs. 55:206 auto-refetch | Tablet/desktop refetch automatically (300 ms debounce); on mobile auto-search is off and the button appears after a pan. |
 | 33 | Location search | Search box filters by `q`, but results are also bounded by the map | A `q` matching one municipality moves the map there (zoom 12); any other text resets the view to all of NIR so the search covers the region. Choosing a province in Area frames it. |
-| 34 | After sign-in | No frame defines the landing route | `?next=` (same-site paths only), otherwise `/requests` until the workspaces exist (Phase 5). |
+| 34 | After sign-in | No frame defines the landing route | `?next=` (same-site paths only), otherwise the role's home: donor `/app`, facility submitter `/requests/mine`, coordinator `/coord`, admin `/admin`. |
 | 35 | Approximate area | 9:256 at every zoom | Drawn from zoom 10 up; below that a 2.5 km circle is a few pixels wide. The selected request is drawn outside clusters so it never hides in one. |
 | 36 | Safety section contrast | 21:3770 uses text/tertiary on bg/inverse (~3.4:1, fails 1.4.3) | Secondary copy there uses on-inverse at 72 % (`text-on-inverse-muted`), ≥ 4.5:1. |
+| 37 | Donor notifications page | Sidebar links "Notifications", no frame | `/app/notifications` lists the same update rows as the Overview panel (28:203), paginated, with "Mark all as read". Copy for each update kind is minimal and factual. |
+| 38 | Recently viewed | 28:290 shows it, no source defined | Kept on the device only (localStorage, max 6, switch in Profile › Privacy). The server never records what a donor looks at. |
+| 39 | Sessions list | 29:1290 shows device + location | Device and last-active only. No geo-IP lookup, so no location; session IDs are HMAC-hashed in the API. |
+| 40 | Close request reason | 32:1755 has no reason field; Handoff (51:476) and the API require one | The dialog keeps the frame's copy and adds "Reason for closing" (min 3 characters, kept in the history, not public). |
+| 41 | Owner routes | Frames name no URLs for detail/drafts | `/requests/new?step=1..3&id=…` (wizard), `/requests/mine`, `/requests/drafts` (sidebar "Drafts" = My Requests locked to draft), `/requests/mine/:id` (owner detail), `/requests/mine/:id/submitted`. Only accounts with `requests.own` reach them. |
+| 42 | Submitter sidebar counts | 32:841 shows "3" and "1" without defining them | My Requests = Active tab count (pending review + active); Drafts = drafts. Both come from `meta.counts` of `GET /api/requests/mine`. |
+| 43 | My Requests tabs | 32:959 tab counts only | Needs action = draft + needs correction; Active = pending review + active; Closed & expired = fulfilled, closed, expired, rejected. Counts follow the search/filters, not the tab. |
+| 44 | Editing from My Requests | 32:959 disables "Edit details" on active requests | Edit is offered for drafts and needs-correction only (it opens the wizard; needs-correction lands on Review with the coordinator's note on top). Active rows show the disabled item with the frame's note, even though the API would accept non-material edits. |
+| 45 | Wizard saving | Frames show "Save draft" only | Every "Continue" also saves (POST once, then PATCH) so steps survive reloads. Server validation errors jump back to the step that owns the field. |
+| 46 | Desk time window | 31:183 shows one "08:00 – 17:00" field | Two native time inputs (opens / closes) under one label; both or neither, closing after opening. |
+| 47 | Privacy review checks | 31:840 shows three green checks | "No street address" always passes (there is no address field). "No patient name…" uses the server's description screener on the saved draft (`privacy_review.flags`, owner only); a hit turns it into a warning — it never blocks. "Contact limited to an approved desk" always passes (contact only comes from the coordination point). |
+| 48 | Preview card ID | 31:380 shows "BM-2026-····" | Kept as in the frame: the ID isn't shown in the public preview until the request is published. |
+| 49 | Request history | 32:1978 includes "Expiry reminder scheduled · System" | History is read from `audit_logs` (`GET /api/requests/{id}/history`, owner or reviewer only). Reminders aren't audited, so that row doesn't appear. Saves/unsaves never appear; contact reveals only for reviewers. Edits made during a correction are folded into "Resubmitted with changes · Changed: …". |
+| 50 | "Approved and published" note | 32:2042 | Static copy "Submitted details confirmed — not a medical verification." under every approval. |
+| 51 | Submitted card | 31:1223 frame has a fixed 66 px height (bug) | Card sizes to its content: tag, ID, status, body, "What happens next", actions. |
+| 52 | Submitter bottom nav | No mobile frame for submitters | Home · Requests · Create · Alerts · Profile, same pattern as the donor bottom nav (55:269). |
+| 53 | Public IDs | `BM-YYYY-NNNN` from the row id | Creation steps past IDs already used by seeded/imported requests, and the draft, its ID and the audit entry are written in one transaction. |
 
 ## Copy that differs by context
 The demo labels differ by screen ("Sample data", "Demo data", "Demonstration
@@ -56,6 +73,11 @@ records being shown.
 - **Map tiles:** development uses `tile.openstreetmap.org` (configured through
   `VITE_MAP_TILE_URL`). Production needs a provider whose terms allow the
   traffic, plus a check that the zoom-13 cap holds.
+
+## Open items from Phase 5 (workspaces)
+- **Submitter "Overview"** (32:841) has no frame; it opens the shared workspace overview (`/app`).
+- **Role chip** shows "Facility submitter · S-0142" (account reference); 32:841 shows "San Carlos desk". A short desk label isn't in the data model yet.
+- **Copy without frames**, kept minimal in `locales/en/manage.json`: empty states, toasts, "Correction requested" banner, "Continue draft", history titles other than those in 32:1978.
 
 ## Open items from Phase 4 (public site)
 - **Copy without frames**, kept minimal and in `locales/en`: sort labels (#26), "This request isn't available" (404 detail), "Couldn't update saved requests", "Removed from saved", "We couldn't get your location", the cluster/facility marker labels, and the Register/Login "Enter your full name." / "Enter your password." messages.
