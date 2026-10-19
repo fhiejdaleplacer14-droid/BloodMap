@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Notifications\RequestUpdate;
 use App\Services\AuditLogger;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
@@ -52,7 +53,7 @@ class RequestController extends Controller
             'submitter_id' => $user->getKey(),
             'coordination_point_id' => $user->coordination_point_id,
             'status' => RequestStatus::Draft,
-            'is_demo' => $user->is_demo,
+            'is_demo' => (bool) $user->is_demo,
         ]);
         AuditLogger::record($user, 'request.created', $bloodRequest, null, RequestStatus::Draft->value);
 

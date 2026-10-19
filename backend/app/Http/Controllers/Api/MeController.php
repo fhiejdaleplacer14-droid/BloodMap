@@ -87,8 +87,10 @@ class MeController extends Controller
 
         $user->revokeSessions();
         Auth::guard('web')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        if ($request->hasSession()) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
 
         return response()->json(['message' => 'Your account will be deleted within 30 days.'], 202);
     }

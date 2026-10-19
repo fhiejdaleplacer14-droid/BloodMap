@@ -24,7 +24,7 @@ class DescriptionScreener
         }
 
         // Honorifics or "patient/name" followed by a capitalised word.
-        $name = '/\b(Mr|Mrs|Ms|Miss|Dr|Sr|Jr|Gng|Ginang|G)\.?\s+[A-Z][a-z]+|\b(patient|pasyente|name|ngalan)\s*[:\-]?\s+[A-Z][a-z]+/u';
+        $name = '/\b(Mr|Mrs|Ms|Miss|Dr|Sr|Jr|Gng|Ginang|G)\.?\s+[A-Z][a-z]+|\b(?i:patient|pasyente|name|ngalan)\s*[:\-]?\s+[A-Z][a-z]+/u';
         if (preg_match($name, $text)) {
             $flags[] = self::POSSIBLE_NAME;
         }
