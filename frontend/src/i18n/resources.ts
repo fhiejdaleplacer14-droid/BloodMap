@@ -1,5 +1,8 @@
+import enAuth from './locales/en/auth.json'
 import enCommon from './locales/en/common.json'
 import enDev from './locales/en/dev.json'
+import enExplorer from './locales/en/explorer.json'
+import enLanding from './locales/en/landing.json'
 import enNav from './locales/en/nav.json'
 import enRequest from './locales/en/request.json'
 import enStates from './locales/en/states.json'
@@ -15,6 +18,9 @@ export const resources = {
     nav: enNav,
     request: enRequest,
     states: enStates,
+    landing: enLanding,
+    explorer: enExplorer,
+    auth: enAuth,
     dev: enDev,
   },
 } as const

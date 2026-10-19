@@ -1,0 +1,186 @@
+{
+  "pageTitle": "Blood requests",
+  "region": "Negros Island Region",
+  "sampleData": "Sample data",
+  "search": {
+    "label": "City or municipality",
+    "placeholder": "Search city or municipality"
+  },
+  "filters": {
+    "label": "Filters",
+    "bloodType": "Blood type",
+    "status": "Status",
+    "posted": "Posted",
+    "datePosted": "Date posted",
+    "area": "Area",
+    "triggerCount": "· {{count}}",
+    "triggerValue": "· {{value}}",
+    "bloodTypeHint": "Show requests for any of the selected types.",
+    "selected": "{{count}} selected",
+    "reset": "Reset",
+    "apply": "Apply",
+    "show_one": "Show {{count}} request",
+    "show_other": "Show {{count}} requests",
+    "clearAll": "Clear all",
+    "statuses": {
+      "active": "Active",
+      "fulfilled": "Recently fulfilled"
+    },
+    "postedRanges": {
+      "any": "Any time",
+      "today": "Today",
+      "3d": "Last 3 days",
+      "7d": "Last 7 days",
+      "custom": "Custom"
+    },
+    "from": "From",
+    "to": "To",
+    "rangeError": "“To” must be on or after “From”. Requests can’t be posted in the future.",
+    "areas": {
+      "all": "All NIR",
+      "occidental": "Negros Occidental",
+      "oriental": "Negros Oriental",
+      "siquijor": "Siquijor",
+      "near": "Near me"
+    },
+    "nearNote": "“Near me” uses your location only in this browser to sort results. It’s never sent with your account.",
+    "chips": {
+      "type": "Type: {{value}}",
+      "urgency": "{{value}}",
+      "status": "Status: {{value}}",
+      "posted": "Posted: {{value}}",
+      "postedRange": "Posted: {{from}} – {{to}}",
+      "postedFrom": "Posted: from {{from}}",
+      "postedTo": "Posted: until {{to}}",
+      "area": "Area: {{value}}",
+      "search": "“{{value}}”"
+    },
+    "applied": "Applied filters"
+  },
+  "results": {
+    "count_one": "{{count}} request",
+    "count_other": "{{count}} requests",
+    "inView": "in view",
+    "asOf": "as of {{time}}",
+    "sort": "Sort:",
+    "sortLabel": "Sort results",
+    "sorts": {
+      "-updated_at": "Most recent",
+      "urgency": "Needed soonest",
+      "expires_at": "Expiring soonest",
+      "-published_at": "Newest posted",
+      "nearest": "Nearest to me"
+    },
+    "listLabel": "Requests",
+    "privacyNote": "Locations are generalized to the city or an authorized facility. Details can change — always follow each request’s coordination steps.",
+    "refreshFailed": "Couldn’t refresh requests",
+    "showingFrom": "Showing results from {{time}}. Statuses may have changed.",
+    "retry": "Retry",
+    "offlineTitle": "You’re offline",
+    "offlineBody": "We’ll retry automatically when your connection returns.",
+    "updating": "Updating results…"
+  },
+  "views": {
+    "label": "View",
+    "list": "List",
+    "map": "Map"
+  },
+  "map": {
+    "label": "Map of blood requests",
+    "skip": "Skip map",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "locate": "Use my location",
+    "layers": "Map key",
+    "demoBadge": "Demonstration map · fictional requests",
+    "searchArea": "Search this area",
+    "loading": "Loading requests in view…",
+    "noneInView": "No {{filter}} requests {{where}} right now",
+    "noneInViewPlain": "No requests {{where}} right now",
+    "inArea": "in {{area}}",
+    "inView": "in this area",
+    "expiredHidden": "Expired requests aren’t shown on the map",
+    "closedHidden": "Closed requests aren’t shown on the map",
+    "approxArea": "Approx. area",
+    "locateFailed": "We couldn’t get your location",
+    "locateFailedBody": "Check your browser’s location permission. You can still search by city or municipality.",
+    "key": {
+      "title": "Map key",
+      "request": "Active request · blood type",
+      "cluster": "Several requests nearby",
+      "facility": "Authorized coordination point",
+      "area": "Approximate area (no exact address)"
+    },
+    "marker": "{{type}} request {{id}}, {{city}}",
+    "cluster_one": "{{count}} request nearby — zoom in",
+    "cluster_other": "{{count}} requests nearby — zoom in",
+    "facility": "Authorized coordination point: {{name}}",
+    "popupDetails": "View details"
+  },
+  "detail": {
+    "backToResults_one": "Back to {{count}} result",
+    "backToResults_other": "Back to {{count}} results",
+    "backToRequests": "Back to requests",
+    "save": "Save request",
+    "saved": "Saved",
+    "removeSaved": "Remove from saved",
+    "title": "{{type}} blood requested",
+    "notice": "BloodMap shares coordination details only. It doesn’t confirm that blood is still needed or that you can donate — qualified staff at the facility decide eligibility.",
+    "facts": {
+      "label": "Request facts",
+      "bloodType": "Blood type",
+      "bloodTypeValue": "{{type}} ({{spoken}})",
+      "units": "Units requested",
+      "unitsValue": "{{count}} · as stated by the requester",
+      "neededBy": "Needed by",
+      "location": "General location",
+      "posted": "Posted",
+      "updated": "Last updated",
+      "expires": "Expires"
+    },
+    "respond": {
+      "title": "How to respond",
+      "step1": "Contact the coordination point below during desk hours.",
+      "step2": "Mention request ID {{id}} so staff can match your response.",
+      "step3": "Staff screen every donor on-site. Follow their guidance — not this page — on whether you can donate."
+    },
+    "point": {
+      "eyebrow": "Authorized coordination point",
+      "hours": "{{hours}} PHT",
+      "gated": "Desk contact details are shown to signed-in users only.",
+      "logIn": "Log in to view contact",
+      "directions": "Directions",
+      "call": "Call {{value}}",
+      "email": "Email {{value}}"
+    },
+    "reviewNote": "Submitted details reviewed by a coordinator on {{when}}. This confirms the listing, not medical information.",
+    "expired": {
+      "title": "No longer accepting responses",
+      "body": "It reached its expiry on {{date}} at {{time}} without a coordinator update. Please don’t contact the facility about this request."
+    },
+    "closed": {
+      "title": "No further responses needed",
+      "body": "A coordinator closed this request on {{date}}. Please don’t contact the facility about it."
+    },
+    "nearby": "Active {{type}} requests nearby",
+    "findNearby": "Find active requests nearby",
+    "notFound": {
+      "title": "This request isn’t available",
+      "body": "It may have been removed from public view. Look for active requests nearby instead.",
+      "action": "Find active requests"
+    },
+    "savedToast": "Request saved",
+    "savedToastBody": "You’ll see updates in Saved requests.",
+    "removedToast": "Removed from saved",
+    "saveFailed": "Couldn’t update saved requests",
+    "saveFailedBody": "Check your connection and try again."
+  },
+  "relative": {
+    "in": {
+      "minutes": "in {{count}} min",
+      "hours": "in {{count}} h",
+      "days_one": "in {{count}} day",
+      "days_other": "in {{count}} days"
+    }
+  }
+}

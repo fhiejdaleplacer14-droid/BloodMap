@@ -7,8 +7,11 @@
     "logIn": "Log In",
     "findARequest": "Find a Request",
     "createAccount": "Create account",
-    "primary": "Main"
+    "primary": "Main",
+    "account": "Account menu for {{name}}",
+    "menu": "Menu"
   },
+  "skipToContent": "Skip to main content",
   "sidebar": {
     "workspace": "Workspace",
     "help": "Help & guidelines",

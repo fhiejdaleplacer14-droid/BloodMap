@@ -25,28 +25,42 @@ export type BloodType = (typeof BLOOD_TYPES)[number]
 /** Statuses that must never read as live (5:202). */
 export const RECEDED_STATUSES: ReadonlySet<RequestStatus> = new Set(['closed', 'expired', 'rejected'])
 
+/** Provinces of NIR — the Explorer "Area" filter (25:625). */
+export const PROVINCES = ['Negros Occidental', 'Negros Oriental', 'Siquijor'] as const
+export type Province = (typeof PROVINCES)[number]
+
+/** Desk phone or email of the coordination point, gated by the server (decision #19). */
+export type RequestContact = { method: 'phone' | 'email'; value: string; masked: boolean }
+
 export type PublicRequest = {
   id: string
   blood_type: BloodType
   units_requested: number | null
+  /** YYYY-MM-DD (Manila). */
   needed_by: string | null
+  /** ["08:00", "17:00"] */
+  desk_window: [string, string] | null
   urgency: Urgency
+  category: string | null
   status: RequestStatus
   /** Municipality centroid only — never an address (decision #5). */
   location: {
     municipality: string
-    province: string
+    province: Province
+    /** [lng, lat] */
     point: [number, number]
     precision: 'municipality'
   }
-  coordination_point: { id: number; name: string; hours: string | null } | null
-  contact: { phone: string | null } | null
+  coordination_point: { id: number; name: string; hours: string | null }
+  contact: RequestContact | null
   public_summary: string
+  response_instructions: string | null
   published_at: string | null
   updated_at: string
   expires_at: string | null
   is_demo: boolean
-  can: { save?: boolean; report?: boolean }
+  is_saved: boolean
+  can: { save: boolean; report: boolean; reveal_contact?: boolean }
 }
 
 /** Display with a true minus sign (U+2212) for legibility (5:264). */

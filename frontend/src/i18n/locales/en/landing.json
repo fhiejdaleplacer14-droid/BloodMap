@@ -1,0 +1,127 @@
+{
+  "hero": {
+    "eyebrow": "Community blood coordination",
+    "title": "When every connection matters.",
+    "body": "Explore active blood requests across Negros Island Region, see what each one needs, and find the right coordination point to respond — without exposing anyone’s private details.",
+    "explore": "Explore Blood Requests",
+    "howItWorks": "How It Works",
+    "assurances": {
+      "free": "Free to browse",
+      "noAccount": "No account needed to view requests",
+      "generalized": "Locations generalized for privacy"
+    },
+    "searchLabel": "Search city or municipality",
+    "useLocation": "Use my location",
+    "sampleData": "Sample data",
+    "mapLabel": "Preview map of active requests in Negros Island Region"
+  },
+  "trust": {
+    "eyebrow": "Built on transparency",
+    "title": "Clear about what you’re seeing — and what you’re not.",
+    "body": "Request status and availability can change at any time. Each request shows when it was last updated and how to reach its authorized coordination point.",
+    "current": {
+      "title": "Current request information",
+      "body": "Every request carries an updated-at time and an expiry. Expired and closed requests leave the map automatically — they’re never shown as active.",
+      "freshness": "Updated 2 h ago",
+      "expires": "Expires Oct 18 · 17:00"
+    },
+    "authorized": {
+      "title": "Authorized coordination",
+      "body": "Only authorized coordinators can publish a request after reviewing what was submitted. Responses go through listed coordination points, not private numbers.",
+      "proof": "Reviewed by a coordinator"
+    },
+    "privacy": {
+      "title": "Privacy-conscious locations",
+      "body": "Requests appear at a city or an authorized facility. Patient names, home addresses and exact coordinates are never displayed publicly.",
+      "proof": "City-level area, never a home address"
+    }
+  },
+  "how": {
+    "eyebrow": "How it works",
+    "title": "Three steps from finding a request to the right desk.",
+    "steps": {
+      "discover": {
+        "title": "Discover an active request",
+        "body": "Search by city or municipality and filter by blood type. The map and list stay in sync."
+      },
+      "review": {
+        "title": "Review its details and requirements",
+        "body": "See the blood type, units stated by the requester, the time window, freshness and expiry."
+      },
+      "follow": {
+        "title": "Follow the verified coordination steps",
+        "body": "Contact the listed coordination point. Qualified staff there handle screening and eligibility."
+      }
+    },
+    "guide": "Read the full guide"
+  },
+  "region": {
+    "eyebrow": "Regional focus",
+    "title": "Built first for Negros Island Region.",
+    "body": "BloodMap starts with the three provinces of NIR so coordination stays local and manageable. Select an area to explore.",
+    "areasLabel": "Areas",
+    "all": "All of NIR",
+    "sample": "sample",
+    "provinceRequests_one": "{{count}} sample request",
+    "provinceRequests_other": "{{count}} sample requests",
+    "provinceLive_one": "{{count}} active request",
+    "provinceLive_other": "{{count}} active requests",
+    "demoDisclaimer": "Counts are fictional demonstration data and don’t reflect real activity in any city.",
+    "demoChip": "Demonstration data",
+    "mapLabel": "Map of {{area}}"
+  },
+  "safety": {
+    "eyebrow": "Safety and guidelines",
+    "title": "A coordination tool — not a blood bank or a medical service.",
+    "body": "BloodMap never promises that blood is available or that a donor can give. Here’s how the interface keeps that clear.",
+    "status": {
+      "title": "Request status, always labelled",
+      "body": "Every request shows one of seven statuses with an icon and words — never color alone."
+    },
+    "freshness": {
+      "title": "Freshness and expiry",
+      "body": "Requests show when they were last updated and expire automatically if nobody confirms them.",
+      "fresh": "Updated 2 h ago",
+      "aging": "Updated 2 days ago",
+      "stale": "No update in 5 days"
+    },
+    "contact": {
+      "title": "Contact and privacy",
+      "body": "Only authorized coordination points are listed. Donor and patient contact details are never public.",
+      "proof": "Desk contact visible after sign-in · personal numbers never shown"
+    },
+    "medical": {
+      "title": "Medical eligibility",
+      "body": "Whether someone can donate is decided by qualified professionals at the facility — not by BloodMap or its assistant.",
+      "proof": "Eligibility is assessed by qualified staff on-site."
+    }
+  },
+  "cta": {
+    "title": "See what’s needed near you",
+    "body": "Browse active requests in NIR — no account required.",
+    "safety": "Read safety guidelines",
+    "explore": "Explore Blood Requests"
+  },
+  "footer": {
+    "overview": "A blood-request discovery and coordination platform for Negros Island Region. Built to help people find active requests and the right place to respond.",
+    "product": "Product",
+    "safetyPrivacy": "Safety & privacy",
+    "support": "Support",
+    "links": {
+      "find": "Find Blood Requests",
+      "how": "How It Works",
+      "about": "About",
+      "safety": "Safety and Guidelines",
+      "privacy": "Privacy notice",
+      "terms": "Terms of use",
+      "retention": "Data retention",
+      "contact": "Contact support",
+      "report": "Report a problem",
+      "docs": "Project documentation",
+      "github": "GitHub repository"
+    },
+    "external": "(opens in a new tab)",
+    "disclaimer": "BloodMap NIR is an independent student portfolio project and a coordination tool. It is not a blood bank, a medical provider, or affiliated with any government agency or humanitarian organization. All requests in this demo are fictional.",
+    "copyright": "© 2026 BloodMap NIR · v0.1 demo"
+  }
+}
