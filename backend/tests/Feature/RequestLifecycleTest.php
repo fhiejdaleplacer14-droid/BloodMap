@@ -235,7 +235,7 @@ class RequestLifecycleTest extends TestCase
             ->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.submitter.reference', $this->submitter->reference)
-            ->assertJsonPath('counts', ['unassigned' => 1, 'mine' => 1, 'needs_correction' => 0, 'all_open' => 2]);
+            ->assertJsonPath('counts', ['unassigned' => 1, 'mine' => 1, 'needs_correction' => 0, 'all_open' => 2, 'active' => 0, 'closed' => 0]);
 
         $this->actingAs(User::factory()->create())->getJson('/api/coordinator/queue')->assertForbidden();
         $this->actingAs(User::factory()->coordinator()->create())->getJson('/api/coordinator/queue')->assertJsonCount(0, 'data');

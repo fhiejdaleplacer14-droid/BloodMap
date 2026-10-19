@@ -281,7 +281,17 @@ class RequestController extends Controller
             ];
         }
 
-        return response()->json(['data' => $events]);
+        // "Previous review notes" (36:498): the submitter's track record, for reviewers only.
+        $meta = $reviewer && $bloodRequest->submitter_id !== null ? ['submitter' => [
+            'approved' => BloodRequest::query()->where('submitter_id', $bloodRequest->submitter_id)->whereNotNull('published_at')->count(),
+            'corrections' => AuditLog::query()
+                ->where('target_type', $bloodRequest->getMorphClass())
+                ->where('action', 'request.correction_requested')
+                ->whereIn('target_id', BloodRequest::query()->where('submitter_id', $bloodRequest->submitter_id)->select('id'))
+                ->count(),
+        ]] : (object) [];
+
+        return response()->json(['data' => $events, 'meta' => $meta]);
     }
 
     private function managed(BloodRequest $bloodRequest): ManagedRequestResource

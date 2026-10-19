@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\Admin\AuditLogController;
 use App\Http\Controllers\Api\Admin\RoleChangeController;
 use App\Http\Controllers\Api\Admin\UserController;
+use App\Http\Controllers\Api\CoordinatorActivityController;
 use App\Http\Controllers\Api\LookupController;
 use App\Http\Controllers\Api\MeController;
 use App\Http\Controllers\Api\PublicRequestController;
@@ -58,6 +59,8 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
     Route::middleware('role:coordinator,admin')->group(function () {
         Route::get('/coordinator/queue', [ReviewController::class, 'queue']);
         Route::get('/coordinator/summary', [ReviewController::class, 'summary']);
+        Route::get('/coordinator/activity', [CoordinatorActivityController::class, 'index']);
+        Route::get('/coordinator/activity/export', [CoordinatorActivityController::class, 'export']);
         Route::post('/requests/{bloodRequest}/assign', [ReviewController::class, 'assign']);
         Route::post('/requests/{bloodRequest}/approve', [ReviewController::class, 'approve']);
         Route::post('/requests/{bloodRequest}/request-correction', [ReviewController::class, 'requestCorrection']);

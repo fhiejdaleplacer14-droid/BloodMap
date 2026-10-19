@@ -6,6 +6,7 @@ use App\Enums\RequestStatus;
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ManagedRequestResource;
+use App\Models\AuditLog;
 use App\Models\BloodRequest;
 use App\Models\User;
 use App\Notifications\RequestUpdate;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
@@ -24,25 +26,30 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
  */
 class ReviewController extends Controller
 {
-    /** Review Queue tabs (35:462). */
-    public const TABS = ['unassigned', 'mine', 'needs_correction', 'all_open'];
+    /** Review Queue tabs (35:462), plus the sidebar's Active / Closed Requests lists. */
+    public const TABS = ['unassigned', 'mine', 'needs_correction', 'all_open', 'active', 'closed'];
 
-    /** GET /api/coordinator/queue?tab=… */
+    /** Actions charted on the Overview (35:12 "Review activity"). */
+    private const CHARTED = ['request.approved', 'request.correction_requested', 'request.rejected'];
+
+    private const RELATIONS = ['municipality', 'coordinationPoint', 'submitter', 'assignedCoordinator'];
+
+    /** GET /api/coordinator/queue?tab=… — 20 per page; counts for every tab. */
     public function queue(Request $request): AnonymousResourceCollection
     {
         $tab = $request->validate(['tab' => ['sometimes', Rule::in(self::TABS)]])['tab'] ?? 'all_open';
         /** @var User $user */
         $user = $request->user();
 
-        $requests = $this->tabQuery($user, $tab)
-            ->with(['municipality', 'coordinationPoint', 'submitter', 'assignedCoordinator'])
+        $query = $this->tabQuery($user, $tab)->with(self::RELATIONS);
+        $query = match ($tab) {
+            'active' => $query->orderBy('expires_at'),
+            'closed' => $query->latest('updated_at'),
             // Queue position = first submission, so corrections keep their place (55:331).
-            ->orderBy('first_submitted_at')
-            ->orderBy('id')
-            ->paginate(30)
-            ->withQueryString();
+            default => $query->orderBy('first_submitted_at'),
+        };
 
-        return ManagedRequestResource::collection($requests)->additional([
+        return ManagedRequestResource::collection($query->orderBy('id')->paginate(20)->withQueryString())->additional([
             'counts' => collect(self::TABS)->mapWithKeys(fn (string $t) => [$t => $this->tabQuery($user, $t)->count()]),
         ]);
     }
@@ -60,9 +67,99 @@ class ReviewController extends Controller
             'unassigned' => $this->tabQuery($user, 'unassigned')->count(),
             'assigned_to_me' => $this->tabQuery($user, 'mine')->count(),
             'needs_correction' => $scoped()->where('status', RequestStatus::NeedsCorrection)->count(),
+            'all_open' => $this->tabQuery($user, 'all_open')->count(),
             'active' => $scoped()->publiclyListed()->count(),
             'expiring_24h' => $scoped()->publiclyListed()->whereBetween('expires_at', [now(), now()->addDay()])->count(),
+            'oldest_pending_at' => $this->iso($scoped()->where('status', RequestStatus::PendingReview)->min('first_submitted_at')),
+            'needs_review' => ManagedRequestResource::collection(
+                $scoped()->where('status', RequestStatus::PendingReview)->with(self::RELATIONS)->orderBy('first_submitted_at')->limit(4)->get()
+            )->resolve($request),
+            'expiring_soon' => ManagedRequestResource::collection(
+                $scoped()->publiclyListed()->whereBetween('expires_at', [now(), now()->addDay()])->with(self::RELATIONS)->orderBy('expires_at')->limit(5)->get()
+            )->resolve($request),
+            'recently_updated' => $this->recentlyUpdated($user),
+            'activity' => $this->weeklyActivity($user),
         ]]);
+    }
+
+    /**
+     * Audit entries on requests in the coordinator's area (all areas for
+     * admins). Saves are donors' business and never included.
+     *
+     * @return Builder<AuditLog>
+     */
+    public static function areaAudit(User $user): Builder
+    {
+        return AuditLog::query()
+            ->where('target_type', (new BloodRequest)->getMorphClass())
+            ->whereNotIn('action', ['request.saved', 'request.unsaved'])
+            ->when($user->role !== Role::Admin, fn (Builder $q) => $q->whereIn(
+                'target_id', BloodRequest::query()->inArea((int) $user->area_id)->select('id')
+            ));
+    }
+
+    /**
+     * "Recently updated" (35:12): the last three changes in the area, with
+     * who made them relative to the viewer.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function recentlyUpdated(User $user): array
+    {
+        $logs = self::areaAudit($user)
+            ->whereNotIn('action', ['request.contact_revealed', 'request.assigned'])
+            ->latest('created_at')->latest('id')
+            ->limit(3)
+            ->get();
+        $owners = BloodRequest::query()->whereKey($logs->pluck('target_id')->filter()->all())->pluck('submitter_id', 'id');
+
+        return $logs->map(fn (AuditLog $log) => [
+            'id' => $log->getKey(),
+            'request_id' => $log->meta['target_label'] ?? null,
+            'action' => $log->action,
+            'fields' => $log->meta['fields'] ?? [],
+            'by' => match (true) {
+                $log->actor_id === null => 'system',
+                $log->actor_id === $user->getKey() => 'you',
+                $log->actor_id === ($owners[$log->target_id] ?? null) => 'owner',
+                default => 'coordinator',
+            },
+            'created_at' => $log->created_at?->toIso8601ZuluString(),
+        ])->values()->all();
+    }
+
+    /**
+     * Review decisions per Manila day for the last 7 days, oldest first.
+     *
+     * @return list<array<string, int|string>>
+     */
+    private function weeklyActivity(User $user): array
+    {
+        $tz = BloodRequest::LOCAL_TIME_ZONE;
+        $start = now($tz)->startOfDay()->subDays(6);
+        $days = [];
+        for ($i = 0; $i < 7; $i++) {
+            $days[$start->copy()->addDays($i)->toDateString()] = ['approved' => 0, 'correction_requested' => 0, 'rejected' => 0];
+        }
+
+        $logs = self::areaAudit($user)
+            ->whereIn('action', self::CHARTED)
+            ->where('created_at', '>=', $start->copy()->utc())
+            ->get(['action', 'created_at']);
+        foreach ($logs as $log) {
+            $day = $log->created_at?->copy()->setTimezone($tz)->toDateString();
+            $key = substr($log->action, strlen('request.'));
+            if ($day !== null && isset($days[$day][$key])) {
+                $days[$day][$key]++;
+            }
+        }
+
+        return collect($days)->map(fn (array $counts, string $date) => ['date' => $date, ...$counts])->values()->all();
+    }
+
+    private function iso(mixed $value): ?string
+    {
+        return $value ? Carbon::parse($value)->toIso8601ZuluString() : null;
     }
 
     /** POST /api/requests/{id}/assign — "Assign to me" (35:462). */
@@ -181,6 +278,8 @@ class ReviewController extends Controller
             'unassigned' => $query->where('status', RequestStatus::PendingReview)->whereNull('assigned_coordinator_id'),
             'mine' => $query->where('status', RequestStatus::PendingReview)->where('assigned_coordinator_id', $user->getKey()),
             'needs_correction' => $query->where('status', RequestStatus::NeedsCorrection),
+            'active' => $query->where('status', RequestStatus::Active),
+            'closed' => $query->whereIn('status', [RequestStatus::Fulfilled, RequestStatus::Closed, RequestStatus::Expired, RequestStatus::Rejected]),
             default => $query->whereIn('status', [RequestStatus::PendingReview, RequestStatus::NeedsCorrection]),
         };
     }
