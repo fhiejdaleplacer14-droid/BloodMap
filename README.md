@@ -37,22 +37,22 @@ Any deviation from it is logged in [`docs/decisions.md`](docs/decisions.md).
 
 ## Highlights
 
-- **🗺️ Find a request in seconds.** Filter by blood type, status, posting date
+- ** Find a request in seconds.** Filter by blood type, status, posting date
   and area, on a list or a live map, on desktop or phone.
-- **🔒 Private by design.** Requests are placed at the municipality centroid,
+- ** Private by design.** Requests are placed at the municipality centroid,
   never at an address or a facility's coordinates. Desk contacts are gated by
   role, coordinators see them masked until they choose to reveal them, and
   every reveal is audited.
-- **✅ Reviewed before it's public.** Coordinators approve requests, send them
+- ** Reviewed before it's public.** Coordinators approve requests, send them
   back for correction or reject them, helped by automated checks for phone
   numbers, personal names, duplicates and missing desk hours.
-- **💬 A built-in guide.** It answers "how does this work?" questions from
+- ** A built-in guide.** It answers "how does this work?" questions from
   approved help articles and cites its source. It never gives medical advice
   or eligibility assessments. It needs no external AI API and costs nothing to
   run.
-- **🧾 An audit trail that can't be edited.** `audit_logs` is insert-only: a
+- ** An audit trail that can't be edited.** `audit_logs` is insert-only: a
   database trigger rejects every UPDATE and DELETE.
-- **♿ Accessible.** Every screen, for every role, is scanned against WCAG 2.2
+- ** Accessible.** Every screen, for every role, is scanned against WCAG 2.2
   AA in light and dark mode on every push.
 
 ### Who uses it
