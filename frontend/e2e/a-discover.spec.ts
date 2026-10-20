@@ -9,8 +9,10 @@ test('A · a visitor finds an O+ request and opens its details', async ({ page }
 
   // Blood type filter (popover) → O+ → "Show N requests".
   await page.getByRole('button', { name: /^Blood type/ }).click()
-  await page.getByRole('button', { name: 'O positive' }).click()
-  await page.getByRole('button', { name: /^Show \d+ requests?$/ }).click()
+  // Scoped to the open filter: the map's O+ markers are buttons with the same name.
+  const filter = page.getByRole('dialog', { name: 'Blood type' })
+  await filter.getByRole('button', { name: 'O positive' }).click()
+  await filter.getByRole('button', { name: /^Show \d+ requests?$/ }).click()
   await expect(page).toHaveURL(/type=O%2B|type=O\+/)
   await expect(page.getByText('Type: O+')).toBeVisible()
 
