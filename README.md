@@ -178,7 +178,7 @@ development, emails go to `storage/logs/laravel.log` (`MAIL_MAILER=log`).
 ### Demo accounts
 
 All demo records are fictional and carry `is_demo = true`. Every account
-uses the password in `DEMO_PASSWORD` (default `BloodMap-demo-2026!`).
+uses the password in `DEMO_PASSWORD`.
 
 | Email | Role | Notes |
 |-------|------|-------|
