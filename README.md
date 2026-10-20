@@ -27,10 +27,6 @@ Region. Facility desks post requests, coordinators review each one before it
 goes public, and anyone can see where help is needed, without an address or a
 private phone number ever reaching the map.
 
-It is built from the Figma file *BloodMap NIR — Product Design*. Page 12 of
-that file, *Handoff and Implementation Notes*, is the implementation spec.
-Any deviation from it is logged in [`docs/decisions.md`](docs/decisions.md).
-
 > [!NOTE]
 > This is a portfolio project. All seeded requests, people and facilities are
 > fictional and are labelled as demo data in the UI.
