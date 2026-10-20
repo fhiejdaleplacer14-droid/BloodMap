@@ -30,7 +30,7 @@ test('D · a facility submitter creates and submits a request for review', async
   await expect(page.getByText('No street address or exact coordinates')).toBeVisible()
   await expect(page.getByText('No patient name or diagnosis detected in the description')).toBeVisible()
   await page.getByRole('button', { name: 'Submit for review' }).click()
-  await expect(page.getByText('Confirm the details before you submit.')).toBeVisible()
+  await expect(page.getByRole('alert').filter({ hasText: 'Confirmation: Confirm the details before you submit.' })).toBeVisible()
   await page.getByRole('checkbox', { name: /I confirm these details were confirmed with the facility/ }).check()
   await page.getByRole('button', { name: 'Submit for review' }).click()
 

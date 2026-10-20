@@ -6,7 +6,7 @@ type BloodTypeTagProps = {
   type: BloodType
   /** lg 52×52 = cards & detail headers · sm 44×24 = tables, chips, map callouts. */
   size?: 'lg' | 'sm'
-  /** Receded (expired / closed) cards show the tag at 50 %. */
+  /** Receded (expired / closed) requests show a neutral tag — never brand red. */
   dimmed?: boolean
   className?: string
 }
@@ -19,9 +19,10 @@ export function BloodTypeTag({ type, size = 'lg', dimmed, className }: BloodType
   return (
     <span
       className={cn(
-        'inline-flex shrink-0 flex-col items-center justify-center border border-brand-soft bg-brand-soft font-semibold text-brand',
+        'inline-flex shrink-0 flex-col items-center justify-center border font-semibold',
         size === 'lg' ? 'size-13 rounded-md' : 'h-6 w-11 rounded-sm',
-        dimmed && 'opacity-50',
+        // Receded requests use neutral colours, not opacity, so text keeps 4.5:1 (decision #87).
+        dimmed ? 'border-default bg-subtle text-secondary' : 'border-brand-soft bg-brand-soft text-brand',
         className,
       )}
     >

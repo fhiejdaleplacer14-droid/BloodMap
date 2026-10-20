@@ -154,7 +154,7 @@ function Conversation({ onClose, titleId, asDialog = false }: { onClose: () => v
           <HelpChat size={16} />
         </span>
         <div className="flex min-w-0 flex-1 flex-col">
-          <Title id={titleId} className="type-label-m text-primary">
+          <Title {...(asDialog ? {} : { id: titleId })} className="type-label-m text-primary">
             {t('title')}
           </Title>
           <p className="type-body-s truncate text-tertiary">{t('subtitle')}</p>

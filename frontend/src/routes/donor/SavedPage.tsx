@@ -78,13 +78,14 @@ export function SavedPage() {
       >
         <TabsList aria-label={t('saved.caption')}>
           {(['all', 'active', 'inactive'] as const).map((key) => (
-            <Tab key={key} value={key} count={saved.data ? lists[key].length : undefined}>
+            <Tab key={key} value={key} aria-controls="saved-results" count={saved.data ? lists[key].length : undefined}>
               {t(`saved.tabs.${key}`)}
             </Tab>
           ))}
         </TabsList>
       </Tabs>
 
+      <div id="saved-results" className="flex flex-col gap-6">
       {saved.isPending ? (
         <Skeleton className="h-64 w-full rounded-lg" />
       ) : saved.isError ? (
@@ -158,6 +159,7 @@ export function SavedPage() {
         </>
       )}
 
+      </div>
       <p className="type-body-s flex items-center gap-2 text-tertiary">
         <icons.info aria-hidden size={16} className="shrink-0" />
         {t('saved.note')}

@@ -8,8 +8,10 @@ test('B · a visitor registers and is told to check their inbox', async ({ page 
 
   // Inline validation before anything is sent.
   await page.getByRole('button', { name: 'Create account' }).click()
-  await expect(page.getByText('Enter your full name.')).toBeVisible()
-  await expect(page.getByText('You need to accept to create an account.')).toBeVisible()
+  // Error summary at the top (55:439), each problem also shown under its field.
+  await expect(page.getByRole('alert').filter({ hasText: /Fix [0-9]+ problems/ })).toBeFocused()
+  await expect(page.getByText('Enter your full name.', { exact: true })).toBeVisible()
+  await expect(page.getByText('You need to accept to create an account.', { exact: true })).toBeVisible()
 
   const email = `e2e.${Date.now()}@example.org`
   const password = `Bm-e2e-${Date.now()}-Strong!`
@@ -18,7 +20,7 @@ test('B · a visitor registers and is told to check their inbox', async ({ page 
   await page.getByLabel('Password', { exact: true }).fill(password)
   await page.getByLabel('Confirm password').fill('different-Password-1!')
   await page.getByRole('button', { name: 'Create account' }).click()
-  await expect(page.getByText('Passwords don’t match.')).toBeVisible()
+  await expect(page.getByText('Passwords don’t match.', { exact: true })).toBeVisible()
 
   await page.getByLabel('Confirm password').fill(password)
   await page.getByRole('checkbox', { name: /I agree to the Terms of use/ }).check()

@@ -66,6 +66,8 @@ export function useQueue(tab: ListTab, page: number) {
       ).data,
     placeholderData: keepPreviousData,
     staleTime: 15_000,
+    // The queue refreshes itself; new rows wait behind the "n new" pill (54:300).
+    refetchInterval: 30_000,
   })
 }
 

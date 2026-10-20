@@ -321,4 +321,14 @@ class RequestLifecycleTest extends TestCase
 
         $this->assertDatabaseMissing('audit_logs', ['action' => 'request.edited', 'target_id' => $request->getKey()]);
     }
+
+    public function test_owner_is_warned_about_a_possible_duplicate_before_submitting(): void
+    {
+        $first = $this->submittedRequest();
+        $draft = $this->actingAs($this->submitter)->postJson('/api/requests', $this->draftPayload())->assertCreated();
+
+        $draft->assertJsonPath('data.privacy_review.duplicate_of', $first->public_id);
+        $this->actingAs($this->submitter)->postJson('/api/requests', $this->draftPayload(['blood_type' => 'AB-']))
+            ->assertJsonPath('data.privacy_review.duplicate_of', null);
+    }
 }

@@ -155,7 +155,7 @@ export function MyRequestsPage({ drafts = false }: { drafts?: boolean }) {
         <Tabs value={filters.tab} onValueChange={(value) => update({ tab: value === 'all' ? undefined : value })}>
           <TabsList aria-label={t('mine.caption')}>
             {MINE_TABS.map((key) => (
-              <Tab key={key} value={key} count={counts?.[key]}>
+              <Tab key={key} value={key} aria-controls="my-requests-results" count={counts?.[key]}>
                 {t(`mine.tabs.${key}`)}
               </Tab>
             ))}
@@ -163,6 +163,7 @@ export function MyRequestsPage({ drafts = false }: { drafts?: boolean }) {
         </Tabs>
       )}
 
+      <div id="my-requests-results" className="flex flex-col gap-6">
       {list.isPending ? (
         <Skeleton className="h-80 w-full rounded-lg" />
       ) : list.isError ? (
@@ -236,6 +237,7 @@ export function MyRequestsPage({ drafts = false }: { drafts?: boolean }) {
           )}
         </>
       )}
+      </div>
       <CloseRequestDialog {...closeDialog} />
     </div>
   )

@@ -23,7 +23,7 @@ export type ManagedRequest = Omit<PublicRequest, 'can'> & {
   rejection_reason: string | null
   closure_reason: string | null
   /** Owner only: screener flags on the public text, computed live (31:840). */
-  privacy_review?: { flags: string[] }
+  privacy_review?: { flags: string[]; duplicate_of: string | null }
   /** Reviewers only: automated checks from submission (36:498). */
   checks?: { flags: string[]; possible_duplicate: boolean }
   /** Reviewers only: the submitter as a reference, never a name. */

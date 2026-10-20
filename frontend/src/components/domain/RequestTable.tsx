@@ -94,17 +94,17 @@ export function RequestTable({ rows, caption, selectedId, onRowClick, renderActi
                 <td className={cell}>
                   <BloodTypeTag type={row.blood_type} size="sm" dimmed={inactive} />
                 </td>
-                <td className={cn(cell, 'type-body-m max-w-45 truncate text-primary', inactive && 'opacity-70')}>{row.municipality}</td>
-                <td className={cn(cell, 'type-mono-s text-secondary', inactive && 'opacity-70')}>
+                <td className={cn(cell, 'type-body-m max-w-45 truncate', inactive ? 'text-tertiary' : 'text-primary')}>{row.municipality}</td>
+                <td className={cn(cell, 'type-mono-s', inactive ? 'text-tertiary' : 'text-secondary')}>
                   <time dateTime={row.created_at}>{formatDate(row.created_at, locale)}</time>
                 </td>
-                <td className={cn(cell, 'type-mono-s text-secondary', inactive && 'opacity-70')}>
+                <td className={cn(cell, 'type-mono-s', inactive ? 'text-tertiary' : 'text-secondary')}>
                   {row.expires_at ? <time dateTime={row.expires_at}>{formatShortDateTime(row.expires_at, locale)}</time> : '—'}
                 </td>
                 <td className={cell}>
                   <StatusBadge status={row.status} />
                 </td>
-                <td className={cn(cell, 'type-mono-s text-secondary', inactive && 'opacity-70')}>
+                <td className={cn(cell, 'type-mono-s', inactive ? 'text-tertiary' : 'text-secondary')}>
                   <time dateTime={row.updated_at} title={formatAbsolute(row.updated_at, locale)}>
                     {tc(`time.ago.${updated.unit}`, { count: updated.count })}
                   </time>

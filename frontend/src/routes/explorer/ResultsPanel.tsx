@@ -112,7 +112,6 @@ export function ResultsPanel({
           </p>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger
-              aria-label={t('results.sortLabel')}
               className="flex items-center gap-1 rounded-sm whitespace-nowrap"
             >
               <span className="type-body-s text-secondary">{t('results.sort')}</span>

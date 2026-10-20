@@ -117,7 +117,9 @@
       "all_open": "The queue is clear."
     },
     "emptyTitle": "Nothing here",
-    "summary": "Showing {{from}}–{{to}} of {{total}}"
+    "summary": "Showing {{from}}–{{to}} of {{total}}",
+    "newPill_one": "{{count}} new · Show",
+    "newPill_other": "{{count}} new · Show"
   },
   "lists": {
     "activeTitle": "Active requests",

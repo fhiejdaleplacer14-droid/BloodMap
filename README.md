@@ -108,13 +108,16 @@ PostgreSQL, with no PostGIS.
 | backend    | `vendor/bin/pint --test` · `vendor/bin/phpstan analyse --memory-limit=1G` · `php artisan test` (uses the `bloodmap_testing` database) |
 
 CI runs the same checks on every push to `main` and on every pull request.
-The backend job runs against a PostgreSQL service container.
+The backend job runs against a PostgreSQL service container. A third job then
+runs the Playwright suite below (flows A–G plus WCAG 2.2 AA scans) against its
+own PostgreSQL service and uploads the HTML report as an artifact.
 
 ### End-to-end flows (Playwright)
 
 `frontend/e2e` covers the seven prototype flows from Figma page 11 (A discover ·
 B register · C save · D submit · E review · F administer · G assistant), plus
-flow A on a phone-sized screen.
+flow A on a phone-sized screen, and an axe-core WCAG 2.2 AA scan of every
+screen for every role in light and dark mode (`z-a11y*.spec.ts`).
 
 ```bash
 cd frontend

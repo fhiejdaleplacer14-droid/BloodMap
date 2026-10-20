@@ -12,6 +12,7 @@ import { useRegister, useResendVerification } from '../../lib/api/auth'
 import { errorBody, errorStatus } from '../../lib/api/client'
 import { AuthHeading, AuthLayout, Banner, IconTile } from './AuthLayout'
 import { isBreachedPasswordMessage, maskEmail, meetsPasswordRules } from './authUtils'
+import { ErrorSummary, type SummaryError } from '../../components/ui/ErrorSummary'
 import { PasswordRequirements } from './PasswordRequirements'
 
 const AlertCircle = icons['alert-circle']
@@ -80,9 +81,25 @@ export function RegisterPage() {
   const form = useForm<Values>({
     resolver: zodResolver(schema),
     defaultValues: { name: '', email: '', password: '', password_confirmation: '', terms: false, email_saved_status_changes: false },
+    // The error summary takes focus instead (55:439).
+    shouldFocusError: false,
   })
   const password = useWatch({ control: form.control, name: 'password' })
-  const { errors } = form.formState
+  const { errors, submitCount } = form.formState
+  const labels: Record<string, string> = {
+    name: t('fields.name'),
+    email: t('fields.email'),
+    password: t('fields.password'),
+    password_confirmation: t('fields.confirmPassword'),
+    terms: t('register.termsLabel'),
+  }
+  const summary: SummaryError[] =
+    submitCount > 0
+      ? Object.keys(labels).flatMap((name) => {
+          const message = errors[name as keyof typeof errors]?.message
+          return message ? [{ name, label: labels[name], message }] : []
+        })
+      : []
 
 
   const onSubmit = form.handleSubmit((values) =>
@@ -114,6 +131,7 @@ export function RegisterPage() {
     <AuthLayout title={t('register.title')}>
       <AuthHeading title={t('register.title')} subtitle={t('register.subtitle')} />
       {unexpected && <Banner tone="critical" title={t('errors.generic')} />}
+      <ErrorSummary errors={summary} onSelect={(name) => form.setFocus(name as keyof Values)} />
       <form noValidate onSubmit={onSubmit} className="flex flex-col gap-5">
         <TextField label={t('fields.name')} autoComplete="name" error={errors.name?.message} {...form.register('name')} />
         <TextField

@@ -17,7 +17,7 @@ test('A · a visitor finds an O+ request and opens its details', async ({ page }
   // Results: every card is O+; the map shows them too (municipality level only).
   const cards = page.locator('#explorer-results a[id^="request-card-"]')
   await expect(cards.first()).toBeVisible()
-  for (const card of await cards.all()) await expect(card).toContainText('O+')
+  for (const card of await cards.all()) await expect(card).toHaveAccessibleName(/O positive/)
   await expect(page.getByRole('region', { name: 'Map of blood requests' })).toBeVisible()
   await expect(page.getByText('OpenStreetMap')).toBeVisible()
 

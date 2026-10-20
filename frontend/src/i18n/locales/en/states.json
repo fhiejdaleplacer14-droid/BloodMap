@@ -24,5 +24,13 @@
     "title": "This request is no longer active",
     "body": "It expired on {{date}} at {{time}} and isn’t accepting responses. Look for active requests nearby instead.",
     "action": "Find active requests"
+  },
+  "pageError": {
+    "title": "This page couldn’t load",
+    "body": "Something went wrong on our side. Reload the page — if it keeps happening, try again later. Nothing you saved was lost.",
+    "reload": "Reload page",
+    "home": "Go to the home page",
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "The link may be old or mistyped."
   }
 }

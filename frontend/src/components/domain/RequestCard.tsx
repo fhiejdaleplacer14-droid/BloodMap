@@ -42,6 +42,7 @@ export function RequestCard({
 }: RequestCardProps) {
   const { t, i18n } = useTranslation('request')
   const labelId = useId()
+  const linkId = props.id ?? `${labelId}-id`
   const { status } = request
   const expired = status === 'expired'
   const closed = status === 'closed'
@@ -57,17 +58,15 @@ export function RequestCard({
       : undefined
 
   return (
-    <Link
-      to={to}
-      aria-labelledby={`${labelId}-id ${labelId}-type ${labelId}-city`}
-      aria-current={selected ? 'true' : undefined}
+    // The request ID is the link; its overlay makes the whole card clickable, so
+    // the visible label stays inside the accessible name (WCAG 2.5.3, decision #87).
+    <div
       onMouseEnter={() => onHighlight?.(request.id)}
       onMouseLeave={() => onHighlight?.(null)}
       onFocus={() => onHighlight?.(request.id)}
       onBlur={() => onHighlight?.(null)}
-      onClick={() => onSelect?.(request.id)}
       className={cn(
-        'group flex w-full flex-col gap-3 rounded-lg text-left transition-[border-color,box-shadow] duration-150',
+        'group relative flex w-full flex-col gap-3 rounded-lg text-left transition-[border-color,box-shadow] duration-150 has-[a:focus-visible]:shadow-focus',
         receded
           ? 'border border-default bg-canvas p-4'
           : selected
@@ -75,7 +74,6 @@ export function RequestCard({
             : 'border border-default bg-surface p-4 hover:border-strong hover:shadow-raised',
         className,
       )}
-      {...props}
     >
       <div className="flex w-full items-start gap-3">
         <span id={`${labelId}-type`}>
@@ -83,20 +81,29 @@ export function RequestCard({
         </span>
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div className="flex items-center justify-between gap-2">
-            <span id={`${labelId}-id`} className="type-mono-m text-secondary">
+            <Link
+              to={to}
+              {...props}
+              id={linkId}
+              aria-labelledby={`${linkId} ${labelId}-type ${labelId}-city`}
+              aria-current={selected ? 'true' : undefined}
+              onClick={() => onSelect?.(request.id)}
+              className="type-mono-m rounded-sm text-secondary outline-none after:absolute after:inset-0 after:rounded-lg focus-visible:shadow-none"
+            >
               {request.id}
-            </span>
+            </Link>
             <StatusBadge status={status} />
           </div>
           <div className="flex min-w-0 items-center gap-1">
             <MapPin aria-hidden size={14} className="shrink-0 text-secondary" />
             <span
               id={`${labelId}-city`}
-              className={cn('type-label-m truncate', receded ? 'text-secondary' : 'text-primary')}
+              className={cn('type-label-m max-w-full shrink-0 truncate', receded ? 'text-secondary' : 'text-primary')}
             >
               {request.location.municipality}
             </span>
-            <span className="type-body-s shrink-0 text-tertiary">· {request.location.province}</span>
+            {/* The province gives way first so the city stays readable (55:380). */}
+            <span className="type-body-s min-w-0 truncate text-tertiary">· {request.location.province}</span>
           </div>
         </div>
       </div>
@@ -129,6 +136,6 @@ export function RequestCard({
           <ChevronRight size={16} />
         </span>
       </div>
-    </Link>
+    </div>
   )
 }

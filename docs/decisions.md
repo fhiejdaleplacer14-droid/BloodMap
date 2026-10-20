@@ -93,6 +93,11 @@ choice can be traced. Decided 2026-10-19.
 | 84 | Mobile create & review headers | 44:960 / 44:1039 show bookmark and ⋯ on task pages | Back arrow and title only; the app top bar and bottom nav give way to the task's sticky actions below 1024 px. The wizard shows "Step N of 3" with Save draft; the public preview panel is desktop-only. The review uses Submission · Preview · History tabs and lists all five automated checks (not only the failing ones). |
 | 85 | Explorer crash on phones | — | Opening a request on a phone after visiting the map called `setView` on the destroyed map. The page now drops the map instance whenever the map isn't shown. Found by flow A (phone). |
 | 86 | End-to-end flows | Prototype flows A–G (46:2) | Playwright runs all seven against the real API on spare ports (API 8100, web 5180) with the `bloodmap_e2e` database, reset and demo-seeded before every run (refuses any database not ending in `_e2e`). One worker, since flows share data. Flow E uses the seeded BM-2026-0025; F changes Rico Bautista (demo). |
+| 87 | Accessibility fixes from the axe scan | Handoff 55:298 checklist (WCAG 2.2 AA) | Request cards: the request ID is now the link and its overlay covers the card, so the visible label is part of the accessible name (2.5.3). Filter tabs point `aria-controls` at the results they filter. Receded rows and blood-type tags use neutral colours instead of opacity (contrast). The workspace content area is keyboard-focusable and reserves scroll padding under sticky bars (2.1.1, 2.4.11). The phone guide sheet now has its accessible name. The scan runs on every screen, for every role, light and dark, desktop and phone. |
+| 88 | Error summary and crash page | 55:439 "error summary at top on submit with links to fields"; no crash frame | Registration and the request wizard show an error summary that takes focus and moves to each field. Any page that fails to render shows a plain "This page couldn’t load" screen with Reload and Home instead of a developer error. |
+| 89 | Duplicate warning and queue refresh | 55:324 duplicate warning on step 3; 54:300 queue refresh with "n new" pill | Step 3 warns when the same desk submitted the same blood type in the last 24 h, with a link to it. The review queue re-fetches every 30 s; rows on screen stay put and new ones wait behind "n new · Show". |
+| 90 | Tablet (768–1023) | 56:252 open: rules only, no frames | Checked at 834 px: list + map, details as a 400 px drawer, phone-style review with tabs and a sticky decision bar. The guide launcher hides while the details drawer is open; on narrow cards the province truncates before the city. |
+| 91 | Account card | App Sidebar (12:908) puts name, email and Sign out at the foot | Moved to an avatar menu in the workspace top bar (name, email, Profile and Preferences, Sign out), the same menu the public site uses. The email no longer truncates, and Sign out is reachable on phones, where the sidebar is hidden. Requested by the product owner. |
 
 ## Copy that differs by context
 The demo labels differ by screen ("Sample data", "Demo data", "Demonstration
@@ -101,7 +106,7 @@ its frame's exact copy. Whether a label renders is decided by `is_demo` on the
 records being shown.
 
 ## Open items carried from Final design review (56:193)
-- **Tablet (768–1023):** built from the rules in 55:252. No frames exist.
+- **Tablet (768–1023):** built from the rules in 55:252 and checked at 834 px (#90). No frames exist.
 - **Copy validation** with blood-service staff and donors before launch.
 - **Map tiles:** development uses `tile.openstreetmap.org` (configured through
   `VITE_MAP_TILE_URL`). Production needs a provider whose terms allow the
@@ -110,7 +115,6 @@ records being shown.
 ## Open items from Phase 5 (workspaces)
 - **Editable system settings** (#72) and an invite flow for coordinators (#74).
 - **Assistant provider**: help-article stub for now (#77); choosing an LLM provider (and its key, cost and data-processing terms) is open.
-- **App error boundary**: unexpected client errors still show React Router's default error page (seen in #85) — a designed fallback is Phase 7.
 - **Coordinator "Reports"** and the "Open reports" card wait for the report flow (#54).
 - **Submitter "Overview"** (32:841) has no frame; it opens the shared workspace overview (`/app`).
 - **Role chip** shows "Facility submitter · S-0142" (account reference); 32:841 shows "San Carlos desk". A short desk label isn't in the data model yet.

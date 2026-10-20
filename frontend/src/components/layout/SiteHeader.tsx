@@ -37,19 +37,22 @@ function useLoginHref() {
   return here === '/' ? '/login' : `/login?next=${encodeURIComponent(here)}`
 }
 
-function AccountMenu({ me }: { me: Me }) {
-  const { t } = useTranslation(['nav', 'common'])
+/**
+ * Avatar menu: name, email, then where to go and Sign out. On the public
+ * site it leads to the workspace; inside a workspace, to Profile.
+ */
+export function AccountMenu({ me, inWorkspace = false }: { me: Me; inWorkspace?: boolean }) {
+  const { t } = useTranslation(['nav', 'common', 'workspace'])
   const logout = useLogout()
   const navigate = useNavigate()
 
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger
-        aria-label={t('nav:public.account', { name: me.name })}
-        className="type-label-m flex h-10 items-center gap-2 rounded-md px-2 text-primary hover:bg-subtle"
-      >
+      {/* Named by its visible text (WCAG 2.5.3); the name is screen-reader-only on small screens. */}
+      <DropdownMenu.Trigger className="type-label-m flex h-10 items-center gap-2 rounded-md px-2 text-primary hover:bg-subtle">
         <Avatar initials={me.initials} />
-        <span className="max-w-40 truncate max-lg:hidden">{me.name}</span>
+        <span className="max-w-40 truncate max-lg:sr-only">{me.name}</span>
+        <span className="sr-only">{t('nav:public.accountSuffix')}</span>
         <ChevronDown aria-hidden size={16} className="text-secondary max-lg:hidden" />
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
@@ -64,11 +67,11 @@ function AccountMenu({ me }: { me: Me }) {
           </div>
           <DropdownMenu.Separator className="my-1 h-px bg-line" />
           <DropdownMenu.Item
-            onSelect={() => navigate(homeFor(me))}
+            onSelect={() => navigate(inWorkspace ? '/app/profile' : homeFor(me))}
             className="type-body-m flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-primary outline-none data-highlighted:bg-subtle"
           >
-            <icons.home aria-hidden size={16} />
-            {t('nav:sidebar.workspace')}
+            {inWorkspace ? <icons.user aria-hidden size={16} /> : <icons.home aria-hidden size={16} />}
+            {inWorkspace ? t('workspace:nav.profile') : t('nav:sidebar.workspace')}
           </DropdownMenu.Item>
           <DropdownMenu.Item
             onSelect={() => logout.mutate(undefined, { onSuccess: () => navigate('/') })}

@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate, type RouteObject } from 'react-router'
 import { RequestRedirect } from '../routes/RequestRedirect'
+import { RouteError } from './RouteError'
 
 /** Internal reference pages (tokens, components). Never shipped to production. */
 const devRoutes: RouteObject[] = import.meta.env.DEV
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
     path: '/',
     // Lazy routes resolve before first render; nothing to show meanwhile.
     HydrateFallback: () => null,
+    ErrorBoundary: RouteError,
     children: [
       {
         index: true,

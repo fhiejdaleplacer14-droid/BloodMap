@@ -9,7 +9,8 @@
     "createAccount": "Create account",
     "primary": "Main",
     "account": "Account menu for {{name}}",
-    "menu": "Menu"
+    "menu": "Menu",
+    "accountSuffix": ", account menu"
   },
   "skipToContent": "Skip to main content",
   "sidebar": {

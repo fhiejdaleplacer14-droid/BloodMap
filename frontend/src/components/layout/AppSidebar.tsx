@@ -14,8 +14,9 @@ type AppSidebarProps = {
   /** Rendered from the user's permissions (/api/me) — never hidden with CSS. */
   items: SidebarItem[]
   helpItem: SidebarItem
-  user: { name: string; email: string; initials: string }
-  onSignOut: () => void
+  /** Optional account card at the foot (12:908). Workspaces use the top-bar account menu instead (decision #91). */
+  user?: { name: string; email: string; initials: string }
+  onSignOut?: () => void
   homeTo?: string
   className?: string
 }
@@ -48,6 +49,7 @@ export function AppSidebar({ roleLabel, roleIcon, items, helpItem, user, onSignO
           <SidebarNavItem {...helpItem} />
         </div>
       </nav>
+      {user && (
       <div className="flex items-center gap-2.5 rounded-lg border border-default bg-surface p-3">
         <Avatar initials={user.initials} size="md" />
         <div className="flex min-w-0 flex-1 flex-col">
@@ -56,6 +58,7 @@ export function AppSidebar({ roleLabel, roleIcon, items, helpItem, user, onSignO
         </div>
         <IconButton icon="log-out" label={t('common:actions.signOut')} onClick={onSignOut} />
       </div>
+      )}
     </aside>
   )
 }

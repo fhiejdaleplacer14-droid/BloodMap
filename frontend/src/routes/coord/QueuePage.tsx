@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { BloodTypeTag } from '../../components/domain/BloodTypeTag'
@@ -62,15 +63,17 @@ export function QueuePage() {
       <Tabs value={tab} onValueChange={(value) => setParams(value === 'unassigned' ? {} : { tab: value }, { replace: true })}>
         <TabsList aria-label={t('queue.caption')}>
           {QUEUE_TABS.map((key) => (
-            <Tab key={key} value={key} count={queue.data?.counts[key]}>
+            <Tab key={key} value={key} aria-controls="queue-results" count={queue.data?.counts[key]}>
               {t(`queue.tabs.${key}`)}
             </Tab>
           ))}
         </TabsList>
       </Tabs>
 
-      <QueueBody tab={tab} query={queue} onPage={(p) => setParams({ ...(tab !== 'unassigned' && { tab }), page: String(p) })} />
+      <div id="queue-results" className="flex flex-col gap-6">
+      <QueueBody key={`${tab}-${page}`} tab={tab} query={queue} onPage={(p) => setParams({ ...(tab !== 'unassigned' && { tab }), page: String(p) })} />
 
+      </div>
       <p className="type-body-s flex items-center gap-2 text-secondary">
         <icons.info aria-hidden size={16} className="shrink-0" />
         {t('queue.note')}
@@ -82,6 +85,9 @@ export function QueuePage() {
 function QueueBody({ tab, query, onPage }: { tab: QueueTab; query: ReturnType<typeof useQueue>; onPage: (page: number) => void }) {
   const { t, i18n } = useTranslation(['coord', 'request', 'states'])
   const navigate = useNavigate()
+  // Rows on screen stay put while the queue refreshes; new ones wait behind a pill (54:300).
+  const [pinned, setPinned] = useState<ReadonlySet<string> | null>(null)
+  if (query.data && pinned === null) setPinned(new Set(query.data.data.map((r) => r.id)))
   if (query.isPending) return <Skeleton className="h-64 w-full rounded-lg" />
   if (query.isError) {
     return (
@@ -99,13 +105,32 @@ function QueueBody({ tab, query, onPage }: { tab: QueueTab; query: ReturnType<ty
       />
     )
   }
-  const { data: rows, meta } = query.data
+  const { data: all, meta } = query.data
+  const held = pinned ? all.filter((r) => !pinned.has(r.id)) : []
+  const kept = pinned ? all.filter((r) => pinned.has(r.id)) : all
+  const rows = kept.length > 0 ? kept : all
+  const newCount = kept.length > 0 ? held.length : 0
+  const pill = (
+    <div aria-live="polite" className="flex justify-center empty:hidden">
+      {newCount > 0 && (
+        <button
+          type="button"
+          onClick={() => setPinned(new Set(all.map((r) => r.id)))}
+          className="type-label-m inline-flex items-center gap-1.5 rounded-full bg-inverse px-3 py-1.5 text-on-inverse shadow-floating"
+        >
+          <icons.refresh aria-hidden size={14} />
+          {t('queue.newPill', { count: newCount })}
+        </button>
+      )}
+    </div>
+  )
   if (rows.length === 0) return <EmptyState icon="clipboard-check" title={t('queue.emptyTitle')} description={t(`queue.empty.${tab}`)} actions={null} />
 
   const head = 'type-overline h-10 px-3 text-left font-semibold whitespace-nowrap text-secondary'
   const cell = 'h-13 px-3 align-middle'
   return (
     <>
+      {pill}
       <div className={cn('overflow-x-auto rounded-lg border border-default', query.isPlaceholderData && 'opacity-60')}>
         <table className="w-full min-w-215 border-collapse">
           <caption className="sr-only">{t('queue.caption')}</caption>

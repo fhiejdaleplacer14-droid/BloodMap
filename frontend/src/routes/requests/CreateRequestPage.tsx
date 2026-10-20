@@ -9,6 +9,7 @@ import { Button } from '../../components/ui/Button'
 import { Checkbox } from '../../components/ui/Checkbox'
 import { DateField, TimeField } from '../../components/ui/DateTimeField'
 import { EmptyState } from '../../components/ui/EmptyState'
+import { ErrorSummary, type SummaryError } from '../../components/ui/ErrorSummary'
 import { icons } from '../../components/ui/icons'
 import { RadioGroup } from '../../components/ui/RadioGroup'
 import { SelectField } from '../../components/ui/SelectField'
@@ -208,6 +209,27 @@ function RequestWizard({ initial, municipalities, point, step, requestId, goTo, 
   const municipality = municipalities.find((m) => String(m.id) === values.municipality_id)
   const closesAt = windowClosesAt(values.needed_by, values.desk_window_end)
   const busy = save.isPending || submit.isPending
+  /** Error summary (55:439) after a failed Continue / Submit on this step. */
+  const [attempted, setAttempted] = useState<Step | null>(null)
+  const fieldLabels: Partial<Record<keyof RequestFormValues, string>> = {
+    blood_type: t('fields.bloodType'),
+    units_requested: t('fields.units'),
+    needed_by: t('fields.neededBy'),
+    desk_window_start: t('fields.deskFrom'),
+    desk_window_end: t('fields.deskTo'),
+    municipality_id: t('fields.municipality'),
+    public_summary: t('fields.summary'),
+    response_instructions: t('fields.instructions'),
+    confirmed: t('review.confirmShort'),
+  }
+  const stepFields = step === 3 ? (Object.keys(fieldLabels) as (keyof RequestFormValues)[]) : STEP_FIELDS[step]
+  const summary: SummaryError[] =
+    attempted === step
+      ? stepFields.flatMap((name) => {
+          const message = form.formState.errors[name]?.message
+          return message && fieldLabels[name] ? [{ name, label: fieldLabels[name], message }] : []
+        })
+      : []
 
   const applyServerErrors = (error: unknown) => {
     const errors = errorStatus(error) === 422 ? errorBody(error)?.errors : undefined
@@ -242,7 +264,7 @@ function RequestWizard({ initial, municipalities, point, step, requestId, goTo, 
   }
 
   const next = async () => {
-    if (!(await form.trigger(STEP_FIELDS[step], { shouldFocus: true }))) return
+    if (!(await form.trigger(STEP_FIELDS[step]))) return setAttempted(step)
     const saved = await persist()
     if (saved) goTo((step + 1) as Step, saved.id)
   }
@@ -250,11 +272,15 @@ function RequestWizard({ initial, municipalities, point, step, requestId, goTo, 
   const submitForReview = async () => {
     if (!(await form.trigger())) {
       const first = Object.keys(form.formState.errors)[0]
-      if (first) goTo(stepOf(first), requestId)
+      if (first && stepOf(first) !== 3) {
+        setAttempted(stepOf(first))
+        goTo(stepOf(first), requestId)
+      } else setAttempted(3)
       return
     }
     if (!form.getValues('confirmed')) {
-      form.setError('confirmed', { message: t('errors.confirm') }, { shouldFocus: true })
+      form.setError('confirmed', { message: t('errors.confirm') })
+      setAttempted(3)
       return
     }
     const saved = await persist()
@@ -323,6 +349,8 @@ function RequestWizard({ initial, municipalities, point, step, requestId, goTo, 
           </div>
         )}
 
+        <ErrorSummary errors={summary} onSelect={(name) => form.setFocus(name as keyof RequestFormValues)} />
+
         {step === 1 && (
           <WizardPanel
             title={t('steps.info')}
@@ -383,6 +411,7 @@ function RequestWizard({ initial, municipalities, point, step, requestId, goTo, 
               point={point}
               closesAt={closesAt}
               flags={latest?.privacy_review?.flags ?? []}
+              duplicateOf={latest?.privacy_review?.duplicate_of ?? null}
               goTo={(n) => goTo(n)}
             />
           </WizardPanel>
@@ -603,6 +632,7 @@ function StepReview({
   point,
   closesAt,
   flags,
+  duplicateOf,
   goTo,
 }: FormProp & {
   values: RequestFormValues
@@ -610,6 +640,7 @@ function StepReview({
   point: OwnCoordinationPoint | undefined
   closesAt: string | null
   flags: string[]
+  duplicateOf: string | null
   goTo: (step: Step) => void
 }) {
   const { t, i18n } = useTranslation(['manage', 'request'])
@@ -668,6 +699,19 @@ function StepReview({
           </div>
         ))}
       </dl>
+
+      {duplicateOf && (
+        // Possible duplicate (55:324): same desk and blood type in the last 24 h.
+        <div role="note" className="type-body-s flex gap-2 rounded-lg bg-status-warning px-3 py-2.5 text-status-warning">
+          <AlertTriangle aria-hidden size={16} className="mt-px shrink-0" />
+          <p>
+            {t('review.duplicate', { id: duplicateOf })}{' '}
+            <Link to={`/requests/mine/${encodeURIComponent(duplicateOf)}`} className="font-medium underline">
+              {t('review.openDuplicate', { id: duplicateOf })}
+            </Link>
+          </p>
+        </div>
+      )}
 
       <section className="flex flex-col gap-3">
         <h3 className="type-h4 text-primary">{t('review.privacy')}</h3>

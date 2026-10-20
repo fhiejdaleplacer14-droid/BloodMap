@@ -507,7 +507,7 @@ export function ExplorerPage() {
         )}
       </main>
       {/* Guide (04 · Assistant). On phones the map and request details fill the screen without it (25:323, 25:657). */}
-      <Assistant hidden={!isTablet && (mapVisible || params.sel !== null)} />
+      <Assistant hidden={(!isTablet && mapVisible) || (params.sel !== null && !isDesktop)} />
     </div>
   )
 }

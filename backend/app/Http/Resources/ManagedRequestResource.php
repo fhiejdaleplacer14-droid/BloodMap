@@ -48,6 +48,8 @@ class ManagedRequestResource extends PublicRequestResource
             ]),
             'privacy_review' => $this->when($policy->owns($viewer, $this->resource), fn () => [
                 'flags' => app(DescriptionScreener::class)->screen($this->public_summary."\n".$this->response_instructions),
+                // Same desk + blood type within 24 h → warning on step 3 with a link (55:324).
+                'duplicate_of' => $this->findPossibleDuplicate()?->public_id,
             ]),
             'submitter' => $this->when($reviewer, fn () => $this->submitter ? [
                 'reference' => $this->submitter->reference,

@@ -150,7 +150,10 @@
       "desk": "Contact limited to an approved desk"
     },
     "confirm": "I confirm these details were confirmed with the facility and contain no personal information about the patient.",
-    "roleNote": "Your role (Facility submitter) can submit for review. Coordinators see “Publish” here instead — the server decides which action is allowed."
+    "roleNote": "Your role (Facility submitter) can submit for review. Coordinators see “Publish” here instead — the server decides which action is allowed.",
+    "duplicate": "You submitted a similar request ({{id}}) for this desk in the last 24 hours. Submit this one only if it’s a separate need.",
+    "openDuplicate": "Open {{id}}",
+    "confirmShort": "Confirmation"
   },
   "submitted": {
     "title": "Request submitted",

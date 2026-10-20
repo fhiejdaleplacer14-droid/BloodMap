@@ -1,6 +1,6 @@
 import { Link, Navigate, Outlet, useLocation, useMatches, useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
-import { useLogout, useMe, type Me } from '../../lib/api/auth'
+import { useMe, type Me } from '../../lib/api/auth'
 import { useNotifications } from '../../lib/api/me'
 import { useCoordinatorSummary } from '../../lib/api/coordinator'
 import { useMyRequestCounts } from '../../lib/api/myRequests'
@@ -13,7 +13,7 @@ import { Assistant } from '../assistant/Assistant'
 import { AppSidebar } from './AppSidebar'
 import { BottomNav } from './BottomNav'
 import { MobileTopBar } from './MobileTopBar'
-import { SkipLink } from './SiteHeader'
+import { AccountMenu, SkipLink } from './SiteHeader'
 
 const ChevronRight = icons['chevron-right']
 
@@ -63,7 +63,6 @@ function Shell({ me }: { me: Me }) {
   const { t } = useTranslation(['workspace', 'coord', 'admin'])
   const { t: tNav } = useTranslation('nav')
   const navigate = useNavigate()
-  const logout = useLogout()
   const unread = useNotifications().data?.meta.unread ?? 0
   const counts = useMyRequestCounts(isSubmitter(me)).data
   const summary = useCoordinatorSummary(isReviewer(me)).data
@@ -87,7 +86,6 @@ function Shell({ me }: { me: Me }) {
           ? { to: '/coord', label: t('coord:root') }
           : { to: '/app', label: t('breadcrumbRoot') }
 
-  const signOut = () => logout.mutate(undefined, { onSuccess: () => navigate('/') })
   const bell = (
     <IconButton
       icon="bell"
@@ -106,11 +104,19 @@ function Shell({ me }: { me: Me }) {
         roleIcon={isReviewer(me) ? 'shield-check' : 'user'}
         items={workspaceNav(me, t, { unread, active: counts?.active, drafts: counts?.draft, queue: summary?.all_open })}
         helpItem={{ to: '/#safety', label: t('nav.help'), icon: 'help-chat' }}
-        user={{ name: me.name, email: me.email, initials: me.initials }}
-        onSignOut={signOut}
       />
       <div className="flex min-w-0 flex-1 flex-col">
-        {!handle.focus && <MobileTopBar className="lg:hidden" actions={bell} />}
+        {!handle.focus && (
+          <MobileTopBar
+            className="lg:hidden"
+            actions={
+              <>
+                {bell}
+                <AccountMenu me={me} inWorkspace />
+              </>
+            }
+          />
+        )}
         <header className="flex h-16 shrink-0 items-center justify-between border-b border-default bg-surface px-8 max-lg:hidden">
           <nav aria-label="Breadcrumb">
             <ol className="flex items-center gap-2">
@@ -130,9 +136,11 @@ function Shell({ me }: { me: Me }) {
           <div className="flex items-center gap-2">
             {me.is_demo && <DemoBadge>{t('demo')}</DemoBadge>}
             {bell}
+            <AccountMenu me={me} inWorkspace />
           </div>
         </header>
-        <main id="main" className="relative min-h-0 flex-1 overflow-y-auto">
+        {/* Focusable so keyboard users can scroll pages that have nothing else to focus (WCAG 2.1.1). */}
+        <main id="main" tabIndex={0} className="relative min-h-0 flex-1 scroll-pb-24 overflow-y-auto max-lg:scroll-pb-44">
           <Outlet />
         </main>
         {!handle.focus && <BottomNav className="lg:hidden" items={workspaceBottomNav(me, t)} />}

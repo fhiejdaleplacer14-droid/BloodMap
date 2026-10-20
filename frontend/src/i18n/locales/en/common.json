@@ -52,5 +52,9 @@
       "days_one": "{{count}} day ago",
       "days_other": "{{count}} days ago"
     }
+  },
+  "errorSummary": {
+    "title_one": "Fix {{count}} problem before continuing",
+    "title_other": "Fix {{count}} problems before continuing"
   }
 }
