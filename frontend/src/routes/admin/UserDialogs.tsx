@@ -74,7 +74,7 @@ export function UserDrawer({ userId, me, onClose }: { userId: number | null; me:
             </Dialog.Close>
           </div>
           <Dialog.Description className="sr-only">{t('drawer.hiddenBody')}</Dialog.Description>
-          <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-6 py-5">
+          <div className="relative flex flex-1 flex-col gap-5 overflow-y-auto px-6 py-5">
             {detail.isPending ? (
               <Skeleton className="h-64 w-full" />
             ) : detail.isError || !u ? (

@@ -128,7 +128,7 @@ export function ResultsPanel({
         tabIndex={-1}
         aria-busy={initialLoading || undefined}
         aria-label={t('results.listLabel')}
-        className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-6 pb-4 outline-none max-sm:px-4"
+        className="relative flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-6 pb-4 outline-none max-sm:px-4"
       >
         {failed ? (
           <EmptyState

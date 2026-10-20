@@ -129,7 +129,7 @@ function Shell({ me }: { me: Me }) {
             {bell}
           </div>
         </header>
-        <main id="main" className="min-h-0 flex-1 overflow-y-auto">
+        <main id="main" className="relative min-h-0 flex-1 overflow-y-auto">
           <Outlet />
         </main>
         <BottomNav className="lg:hidden" items={workspaceBottomNav(me, t)} />

@@ -73,6 +73,16 @@ choice can be traced. Decided 2026-10-19.
 | 64 | Review activity chart | 35:12 bar chart | Plain markup (no chart library): approved in ink, corrections in warning brown, rejections in grey, with a text list for screen readers. |
 | 65 | Coordinator bottom nav | No mobile frame | Home · Queue · Active · Activity · Profile, same pattern as 55:269. |
 | 66 | Desk-time edits | Activity showed "Changed: desk time window" on every save | Times are normalised to the TIME column format before saving, so unchanged values are no longer logged as edits. |
+| 67 | Admin "Blood Requests" / "Verification Queue" | 38:2 sidebar, no admin frames | Both open the shared review pages (`/coord/active`, `/coord/queue`); admins review in every area. The breadcrumb reads "Administration" for admins. |
+| 68 | Admin overview data | 38:2 labels charts "sample" | Real counts from `GET /api/admin/summary?days=7|30|90`. "Created" is drafts created; "Expired without update" counts `request.expired` audit entries, compared with the previous period of the same length. No "sample" labels. |
+| 69 | Account status | 39:441 shows Active / Unverified / Invited / Restricted | Active, Unverified (email not verified) and Restricted only — there is no invite flow, so "Invited" and "Pending invite" never appear. |
+| 70 | Change role to Administrator | 39:1074 shows the option greyed out | Selectable: it creates a pending change that a different administrator approves or declines from the user's drawer (Handoff 51:558). The drawer says it's waiting. |
+| 71 | Restriction reason | 39:1286 says the reason is "Shown to the user in the sign-in error message" | Edge case 55:345 wins: sign-in shows a neutral message. The helper says the reason stays in the audit log. Reasons are a fixed list; restrictions can be lifted (with a reason), which resumes paused requests. |
+| 72 | System settings | 41:2021 is an editable form with "Save changes" | Read-only read-out of the values the platform runs with (expiry rule, 72 h extension, 6 h reminder, 5-min job, retention windows) plus live health. Editing needs a settings store wired into the business rules — open item. Mail shows "Degraded" when the driver is `log`/`array` (nothing is delivered). |
+| 73 | Expiry reminders | 41:2021 "Sent to owners and people who saved it" | The reminder job now notifies the owner as well as savers (it only reached savers before). |
+| 74 | Coordinator Management | 41:1289 "Invite coordinator", "Pending invite", "Authorization expired" | No invite or expiring authorization exists in the data model. The button is "Assign a coordinator" (opens User Management to change someone's role); authorization shows "Authorized" for coordinators with an area. Areas without an active coordinator are listed in the warning banner. |
+| 75 | Audit log | 41:1616 Result filter (Success / Failed / Denied) and resources like `settings/…` | Only completed actions are audited, so there's no Result filter and every row reads Success. Resources are `request/BM-…` or `user/S-0142` / `user/0042` — users never by name. Action filter groups by prefix (request., user., account., admin.). |
+| 76 | User export | 39:441 "Export user list" | CSV of the current filters (max 10 000 rows), recorded in the audit log as `admin.users_exported`. |
 
 ## Copy that differs by context
 The demo labels differ by screen ("Sample data", "Demo data", "Demonstration
@@ -88,6 +98,7 @@ records being shown.
   traffic, plus a check that the zoom-13 cap holds.
 
 ## Open items from Phase 5 (workspaces)
+- **Editable system settings** (#72) and an invite flow for coordinators (#74).
 - **Coordinator "Reports"** and the "Open reports" card wait for the report flow (#54).
 - **Submitter "Overview"** (32:841) has no frame; it opens the shared workspace overview (`/app`).
 - **Role chip** shows "Facility submitter · S-0142" (account reference); 32:841 shows "San Carlos desk". A short desk label isn't in the data model yet.

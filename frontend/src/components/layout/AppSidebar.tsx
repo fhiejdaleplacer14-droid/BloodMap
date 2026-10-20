@@ -20,10 +20,6 @@ type AppSidebarProps = {
   className?: string
 }
 
-/**
- * App Sidebar (12:908): 264 w on bg/canvas so content surfaces read as raised.
- * Items a user can't access are not rendered.
- */
 export function AppSidebar({ roleLabel, roleIcon, items, helpItem, user, onSignOut, homeTo = '/', className }: AppSidebarProps) {
   const { t } = useTranslation(['nav', 'common'])
   const RoleIcon = icons[roleIcon]

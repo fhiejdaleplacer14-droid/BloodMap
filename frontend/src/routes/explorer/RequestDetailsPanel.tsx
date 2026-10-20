@@ -214,7 +214,7 @@ export function RequestDetailsPanel({ id, resultCount, onBack, hrefFor, onFindNe
         ),
       )}
 
-      <article aria-labelledby="request-detail-title" className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto p-6 max-sm:px-4">
+      <article aria-labelledby="request-detail-title" className="relative flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto p-6 max-sm:px-4">
         <header className="flex gap-4">
           <BloodTypeTag type={request.blood_type} dimmed={receded} />
           <div className="flex min-w-0 flex-1 flex-col gap-1">
