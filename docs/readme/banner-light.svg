@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-label="BloodMap NIR — a public map of active blood requests across Negros Island Region">
+  <rect width="1280" height="320" rx="24" fill="#F7F8FA"/>
+  <g stroke="#E2E6EC" stroke-width="1" fill="none" opacity="0.9">
+    <path d="M760 40c60 30 110 20 150 60s30 90 80 120 120 10 150 60"/>
+    <path d="M720 80c50 40 90 30 130 70s40 80 90 110 110 20 140 60"/>
+    <path d="M820 20c40 20 90 10 130 40s50 70 100 90 100 0 150 30"/>
+    <path d="M700 140c40 30 80 30 110 60s20 60 60 90"/>
+  </g>
+  <g fill="#EBA6AE">
+    <path transform="translate(905 92) scale(1.1)" d="M13 0C5.8 0 0 5.6 0 12.6C0 21.4 13 32 13 32C13 32 26 21.4 26 12.6C26 5.6 20.2 0 13 0Z"/>
+    <path transform="translate(1010 170) scale(0.9)" d="M13 0C5.8 0 0 5.6 0 12.6C0 21.4 13 32 13 32C13 32 26 21.4 26 12.6C26 5.6 20.2 0 13 0Z"/>
+    <path transform="translate(1110 110) scale(0.8)" d="M13 0C5.8 0 0 5.6 0 12.6C0 21.4 13 32 13 32C13 32 26 21.4 26 12.6C26 5.6 20.2 0 13 0Z"/>
+    <path transform="translate(1180 214) scale(0.7)" d="M13 0C5.8 0 0 5.6 0 12.6C0 21.4 13 32 13 32C13 32 26 21.4 26 12.6C26 5.6 20.2 0 13 0Z"/>
+  </g>
+  <g transform="translate(72 96) scale(3.6)">
+    <path d="M13 0C5.8 0 0 5.6 0 12.6C0 21.4 13 32 13 32C13 32 26 21.4 26 12.6C26 5.6 20.2 0 13 0Z" fill="#B42332"/>
+    <path d="M13 5C13 5 7.6 10.8 7.6 14.4C7.6 17.4 10 19.8 13 19.8C16 19.8 18.4 17.4 18.4 14.4C18.4 10.8 13 5 13 5Z" fill="#FFFFFF"/>
+  </g>
+  <text x="196" y="164" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="72" font-weight="700" letter-spacing="-2.2" fill="#18212F">BloodMap</text>
+  <rect x="198" y="58" width="74" height="34" rx="6" fill="none" stroke="#EBA6AE" stroke-width="2"/>
+  <text x="235" y="82" text-anchor="middle" font-family="'JetBrains Mono', 'Cascadia Code', Consolas, Menlo, monospace" font-size="19" font-weight="600" letter-spacing="1.5" fill="#B42332">NIR</text>
+  <text x="198" y="210" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="24" fill="#5F6B7A">A public map of active blood requests across Negros Island Region.</text>
+  <text x="198" y="248" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="18" fill="#5F6B7A" opacity="0.85">Reviewed by coordinators · city-level locations only · never an address</text>
+</svg>

@@ -1,22 +1,131 @@
-# BloodMap NIR
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/readme/banner-dark.svg">
+    <img src="docs/readme/banner-light.svg" alt="BloodMap NIR — a public map of active blood requests across Negros Island Region" width="100%">
+  </picture>
+</p>
 
-A public map of active blood requests across Negros Island Region, with
-coordinator review, generalized (municipality-level) locations and audited
-access to contact details. It is built from the Figma file
-*BloodMap NIR — Product Design*. Page 12 of that file, *Handoff and
-Implementation Notes*, is the implementation spec.
+<p align="center">
+  <a href="https://github.com/fhiejdaleplacer14-droid/BloodMap/actions/workflows/ci.yml"><img src="https://github.com/fhiejdaleplacer14-droid/BloodMap/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/React-TypeScript-3178C6?logo=typescript&logoColor=white" alt="React + TypeScript">
+  <img src="https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white" alt="Laravel 12">
+  <img src="https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL 17">
+  <img src="https://img.shields.io/badge/WCAG-2.2%20AA-1F7A4D" alt="WCAG 2.2 AA">
+</p>
 
-> Portfolio project. All seeded requests, people and facilities are fictional
-> and are labelled as demo data in the UI.
+<p align="center">
+  <a href="#screenshots">Screenshots</a> ·
+  <a href="#local-setup">Run it locally</a> ·
+  <a href="#demo-accounts">Demo accounts</a> ·
+  <a href="docs/decisions.md">Design decisions</a>
+</p>
+
+---
+
+BloodMap is a public map of active blood requests across Negros Island
+Region. Facility desks post requests, coordinators review each one before it
+goes public, and anyone can see where help is needed, without an address or a
+private phone number ever reaching the map.
+
+It is built from the Figma file *BloodMap NIR — Product Design*. Page 12 of
+that file, *Handoff and Implementation Notes*, is the implementation spec.
+Any deviation from it is logged in [`docs/decisions.md`](docs/decisions.md).
+
+> [!NOTE]
+> This is a portfolio project. All seeded requests, people and facilities are
+> fictional and are labelled as demo data in the UI.
+
+## Highlights
+
+- **🗺️ Find a request in seconds.** Filter by blood type, status, posting date
+  and area, on a list or a live map, on desktop or phone.
+- **🔒 Private by design.** Requests are placed at the municipality centroid,
+  never at an address or a facility's coordinates. Desk contacts are gated by
+  role, coordinators see them masked until they choose to reveal them, and
+  every reveal is audited.
+- **✅ Reviewed before it's public.** Coordinators approve requests, send them
+  back for correction or reject them, helped by automated checks for phone
+  numbers, personal names, duplicates and missing desk hours.
+- **💬 A built-in guide.** It answers "how does this work?" questions from
+  approved help articles and cites its source. It never gives medical advice
+  or eligibility assessments. It needs no external AI API and costs nothing to
+  run.
+- **🧾 An audit trail that can't be edited.** `audit_logs` is insert-only: a
+  database trigger rejects every UPDATE and DELETE.
+- **♿ Accessible.** Every screen, for every role, is scanned against WCAG 2.2
+  AA in light and dark mode on every push.
+
+### Who uses it
+
+| Role | What they can do |
+|------|------------------|
+| **Visitor** | Browse and filter requests, open the details, ask the guide. No account needed. |
+| **Donor** | Save requests, get notified when one changes, and see desk contacts after signing in. |
+| **Facility submitter** | Post requests through a guided wizard, fix requests sent back for correction, and close them when fulfilled. |
+| **Coordinator** | Work a regional review queue, approve or send back requests, and reveal contacts (audited). |
+| **Administrator** | Manage users and coordinator coverage, and read the audit log, platform metrics and system settings. |
+
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/readme/landing.png" alt="Landing page with a map preview of an O+ request in San Carlos City"></td>
+    <td width="50%"><img src="docs/readme/explorer.png" alt="Request explorer: filters and request cards beside a map of Negros Island"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Landing</b></td>
+    <td align="center"><b>Explorer</b>: list and map, with filters</td>
+  </tr>
+  <tr>
+    <td><img src="docs/readme/details-dark.png" alt="Request details in dark mode with an approximate area on the map"></td>
+    <td><img src="docs/readme/guide.png" alt="The BloodMap guide answering what request statuses mean, with its source"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Request details</b> (dark mode)</td>
+    <td align="center"><b>The guide</b>: answers cite their help article</td>
+  </tr>
+  <tr>
+    <td><img src="docs/readme/review.png" alt="Coordinator review screen with submitted information, public preview and automated checks"></td>
+    <td><img src="docs/readme/submitter.png" alt="Facility submitter's list of requests with status badges"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Coordinator review</b> with automated checks</td>
+    <td align="center"><b>Facility desk</b>: my requests</td>
+  </tr>
+  <tr>
+    <td><img src="docs/readme/admin-dark.png" alt="Administrator platform overview with metrics and charts in dark mode"></td>
+    <td><img src="docs/readme/donor.png" alt="Donor's saved requests"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Admin overview</b> (dark mode)</td>
+    <td align="center"><b>Donor</b>: saved requests</td>
+  </tr>
+</table>
+
+### On a phone
+
+<table>
+  <tr>
+    <td width="33%"><img src="docs/readme/phone-list.png" alt="Phone: list of requests with filters and a list/map toggle"></td>
+    <td width="33%"><img src="docs/readme/phone-map.png" alt="Phone: map with a bottom sheet of requests in view"></td>
+    <td width="33%"><img src="docs/readme/phone-details.png" alt="Phone: request details with save and log-in-for-contact actions"></td>
+  </tr>
+  <tr>
+    <td align="center">List</td>
+    <td align="center">Map and sheet</td>
+    <td align="center">Details</td>
+  </tr>
+</table>
 
 ## Stack
 
 | Layer      | Choice |
 |------------|--------|
-| Frontend   | React · TypeScript · Vite · Tailwind CSS (`/frontend`) |
+| Frontend   | React · TypeScript · Vite · Tailwind CSS · TanStack Query · React Router · Radix (`/frontend`) |
 | Backend    | Laravel REST API · Sanctum SPA cookie auth (`/backend`) |
 | Database   | PostgreSQL. Local via Docker Compose, configured only through `DB_*` env vars |
 | Maps       | Leaflet + OpenStreetMap (attribution always visible) |
+| Testing    | PHPUnit · Playwright · axe-core (WCAG 2.2 AA) |
 | CI         | GitHub Actions (`.github/workflows/ci.yml`) |
 
 ## Repository layout
@@ -25,6 +134,7 @@ Implementation Notes*, is the implementation spec.
 .
 ├── backend/                 Laravel API
 ├── frontend/                React SPA
+├── docs/                    Design decisions and README assets
 ├── docker/postgres/init/    First-start scripts for the local Postgres container
 ├── docker-compose.yml       Local PostgreSQL 17
 ├── .env.example             Values docker-compose reads (copy to .env)
