@@ -1,4 +1,5 @@
 import enAdmin from './locales/en/admin.json'
+import enAssistant from './locales/en/assistant.json'
 import enAuth from './locales/en/auth.json'
 import enCommon from './locales/en/common.json'
 import enCoord from './locales/en/coord.json'
@@ -29,6 +30,7 @@ export const resources = {
     manage: enManage,
     coord: enCoord,
     admin: enAdmin,
+    assistant: enAssistant,
     dev: enDev,
   },
 } as const

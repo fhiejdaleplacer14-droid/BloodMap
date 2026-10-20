@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type L from 'leaflet'
 import { latLngBounds } from 'leaflet'
 import { useTranslation } from 'react-i18next'
+import { Assistant } from '../../components/assistant/Assistant'
 import { SiteHeader, SkipLink } from '../../components/layout/SiteHeader'
 import { DemoBadge, MapChip, MapControls, MapKey } from '../../components/map/MapOverlays'
 import {
@@ -13,7 +14,10 @@ import {
   toLatLng,
   VIEW_DEBOUNCE_MS,
 } from '../../components/map/mapConfig'
+import { RequestCard } from '../../components/domain/RequestCard'
+import { SkeletonRequestCard } from '../../components/domain/SkeletonRequestCard'
 import { RequestMap, type MapView } from '../../components/map/RequestMap'
+import { IconButton } from '../../components/ui/IconButton'
 import { Button } from '../../components/ui/Button'
 import { EmptyState } from '../../components/ui/EmptyState'
 import { SegmentedControl } from '../../components/ui/SegmentedControl'
@@ -38,6 +42,8 @@ import { distanceKm, locateOnce, useDebouncedCallback, useGeolocation, useMinWid
 import { displayBloodType, RECEDED_STATUSES, type PublicRequest } from '../../lib/request'
 import { useDevicePref } from '../../lib/devicePrefs'
 import { useDocumentTitle } from '../../lib/useDocumentTitle'
+import { MapSheet } from './MapSheet'
+import { useSnapHeights, type Snap } from './sheetHeights'
 import { RequestDetailsPanel } from './RequestDetailsPanel'
 import { ResultsPanel } from './ResultsPanel'
 import { SearchFilters } from './SearchFilters'
@@ -70,10 +76,15 @@ export function ExplorerPage() {
   const [tileKey, setTileKey] = useState(0)
   const [mapFailed, setMapFailed] = useState(false)
   const [keyOpen, setKeyOpen] = useState(true)
+  /** Phone map bottom sheet (25:323). */
+  const [snap, setSnap] = useState<Snap>('peek')
+  const snapHeights = useSnapHeights()
 
   // Search this area is automatic on tablet/desktop, a button on mobile.
   const autoSearch = isTablet
   const mapVisible = isTablet ? params.view !== 'list' : params.view === 'map' && params.sel === null
+  // The map unmounts when hidden; never keep (and later call) a destroyed Leaflet instance.
+  if (!mapVisible && map) setMap(null)
   // Area "Near me" or the device-only Profile preference (29:1157); never sent to the API.
   const locationSort = useDevicePref('locationSort')
   const nearMe = params.area === 'near' || locationSort
@@ -241,6 +252,8 @@ export function ExplorerPage() {
   ) : null
 
   // ── Layout ─────────────────────────────────────────────────────────────
+  const phoneMap = !isTablet && mapVisible
+  const phoneDetails = !isTablet && params.sel !== null
   const detailsInPanel = params.sel !== null && (isDesktop || !isTablet)
   const detailsAsDrawer = params.sel !== null && isTablet && !isDesktop
 
@@ -251,6 +264,7 @@ export function ExplorerPage() {
       resultCount={resultCount}
       onBack={closeDetails}
       hrefFor={hrefFor}
+      compact={!isTablet}
       onFindNearby={(request) => {
         const [lng, lat] = request.location.point
         update({
@@ -264,6 +278,35 @@ export function ExplorerPage() {
       }}
     />
   )
+
+  const resultsPanel = (
+    <ResultsPanel
+      items={items}
+      meta={shown?.meta ?? null}
+      initialLoading={initialLoading}
+      stale={stale}
+      failed={failed}
+      lastUpdated={lastGood?.at ?? null}
+      onRetry={() => void search.refetch()}
+      sort={params.sort}
+      nearMe={nearMe}
+      onSortChange={(sort) => update({ sort, page: 1, area: nearMe ? null : params.area })}
+      onPageChange={(page) => {
+        update({ page })
+        document.getElementById('explorer-results')?.scrollTo({ top: 0 })
+      }}
+      onClearAll={clearAll}
+      hrefFor={hrefFor}
+      selectedId={params.sel}
+      highlightedId={highlighted}
+      onHighlight={setHighlighted}
+      compact={!isTablet}
+      badge={!isTablet && demo ? <DemoBadge>{t('sampleData')}</DemoBadge> : undefined}
+    />
+  )
+
+  // Peek card: the tapped marker's request, else the first in view.
+  const peekRequest = (highlighted ? items.find((r) => r.id === highlighted) : undefined) ?? items[0]
 
   const viewToggle = (!isTablet || params.view === 'list') && (
     <SegmentedControl<View>
@@ -280,7 +323,7 @@ export function ExplorerPage() {
   return (
     <div className="flex h-dvh flex-col bg-canvas">
       <SkipLink href="#explorer-panel" />
-      <SiteHeader cta="create" />
+      {!phoneDetails && <SiteHeader cta="create" />}
       <main id="main" className="relative flex min-h-0 flex-1">
         {(!mapVisible || isTablet) && (
           <section
@@ -308,33 +351,11 @@ export function ExplorerPage() {
                     updateFilters={updateFilters}
                     onClearAll={clearAll}
                     bbox={mapVisible ? bbox : null}
-                    titleAside={
-                      viewToggle ||
-                      (demo && <DemoBadge>{t('sampleData')}</DemoBadge>)
-                    }
+                    compact={!isTablet}
+                    titleAside={viewToggle || (demo && <DemoBadge>{t('sampleData')}</DemoBadge>)}
                   />
                 </div>
-                <ResultsPanel
-                  items={items}
-                  meta={shown?.meta ?? null}
-                  initialLoading={initialLoading}
-                  stale={stale}
-                  failed={failed}
-                  lastUpdated={lastGood?.at ?? null}
-                  onRetry={() => void search.refetch()}
-                  sort={params.sort}
-                  nearMe={nearMe}
-                  onSortChange={(sort) => update({ sort, page: 1, area: nearMe ? null : params.area })}
-                  onPageChange={(page) => {
-                    update({ page })
-                    document.getElementById('explorer-results')?.scrollTo({ top: 0 })
-                  }}
-                  onClearAll={clearAll}
-                  hrefFor={hrefFor}
-                  selectedId={params.sel}
-                  highlightedId={highlighted}
-                  onHighlight={setHighlighted}
-                />
+                {resultsPanel}
               </>
             )}
           </section>
@@ -342,6 +363,10 @@ export function ExplorerPage() {
 
         {mapVisible && (
           <div className="relative min-w-0 flex-1">
+            <div
+              className={phoneMap ? 'absolute inset-x-0 top-0' : 'size-full'}
+              style={phoneMap ? { bottom: snapHeights[snap === 'full' ? 'half' : snap] } : undefined}
+            >
             <a
               href="#explorer-results"
               className="type-label-m sr-only z-1100 rounded-md bg-surface px-3 py-2 text-primary shadow-overlay focus:not-sr-only focus:absolute focus:top-3 focus:left-3"
@@ -357,7 +382,13 @@ export function ExplorerPage() {
               highlightedId={highlighted}
               areaFor={areaFor}
               onHighlight={setHighlighted}
-              onSelect={(id) => update({ sel: id })}
+              onSelect={(id) => {
+                // Phones preview the tapped request in the sheet first (25:483).
+                if (phoneMap) {
+                  setHighlighted(id)
+                  setSnap('peek')
+                } else update({ sel: id })
+              }}
               initialView={params.c && params.z !== null ? { center: params.c, zoom: params.z } : null}
               onMapReady={onMapReady}
               onViewChange={onViewChange}
@@ -366,15 +397,27 @@ export function ExplorerPage() {
             >
               {/* Overlays sit above Leaflet panes (z 400–1000). */}
               <div className="pointer-events-none absolute inset-0 z-1000">
-                {!isTablet && (
-                  <div className="pointer-events-auto absolute top-3 left-3">{viewToggle}</div>
+                {phoneMap ? (
+                  <div className="absolute inset-x-0 top-3 flex flex-col gap-3 px-4">
+                    <div className="pointer-events-auto">
+                      <SearchFilters params={params} updateFilters={updateFilters} onClearAll={clearAll} bbox={bbox} mapOverlay />
+                    </div>
+                    <div className="relative flex items-center justify-center">
+                      <div className="pointer-events-auto rounded-lg shadow-floating">{viewToggle}</div>
+                      <IconButton
+                        icon="locate"
+                        variant="outline"
+                        label={t('map.locate')}
+                        onClick={locate}
+                        className="pointer-events-auto absolute right-0 bg-surface shadow-floating"
+                      />
+                    </div>
+                    {demo && <DemoBadge className="pointer-events-auto w-fit">{t('map.demoBadge')}</DemoBadge>}
+                  </div>
+                ) : (
+                  demo && <DemoBadge className="pointer-events-auto absolute top-4 left-4">{t('map.demoBadge')}</DemoBadge>
                 )}
-                {demo && (
-                  <DemoBadge className={cn('pointer-events-auto absolute', isTablet ? 'top-4 left-4' : 'top-16 left-3')}>
-                    {t('map.demoBadge')}
-                  </DemoBadge>
-                )}
-                <div className="absolute inset-x-0 top-4 flex flex-col items-center gap-2 px-16">
+                <div className={cn('absolute inset-x-0 flex flex-col items-center gap-2 px-16', phoneMap ? 'top-40' : 'top-4')}>
                   {chip && <div className="pointer-events-auto">{chip}</div>}
                   {!autoSearch && pendingBbox && pendingBbox !== bbox && (
                     <Button
@@ -387,7 +430,7 @@ export function ExplorerPage() {
                     </Button>
                   )}
                 </div>
-                <MapControls
+                {!phoneMap && <MapControls
                   className="pointer-events-auto absolute top-4 right-4"
                   onZoomIn={() => map?.zoomIn()}
                   onZoomOut={() => map?.zoomOut()}
@@ -396,7 +439,7 @@ export function ExplorerPage() {
                   keyOpen={keyOpen}
                   canZoomIn={zoom < MAX_ZOOM}
                   canZoomOut={zoom > MIN_ZOOM}
-                />
+                />}
                 {keyOpen && <MapKey className="pointer-events-auto absolute bottom-8 left-4 max-sm:hidden" />}
                 {mapFailed && (
                   // Map failed to load (17:2258): the list keeps working.
@@ -431,6 +474,29 @@ export function ExplorerPage() {
                 )}
               </div>
             </RequestMap>
+            </div>
+            {phoneMap && (
+              <MapSheet
+                snap={snap}
+                onSnapChange={setSnap}
+                summary={shown ? t('sheet.inView', { count: shown.meta.total }) : t('map.loading')}
+                peek={
+                  initialLoading ? (
+                    <SkeletonRequestCard />
+                  ) : peekRequest ? (
+                    <RequestCard
+                      request={peekRequest}
+                      to={hrefFor(peekRequest.id)}
+                      selected={peekRequest.id === highlighted}
+                      onHighlight={setHighlighted}
+                    />
+                  ) : (
+                    <p className="type-body-m text-secondary">{t('sheet.noneInView')}</p>
+                  )
+                }
+                list={resultsPanel}
+              />
+            )}
             {detailsAsDrawer && (
               // Tablet: detail opens as a 400 px drawer over the map (55:281).
               <aside className="absolute inset-y-0 right-0 z-1100 flex w-100 max-w-full flex-col border-l border-default bg-surface shadow-overlay">
@@ -440,6 +506,8 @@ export function ExplorerPage() {
           </div>
         )}
       </main>
+      {/* Guide (04 · Assistant). On phones the map and request details fill the screen without it (25:323, 25:657). */}
+      <Assistant hidden={!isTablet && (mapVisible || params.sel !== null)} />
     </div>
   )
 }

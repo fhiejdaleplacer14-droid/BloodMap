@@ -151,7 +151,8 @@
       "logIn": "Log in to view contact",
       "directions": "Directions",
       "call": "Call {{value}}",
-      "email": "Email {{value}}"
+      "email": "Email {{value}}",
+      "logInShort": "Log in for contact"
     },
     "reviewNote": "Submitted details reviewed by a coordinator on {{when}}. This confirms the listing, not medical information.",
     "expired": {
@@ -173,7 +174,8 @@
     "savedToastBody": "You’ll see updates in Saved requests.",
     "removedToast": "Removed from saved",
     "saveFailed": "Couldn’t update saved requests",
-    "saveFailedBody": "Check your connection and try again."
+    "saveFailedBody": "Check your connection and try again.",
+    "mobileTitle": "Request details"
   },
   "relative": {
     "in": {
@@ -182,5 +184,19 @@
       "days_one": "in {{count}} day",
       "days_other": "in {{count}} days"
     }
+  },
+  "sheet": {
+    "label": "Requests in view",
+    "inView_one": "{{count}} request in view",
+    "inView_other": "{{count}} requests in view",
+    "swipe": "Swipe up for list",
+    "expand": "Show more of the list",
+    "collapse": "Show the map",
+    "noneInView": "No requests in this area right now. Move the map or change filters."
+  },
+  "mobile": {
+    "filtersButton": "Filters",
+    "filtersApplied": "Filters applied",
+    "mapSearch": "Search city or municipality"
   }
 }

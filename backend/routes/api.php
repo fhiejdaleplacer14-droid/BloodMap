@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Admin\AdminController;
 use App\Http\Controllers\Api\Admin\AuditLogController;
 use App\Http\Controllers\Api\Admin\RoleChangeController;
 use App\Http\Controllers\Api\Admin\UserController;
+use App\Http\Controllers\Api\AssistantController;
 use App\Http\Controllers\Api\CoordinatorActivityController;
 use App\Http\Controllers\Api\LookupController;
 use App\Http\Controllers\Api\MeController;
@@ -23,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/requests', [PublicRequestController::class, 'index'])->middleware('throttle:public');
 Route::get('/stats/public', [PublicRequestController::class, 'stats']);
 Route::get('/municipalities', [LookupController::class, 'municipalities']);
+Route::post('/assistant/messages', [AssistantController::class, 'message'])->middleware('throttle:assistant');
 Route::get('/coordination-points/public', [LookupController::class, 'publicCoordinationPoints']);
 
 // ── Signed in ───────────────────────────────────────────────────────────

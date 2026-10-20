@@ -17,6 +17,9 @@ import { cn } from '../../lib/cn'
 import { formatCalendarDate, formatShortDateTime } from '../../lib/datetime'
 import { displayBloodType } from '../../lib/request'
 import { useDocumentTitle } from '../../lib/useDocumentTitle'
+import { MobilePageHeader } from '../../components/layout/MobilePageHeader'
+import { Tab, Tabs, TabsContent, TabsList } from '../../components/ui/Tabs'
+import { useMinWidth } from '../../lib/hooks'
 import { CloseRequestDialog } from '../requests/CloseRequestDialog'
 import { useOwnerActions } from '../requests/ownerActions'
 import { AreaMap, PreviewCard, type PreviewData } from '../requests/WizardParts'
@@ -105,6 +108,7 @@ function Review({ request: r, onRefresh }: { request: ManagedRequest; onRefresh:
   const owner = useOwnerActions()
   const [dialog, setDialog] = useState<'correction' | 'reject' | null>(null)
   const [now] = useState(() => new Date())
+  const wide = useMinWidth('lg')
 
   const pending = r.status === 'pending_review'
   const assigned = r.assigned_coordinator
@@ -179,10 +183,67 @@ function Review({ request: r, onRefresh }: { request: ManagedRequest; onRefresh:
     ],
   ]
 
+  const submittedSection = (
+          <section className="overflow-hidden rounded-xl border border-default bg-surface">
+            <div className="flex items-center justify-between gap-3 border-b border-default px-4 py-3.5">
+              <h2 className="type-h4 text-primary">{t('review.submitted')}</h2>
+              <span className="type-body-s text-tertiary">{t('review.asEntered')}</span>
+            </div>
+            <dl className="flex flex-col px-4 py-2">
+              {facts.map(([label, value]) => (
+                <div key={label} className="flex gap-3 py-2.5">
+                  <dt className="type-body-s w-26 shrink-0 pt-px text-secondary">{label}</dt>
+                  <dd className="type-body-m min-w-0 flex-1 text-primary">{value}</dd>
+                </div>
+              ))}
+              <div className="flex flex-col gap-2 py-2.5">
+                <dt className="type-body-s text-secondary">{t('manage:detail.publicDescription')}</dt>
+                <dd className="type-body-m rounded-md border border-default bg-canvas px-3 py-2 break-words text-primary">
+                  {r.public_summary ? withMaskedPhones(r.public_summary) : t('manage:review.notSet')}
+                </dd>
+                {flags.includes('possible_phone_number') && (
+                  <dd className="type-body-s flex gap-1.5 text-status-warning">
+                    <AlertTriangle aria-hidden size={14} className="mt-0.5 shrink-0" />
+                    {t('review.phoneWarning')}
+                  </dd>
+                )}
+                {flags.includes('possible_personal_name') && (
+                  <dd className="type-body-s flex gap-1.5 text-status-warning">
+                    <AlertTriangle aria-hidden size={14} className="mt-0.5 shrink-0" />
+                    {t('review.nameWarning')}
+                  </dd>
+                )}
+              </div>
+              {r.response_instructions && (
+                <div className="flex flex-col gap-2 py-2.5">
+                  <dt className="type-body-s text-secondary">{t('manage:detail.instructions')}</dt>
+                  <dd className="type-body-m rounded-md border border-default bg-canvas px-3 py-2 break-words text-primary">
+                    {withMaskedPhones(r.response_instructions)}
+                  </dd>
+                </div>
+              )}
+            </dl>
+          </section>
+  )
+  const previewSection = (
+          <section aria-labelledby="review-preview" className="flex flex-col gap-3">
+            <h2 id="review-preview" className="type-overline text-tertiary">
+              {t('review.preview')}
+            </h2>
+            <PreviewCard data={preview} id={r.id} footer={r.published_at ? t('request:card.reviewed') : t('review.notPublic')} />
+            <AreaMap data={preview} className="h-44" />
+            <p className="type-body-s flex items-center gap-1.5 text-secondary">
+              <ShieldCheck aria-hidden size={14} className="shrink-0" />
+              {t('review.centroidNote')}
+            </p>
+          </section>
+  )
+
   return (
     <div className="flex min-h-full flex-col">
-      <div className="flex flex-1 flex-col gap-5 p-8 max-sm:p-4">
-        <Link to="/coord/queue" className="type-label-m inline-flex w-fit items-center gap-1.5 rounded-sm text-primary hover:underline">
+      <MobilePageHeader title={pending ? t('review.title', { id: r.id }) : r.id} backTo="/coord/queue" backLabel={t('review.back')} />
+      <div className={cn('flex flex-1 flex-col gap-5 p-8 max-sm:p-4', pending && canDecide && 'max-lg:pb-40')}>
+        <Link to="/coord/queue" className="type-label-m inline-flex w-fit items-center gap-1.5 rounded-sm text-primary hover:underline max-lg:hidden">
           <ArrowLeft aria-hidden size={16} />
           {t('review.back')}
         </Link>
@@ -192,7 +253,7 @@ function Review({ request: r, onRefresh }: { request: ManagedRequest; onRefresh:
             <BloodTypeTag type={r.blood_type} />
             <div className="flex flex-col gap-1">
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="type-h1 text-primary">{pending ? t('review.title', { id: r.id }) : r.id}</h1>
+                <h1 className="type-h1 text-primary max-lg:hidden">{pending ? t('review.title', { id: r.id }) : r.id}</h1>
                 <StatusBadge status={r.status} />
               </div>
               <p className="type-body-s text-secondary">
@@ -238,69 +299,39 @@ function Review({ request: r, onRefresh }: { request: ManagedRequest; onRefresh:
           </div>
         </div>
 
-        <div className="grid items-start gap-5 xl:grid-cols-[360px_minmax(0,1fr)_320px]">
-          <section className="overflow-hidden rounded-xl border border-default bg-surface">
-            <div className="flex items-center justify-between gap-3 border-b border-default px-4 py-3.5">
-              <h2 className="type-h4 text-primary">{t('review.submitted')}</h2>
-              <span className="type-body-s text-tertiary">{t('review.asEntered')}</span>
+        {wide ? (
+          <div className="grid items-start gap-5 xl:grid-cols-[360px_minmax(0,1fr)_320px]">
+            {submittedSection}
+            {previewSection}
+            <div className="flex flex-col gap-4">
+              <Checks request={r} />
+              <ReviewHistory request={r} />
             </div>
-            <dl className="flex flex-col px-4 py-2">
-              {facts.map(([label, value]) => (
-                <div key={label} className="flex gap-3 py-2.5">
-                  <dt className="type-body-s w-26 shrink-0 pt-px text-secondary">{label}</dt>
-                  <dd className="type-body-m min-w-0 flex-1 text-primary">{value}</dd>
-                </div>
-              ))}
-              <div className="flex flex-col gap-2 py-2.5">
-                <dt className="type-body-s text-secondary">{t('manage:detail.publicDescription')}</dt>
-                <dd className="type-body-m rounded-md border border-default bg-canvas px-3 py-2 break-words text-primary">
-                  {r.public_summary ? withMaskedPhones(r.public_summary) : t('manage:review.notSet')}
-                </dd>
-                {flags.includes('possible_phone_number') && (
-                  <dd className="type-body-s flex gap-1.5 text-status-warning">
-                    <AlertTriangle aria-hidden size={14} className="mt-0.5 shrink-0" />
-                    {t('review.phoneWarning')}
-                  </dd>
-                )}
-                {flags.includes('possible_personal_name') && (
-                  <dd className="type-body-s flex gap-1.5 text-status-warning">
-                    <AlertTriangle aria-hidden size={14} className="mt-0.5 shrink-0" />
-                    {t('review.nameWarning')}
-                  </dd>
-                )}
-              </div>
-              {r.response_instructions && (
-                <div className="flex flex-col gap-2 py-2.5">
-                  <dt className="type-body-s text-secondary">{t('manage:detail.instructions')}</dt>
-                  <dd className="type-body-m rounded-md border border-default bg-canvas px-3 py-2 break-words text-primary">
-                    {withMaskedPhones(r.response_instructions)}
-                  </dd>
-                </div>
-              )}
-            </dl>
-          </section>
-
-          <section aria-labelledby="review-preview" className="flex flex-col gap-3">
-            <h2 id="review-preview" className="type-overline text-tertiary">
-              {t('review.preview')}
-            </h2>
-            <PreviewCard data={preview} id={r.id} footer={r.published_at ? t('request:card.reviewed') : t('review.notPublic')} />
-            <AreaMap data={preview} className="h-44" />
-            <p className="type-body-s flex items-center gap-1.5 text-secondary">
-              <ShieldCheck aria-hidden size={14} className="shrink-0" />
-              {t('review.centroidNote')}
-            </p>
-          </section>
-
-          <div className="flex flex-col gap-4">
-            <Checks request={r} />
-            <ReviewHistory request={r} />
           </div>
-        </div>
+        ) : (
+          // Below 1024 px: Submission · Preview · History tabs (44:1070).
+          <Tabs defaultValue="submission">
+            <TabsList aria-label={t('review.tabsLabel')}>
+              <Tab value="submission">{t('review.tabs.submission')}</Tab>
+              <Tab value="preview">{t('review.tabs.preview')}</Tab>
+              <Tab value="history">{t('review.tabs.history')}</Tab>
+            </TabsList>
+            <TabsContent value="submission" className="flex flex-col gap-4 pt-4">
+              <Checks request={r} />
+              {submittedSection}
+            </TabsContent>
+            <TabsContent value="preview" className="pt-4">
+              {previewSection}
+            </TabsContent>
+            <TabsContent value="history" className="flex flex-col gap-4 pt-4">
+              <ReviewHistory request={r} />
+            </TabsContent>
+          </Tabs>
+        )}
       </div>
 
       {pending && (
-        <div className="sticky bottom-0 z-10 flex flex-wrap items-center justify-between gap-3 border-t border-default bg-surface px-8 py-3 max-sm:px-4">
+        <div className="sticky bottom-0 z-10 flex flex-wrap items-center justify-between gap-3 border-t border-default bg-surface px-8 py-3 max-lg:hidden">
           <p className="type-body-s flex items-center gap-2 text-secondary">
             <ShieldCheck aria-hidden size={16} className="shrink-0" />
             {elsewhere ? t('review.assignedElsewhere', { name: assigned?.name ?? '' }) : t('review.confirmNote')}
@@ -318,6 +349,24 @@ function Review({ request: r, onRefresh }: { request: ManagedRequest; onRefresh:
               </Button>
             </div>
           )}
+        </div>
+      )}
+
+      {pending && canDecide && (
+        <div className="fixed inset-x-0 bottom-0 z-20 flex flex-col gap-2 border-t border-default bg-surface px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
+          <Button variant="primary" icon="check" className="w-full" loading={action.isPending && dialog === null} onClick={() => run('approve')}>
+            {t('review.approve')}
+          </Button>
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <Button variant="secondary" icon="pencil" className="w-full" disabled={action.isPending} onClick={() => setDialog('correction')}>
+                {t('review.requestCorrection')}
+              </Button>
+            </div>
+            <Button variant="destructive" icon="ban" disabled={action.isPending} onClick={() => setDialog('reject')}>
+              {t('review.reject')}
+            </Button>
+          </div>
         </div>
       )}
 

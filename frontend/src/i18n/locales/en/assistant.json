@@ -1,0 +1,38 @@
+{
+  "launcher": {
+    "open": "Ask the guide",
+    "close": "Close guide"
+  },
+  "title": "BloodMap guide",
+  "subtitle": "Answers from approved help articles",
+  "clear": "Clear conversation",
+  "close": "Close",
+  "greeting": "Hi! I can explain how BloodMap works and point you to the right guidelines.",
+  "limits": "I can’t see private details, confirm whether blood is still needed, or tell you if you can donate.",
+  "tryAsking": "Try asking",
+  "suggestions": [
+    "How do I find a blood request?",
+    "How do I submit a request?",
+    "What do the request statuses mean?",
+    "How can I protect my personal information?"
+  ],
+  "label": "BloodMap guide · From approved help articles",
+  "you": "You asked",
+  "source": "From: Help › {{title}}",
+  "openSource": "Open {{title}}",
+  "searching": "Searching approved help articles…",
+  "placeholder": "Ask about using BloodMap…",
+  "waiting": "Waiting for the answer…",
+  "inputLabel": "Your question",
+  "send": "Send",
+  "tooLong": "Keep your question under {{max}} characters.",
+  "disclaimer": "Answers come from approved help articles and can be incomplete. The guide can’t see private data or check if blood is available, and it isn’t medical advice.",
+  "error": {
+    "title": "The guide isn’t available right now",
+    "body": "Your question wasn’t lost. You can retry, or read the help articles directly.",
+    "retry": "Retry",
+    "open": "Open help and guidelines",
+    "rateLimited": "You’ve asked a lot of questions in a short time. Wait a minute, then retry."
+  },
+  "conversation": "Conversation with the BloodMap guide"
+}

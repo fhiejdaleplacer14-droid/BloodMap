@@ -9,6 +9,7 @@ import { DemoBadge } from '../map/MapOverlays'
 import { IconButton } from '../ui/IconButton'
 import { icons } from '../ui/icons'
 import { Skeleton } from '../ui/Skeleton'
+import { Assistant } from '../assistant/Assistant'
 import { AppSidebar } from './AppSidebar'
 import { BottomNav } from './BottomNav'
 import { MobileTopBar } from './MobileTopBar'
@@ -25,6 +26,8 @@ export type WorkspaceHandle = {
     | 'overview' | 'saved' | 'activity' | 'notifications' | 'profile' | 'myRequests' | 'drafts' | 'create' | 'param'
     | 'queue' | 'active' | 'closed' | 'users' | 'coordinators' | 'audit' | 'settings'
   section?: 'requests' | 'coord' | 'admin'
+  /** Focused task (create, review): below 1024 px the page's own header and sticky actions replace the top bar and bottom nav. */
+  focus?: boolean
 }
 
 function roleLabel(me: Me, t: ReturnType<typeof useTranslation<'nav'>>['t']): string {
@@ -107,7 +110,7 @@ function Shell({ me }: { me: Me }) {
         onSignOut={signOut}
       />
       <div className="flex min-w-0 flex-1 flex-col">
-        <MobileTopBar className="lg:hidden" actions={bell} />
+        {!handle.focus && <MobileTopBar className="lg:hidden" actions={bell} />}
         <header className="flex h-16 shrink-0 items-center justify-between border-b border-default bg-surface px-8 max-lg:hidden">
           <nav aria-label="Breadcrumb">
             <ol className="flex items-center gap-2">
@@ -132,7 +135,9 @@ function Shell({ me }: { me: Me }) {
         <main id="main" className="relative min-h-0 flex-1 overflow-y-auto">
           <Outlet />
         </main>
-        <BottomNav className="lg:hidden" items={workspaceBottomNav(me, t)} />
+        {!handle.focus && <BottomNav className="lg:hidden" items={workspaceBottomNav(me, t)} />}
+        {/* Donors get the guide (44:954); staff workspaces don't show it. */}
+        {me.role === 'donor' && <Assistant raised />}
       </div>
     </div>
   )

@@ -39,6 +39,8 @@ type RequestDetailsPanelProps = {
   hrefFor: (id: string) => string
   /** "Find active requests nearby": same type around this request's area. */
   onFindNearby: (request: PublicRequest) => void
+  /** Phones (25:657): icon back, "Request details" title, sticky Save + Log in for contact. */
+  compact?: boolean
 }
 
 function Fact({ label, children, mono }: { label: string; children: ReactNode; mono?: boolean }) {
@@ -93,7 +95,7 @@ function NearbyActive({ request, hrefFor }: { request: PublicRequest; hrefFor: (
  * (19:2457) states. A request that expires while open swaps state in place —
  * never removed silently, never shown as active (55:241).
  */
-export function RequestDetailsPanel({ id, resultCount, onBack, hrefFor, onFindNearby }: RequestDetailsPanelProps) {
+export function RequestDetailsPanel({ id, resultCount, onBack, hrefFor, onFindNearby, compact = false }: RequestDetailsPanelProps) {
   const { t, i18n } = useTranslation(['explorer', 'request', 'states', 'common'])
   const locale = i18n.language
   const navigate = useNavigate()
@@ -113,7 +115,14 @@ export function RequestDetailsPanel({ id, resultCount, onBack, hrefFor, onFindNe
     resultCount === null ? t('detail.backToRequests') : t('detail.backToResults', { count: resultCount })
   const loginHref = `/login?next=${encodeURIComponent(`${location.pathname}${location.search}`)}`
 
-  const topBar = (actions?: ReactNode) => (
+  const topBar = (actions?: ReactNode) =>
+    compact ? (
+      <div className="flex h-14 shrink-0 items-center gap-1 border-b border-default bg-surface px-2">
+        <IconButton icon="arrow-left" label={backLabel} tooltip={false} onClick={onBack} />
+        <p className="type-h4 min-w-0 flex-1 truncate text-primary">{t('detail.mobileTitle')}</p>
+        {actions}
+      </div>
+    ) : (
     <div className="flex items-center justify-between gap-2 border-b border-default px-4 py-3">
       <Button variant="tertiary" onClick={onBack} className="-ml-1">
         <ArrowLeft aria-hidden size={16} />
@@ -121,7 +130,7 @@ export function RequestDetailsPanel({ id, resultCount, onBack, hrefFor, onFindNe
       </Button>
       <div className="flex gap-2">{actions}</div>
     </div>
-  )
+    )
 
   if (detail.isPending && !request) {
     return (
@@ -204,7 +213,7 @@ export function RequestDetailsPanel({ id, resultCount, onBack, hrefFor, onFindNe
         canToggleSave && (
           <IconButton
             icon="bookmark"
-            variant="outline"
+            variant={compact ? undefined : 'outline'}
             label={saveLabel}
             aria-pressed={request.is_saved}
             disabled={toggleSaved.isPending}
@@ -415,16 +424,23 @@ export function RequestDetailsPanel({ id, resultCount, onBack, hrefFor, onFindNe
             )}
           </>
         ) : (
-          <Button
-            variant={request.is_saved ? 'secondary' : 'primary'}
-            icon="bookmark"
-            className="flex-1"
-            aria-pressed={request.is_saved}
-            loading={toggleSaved.isPending}
-            onClick={() => save(!request.is_saved)}
-          >
-            {saveLabel}
-          </Button>
+          <>
+            <Button
+              variant={request.is_saved ? 'secondary' : 'primary'}
+              icon="bookmark"
+              className="flex-1"
+              aria-pressed={request.is_saved}
+              loading={toggleSaved.isPending}
+              onClick={() => save(!request.is_saved)}
+            >
+              {saveLabel}
+            </Button>
+            {compact && !me && !request.contact && live && (
+              <Button asChild variant="secondary">
+                <Link to={loginHref}>{t('detail.point.logInShort')}</Link>
+              </Button>
+            )}
+          </>
         )}
       </div>
     </div>

@@ -194,7 +194,13 @@
     "conflict": "This request changed in the meantime",
     "conflictBody": "Someone else may have reviewed it. The page has been refreshed.",
     "failed": "Couldn’t complete the action",
-    "failedBody": "Check your connection and try again."
+    "failedBody": "Check your connection and try again.",
+    "tabsLabel": "Review sections",
+    "tabs": {
+      "submission": "Submission",
+      "preview": "Preview",
+      "history": "History"
+    }
   },
   "activity": {
     "title": "Activity log",

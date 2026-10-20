@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Services\Assistant\AssistantEngine;
+use App\Services\Assistant\HelpArticleAssistant;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +16,8 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        // The guide answers from approved help articles; swap here for an LLM-backed engine (decision #77).
+        $this->app->bind(AssistantEngine::class, HelpArticleAssistant::class);
     }
 
     public function boot(): void
@@ -24,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Public search: generous for people, firm for scrapers.
         RateLimiter::for('public', fn (Request $request) => Limit::perMinute(120)->by($request->ip()));
+        RateLimiter::for('assistant', fn (Request $request) => Limit::perMinute(20)->by($request->ip()));
 
         // Reset links open the SPA, which posts to /reset-password.
         ResetPassword::createUrlUsing(fn (User $user, string $token) => rtrim((string) config('app.frontend_url'), '/')

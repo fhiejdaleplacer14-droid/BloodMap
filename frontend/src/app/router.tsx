@@ -144,7 +144,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'requests/:id',
-                handle: { crumb: 'param', section: 'coord' },
+                handle: { crumb: 'param', section: 'coord', focus: true },
                 lazy: async () => ({ Component: (await import('../routes/coord/ReviewPage')).ReviewPage }),
               },
               {
@@ -159,7 +159,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: 'requests/new',
-                handle: { crumb: 'create', section: 'requests' },
+                handle: { crumb: 'create', section: 'requests', focus: true },
                 lazy: async () => ({ Component: (await import('../routes/requests/CreateRequestPage')).CreateRequestPage }),
               },
               {

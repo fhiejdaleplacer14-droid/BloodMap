@@ -13,6 +13,7 @@ services:
       POSTGRES_USER: ${DB_USERNAME:-bloodmap}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
       DB_TEST_DATABASE: ${DB_TEST_DATABASE:-bloodmap_testing}
+      DB_E2E_DATABASE: ${DB_E2E_DATABASE:-bloodmap_e2e}
     ports:
       - "${DB_PORT:-5432}:5432"
     volumes:

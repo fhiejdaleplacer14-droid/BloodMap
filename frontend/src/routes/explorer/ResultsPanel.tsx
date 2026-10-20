@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { DropdownMenu } from 'radix-ui'
 import { useTranslation } from 'react-i18next'
 import { RequestCard } from '../../components/domain/RequestCard'
@@ -6,6 +7,7 @@ import { Button } from '../../components/ui/Button'
 import { EmptyState } from '../../components/ui/EmptyState'
 import { icons } from '../../components/ui/icons'
 import { Pagination, type PaginationMeta } from '../../components/ui/Pagination'
+import { cn } from '../../lib/cn'
 import { formatTime } from '../../lib/datetime'
 import { SORTS, type Sort } from '../../lib/explorer/params'
 import type { PublicRequest } from '../../lib/request'
@@ -33,6 +35,13 @@ type ResultsPanelProps = {
   selectedId: string | null
   highlightedId: string | null
   onHighlight: (id: string | null) => void
+  /** Beside the count, e.g. "Sample data" on phones (25:116). */
+  badge?: ReactNode
+  /**
+   * Phones and the map sheet: the privacy note scrolls with the list and the
+   * list leaves room for the guide launcher.
+   */
+  compact?: boolean
 }
 
 /** Results bar · Results list · Privacy note (14:107 → 14:373). */
@@ -53,10 +62,19 @@ export function ResultsPanel({
   selectedId,
   highlightedId,
   onHighlight,
+  badge,
+  compact = false,
 }: ResultsPanelProps) {
   const { t, i18n } = useTranslation(['explorer', 'states'])
   const asOf = lastUpdated ? formatTime(new Date(lastUpdated).toISOString(), i18n.language) : null
   const total = meta?.total ?? 0
+
+  const privacyNote = (
+        <div className="flex gap-2 border-t border-default bg-canvas px-6 py-3 max-sm:px-4">
+          <icons.info aria-hidden size={16} className="mt-px shrink-0 text-secondary" />
+          <p className="type-body-s text-secondary">{t('results.privacyNote')}</p>
+        </div>
+  )
 
   return (
     <>
@@ -82,9 +100,13 @@ export function ResultsPanel({
             ) : (
               <>
                 <span className="type-label-m text-primary">{t('results.count', { count: total })}</span>
-                <span className="type-body-s text-secondary">
-                  {stale && asOf ? t('results.asOf', { time: asOf }) : t('results.inView')}
-                </span>
+                {stale && asOf ? (
+                  <span className="type-body-s text-secondary">{t('results.asOf', { time: asOf })}</span>
+                ) : badge ? (
+                  badge
+                ) : (
+                  <span className="type-body-s text-secondary">{t('results.inView')}</span>
+                )}
               </>
             )}
           </p>
@@ -128,7 +150,10 @@ export function ResultsPanel({
         tabIndex={-1}
         aria-busy={initialLoading || undefined}
         aria-label={t('results.listLabel')}
-        className="relative flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-6 pb-4 outline-none max-sm:px-4"
+        className={cn(
+          'relative flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto outline-none',
+          compact ? 'px-4 pb-24' : 'px-6 pb-4 max-sm:px-4',
+        )}
       >
         {failed ? (
           <EmptyState
@@ -178,12 +203,10 @@ export function ResultsPanel({
             {meta && meta.last_page > 1 && <Pagination meta={meta} onPageChange={onPageChange} className="mt-2" />}
           </>
         )}
+        {compact && !failed && <div className="-mx-4 mt-2">{privacyNote}</div>}
       </div>
 
-      <div className="flex gap-2 border-t border-default bg-canvas px-6 py-3 max-sm:px-4">
-        <icons.info aria-hidden size={16} className="mt-px shrink-0 text-secondary" />
-        <p className="type-body-s text-secondary">{t('results.privacyNote')}</p>
-      </div>
+      {!compact && privacyNote}
     </>
   )
 }

@@ -109,3 +109,21 @@ PostgreSQL, with no PostGIS.
 
 CI runs the same checks on every push to `main` and on every pull request.
 The backend job runs against a PostgreSQL service container.
+
+### End-to-end flows (Playwright)
+
+`frontend/e2e` covers the seven prototype flows from Figma page 11 (A discover ·
+B register · C save · D submit · E review · F administer · G assistant), plus
+flow A on a phone-sized screen.
+
+```bash
+cd frontend
+npx playwright install chromium   # first time only (local runs use your installed Chrome)
+npm run test:e2e
+```
+
+The suite starts its own API (`localhost:8100`) and frontend (`localhost:5180`)
+so your dev servers can keep running. Before every run it resets and
+demo-seeds the `bloodmap_e2e` database (created by the Docker init script; on
+an existing volume create it once with `CREATE DATABASE bloodmap_e2e`). It
+refuses to reset any database whose name doesn't end in `_e2e`.

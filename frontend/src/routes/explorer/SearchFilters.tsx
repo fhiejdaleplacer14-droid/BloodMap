@@ -6,7 +6,6 @@ import { TextField } from '../../components/ui/TextField'
 import { icons } from '../../components/ui/icons'
 import { useRequestSearch } from '../../lib/api/requests'
 import { manilaToday } from '../../lib/dates'
-import { formatCalendarDate } from '../../lib/datetime'
 import {
   AREAS,
   DEFAULT_FILTERS,
@@ -21,8 +20,11 @@ import {
   type PublicStatus,
 } from '../../lib/explorer/params'
 import { BLOOD_TYPES, displayBloodType, type BloodType } from '../../lib/request'
+import { Button } from '../../components/ui/Button'
 import { useDebouncedCallback } from '../../lib/hooks'
+import { appliedGroupCount, hasStatusChip, useFilterChips } from './filterChips'
 import { FilterPopover } from './FilterPopover'
+import { FiltersSheet } from './FiltersSheet'
 
 const AlertCircle = icons['alert-circle']
 
@@ -53,15 +55,21 @@ type SearchFiltersProps = {
   bbox: string | null
   /** Header slot on the right of the title (sample-data label, view toggle). */
   titleAside?: ReactNode
+  /**
+   * Phones (25:2): search, "Filters · N" (opens the full-screen sheet) and the
+   * List/Map toggle, then a scrollable row of applied chips.
+   */
+  compact?: boolean
+  /** Phone map (25:430): floating search and a filter icon with a dot when filters apply. */
+  mapOverlay?: boolean
 }
 
 /**
  * Search & filters (14:42): title row, location search, filter triggers
  * (Blood type · Status · Posted · Area) and applied filter chips.
  */
-export function SearchFilters({ params, updateFilters, onClearAll, bbox, titleAside }: SearchFiltersProps) {
-  const { t, i18n } = useTranslation(['explorer', 'request'])
-  const locale = i18n.language
+export function SearchFilters({ params, updateFilters, onClearAll, bbox, titleAside, compact = false, mapOverlay = false }: SearchFiltersProps) {
+  const { t } = useTranslation(['explorer', 'request'])
   const [open, setOpen] = useState<PopoverName | null>(null)
   const [draft, setDraft] = useState<ExplorerFilters>(DEFAULT_FILTERS)
   const [custom, setCustom] = useState(false)
@@ -121,46 +129,80 @@ export function SearchFilters({ params, updateFilters, onClearAll, bbox, titleAs
   const showLabel = (count: number | undefined) =>
     count === undefined ? t('filters.apply') : t('filters.show', { count })
 
-  // Applied filter chips (14:88): each one removes itself.
-  const chips: Array<{ key: string; label: string; remove: () => void }> = [
-    ...params.types.map((type) => ({
-      key: `type-${type}`,
-      label: t('filters.chips.type', { value: displayBloodType(type) }),
-      remove: () => updateFilters({ types: params.types.filter((v) => v !== type) }),
-    })),
-    ...params.urgency.map((urgency) => ({
-      key: `urgency-${urgency}`,
-      label: t('filters.chips.urgency', { value: t(`request:urgency.${urgency}`) }),
-      remove: () => updateFilters({ urgency: params.urgency.filter((v) => v !== urgency) }),
-    })),
-    ...(hasStatusChip(params.status)
-      ? params.status.map((status) => ({
-          key: `status-${status}`,
-          label: t('filters.chips.status', { value: t(`filters.statuses.${status}`) }),
-          remove: () => updateFilters({ status: params.status.length > 1 ? params.status.filter((v) => v !== status) : DEFAULT_FILTERS.status }),
-        }))
-      : []),
-    ...(params.posted
-      ? [{ key: 'posted', label: t('filters.chips.posted', { value: t(`filters.postedRanges.${params.posted}`) }), remove: () => updateFilters({ posted: null }) }]
-      : []),
-    ...(params.from || params.to
-      ? [
-          {
-            key: 'range',
-            label:
-              params.from && params.to
-                ? t('filters.chips.postedRange', { from: formatCalendarDate(params.from, locale), to: formatCalendarDate(params.to, locale) })
-                : params.from
-                  ? t('filters.chips.postedFrom', { from: formatCalendarDate(params.from, locale) })
-                  : t('filters.chips.postedTo', { to: formatCalendarDate(params.to as string, locale) }),
-            remove: () => updateFilters({ from: null, to: null }),
-          },
-        ]
-      : []),
-    ...(params.area
-      ? [{ key: 'area', label: t('filters.chips.area', { value: t(`filters.areas.${params.area}`) }), remove: () => updateFilters({ area: null }) }]
-      : []),
-  ]
+  const chips = useFilterChips(params, updateFilters)
+  const groups = appliedGroupCount(params)
+
+  const searchForm = (label: ReactNode) => (
+    <form
+      role="search"
+      onSubmit={(event) => {
+        event.preventDefault()
+        updateFilters({ q: search.trim() })
+      }}
+    >
+      <TextField
+        type="search"
+        label={label}
+        placeholder={t('search.placeholder')}
+        value={search}
+        maxLength={100}
+        autoComplete="off"
+        onChange={(event) => {
+          setSearch(event.target.value)
+          commitSearch(event.target.value)
+        }}
+        onClear={() => {
+          setSearch('')
+          updateFilters({ q: '' })
+        }}
+      />
+    </form>
+  )
+
+  if (mapOverlay) {
+    return (
+      <div className="flex items-start gap-2">
+        <div className="min-w-0 flex-1 rounded-md bg-surface shadow-floating">{searchForm(<span className="sr-only">{t('search.label')}</span>)}</div>
+        <FiltersSheet params={params} updateFilters={updateFilters} bbox={bbox}>
+          <button
+            type="button"
+            aria-label={groups ? `${t('filters.label')} ${t('filters.triggerCount', { count: groups })}` : t('filters.label')}
+            className="relative flex size-11 shrink-0 items-center justify-center rounded-md border border-default bg-surface text-primary shadow-floating"
+          >
+            <icons.sliders aria-hidden size={18} />
+            {groups > 0 && <span aria-hidden className="absolute -top-1 -right-1 size-2.5 rounded-full border-2 border-(--bg-surface) bg-inverse" />}
+          </button>
+        </FiltersSheet>
+      </div>
+    )
+  }
+
+  if (compact) {
+    return (
+      <div className="flex flex-col gap-3 px-4 pt-3 pb-3">
+        <h1 className="sr-only">{t('pageTitle')}</h1>
+        {searchForm(<span className="sr-only">{t('search.label')}</span>)}
+        <div className="flex items-center justify-between gap-3">
+          <FiltersSheet params={params} updateFilters={updateFilters} bbox={bbox}>
+            <Button variant="secondary" icon="sliders">
+              {groups ? `${t('filters.label')} ${t('filters.triggerCount', { count: groups })}` : t('filters.label')}
+            </Button>
+          </FiltersSheet>
+          {titleAside}
+        </div>
+        {chips.length > 0 && (
+          <div role="group" aria-label={t('filters.applied')} className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+            {chips.map((chip) => (
+              <FilterChip key={chip.key} label={chip.label} onRemove={chip.remove} className="shrink-0" />
+            ))}
+            <button type="button" onClick={onClearAll} className="type-label-m shrink-0 rounded-sm px-1 whitespace-nowrap text-link hover:underline">
+              {t('filters.clearAll')}
+            </button>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col gap-4 px-6 py-5 max-sm:px-4">
@@ -172,30 +214,7 @@ export function SearchFilters({ params, updateFilters, onClearAll, bbox, titleAs
         {titleAside}
       </div>
 
-      <form
-        role="search"
-        onSubmit={(event) => {
-          event.preventDefault()
-          updateFilters({ q: search.trim() })
-        }}
-      >
-        <TextField
-          type="search"
-          label={t('search.label')}
-          placeholder={t('search.placeholder')}
-          value={search}
-          maxLength={100}
-          autoComplete="off"
-          onChange={(event) => {
-            setSearch(event.target.value)
-            commitSearch(event.target.value)
-          }}
-          onClear={() => {
-            setSearch('')
-            updateFilters({ q: '' })
-          }}
-        />
-      </form>
+      {searchForm(t('search.label'))}
 
       <div role="group" aria-label={t('filters.label')} className="flex flex-wrap gap-2">
         <FilterPopover
@@ -360,9 +379,4 @@ export function SearchFilters({ params, updateFilters, onClearAll, bbox, titleAs
       )}
     </div>
   )
-}
-
-/** Status is "applied" only when it differs from the Active default. */
-function hasStatusChip(status: PublicStatus[]): boolean {
-  return !(status.length === 1 && status[0] === 'active')
 }

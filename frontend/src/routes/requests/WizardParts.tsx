@@ -56,7 +56,8 @@ export function WizardPanel({ title, children, footer }: { title: string; childr
     <section className="flex flex-col rounded-xl border border-default bg-surface">
       <h2 className="type-h4 px-5 pt-5 text-primary">{title}</h2>
       <div className="flex flex-col gap-5 p-5">{children}</div>
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-default px-5 py-4">{footer}</div>
+      {/* Below 1024 px the actions sit in a sticky bar instead (44:1031). */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-default px-5 py-4 max-lg:hidden">{footer}</div>
     </section>
   )
 }

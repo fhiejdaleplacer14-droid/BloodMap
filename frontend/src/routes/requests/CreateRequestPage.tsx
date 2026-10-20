@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm, useWatch, type UseFormReturn } from 'react-hook-form'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import { useTranslation } from 'react-i18next'
+import { MobilePageHeader } from '../../components/layout/MobilePageHeader'
 import { PageHeader } from '../../components/layout/WorkspaceLayout'
 import { Button } from '../../components/ui/Button'
 import { Checkbox } from '../../components/ui/Checkbox'
@@ -165,11 +166,20 @@ export function CreateRequestPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[calc(1112px+4rem)] flex-col gap-6 p-8 max-sm:p-4">
-      <PageHeader title={heading.title} subtitle={heading.subtitle} />
-      <Stepper step={step} />
-      {body}
-    </div>
+    <>
+      <MobilePageHeader
+        title={existing.data && existing.data.status !== 'draft' ? heading.title : t('create.mobileTitle')}
+        backTo="/requests/mine"
+        backLabel={t('detail.back')}
+      />
+      <div className="mx-auto flex w-full max-w-[calc(1112px+4rem)] flex-col gap-6 p-8 max-lg:pb-28 max-sm:p-4 max-sm:pb-28">
+        <div className="flex flex-col gap-6 max-lg:hidden">
+          <PageHeader title={heading.title} subtitle={heading.subtitle} />
+          <Stepper step={step} />
+        </div>
+        {body}
+      </div>
+    </>
   )
 }
 
@@ -272,8 +282,29 @@ function RequestWizard({ initial, municipalities, point, step, requestId, goTo, 
       </Button>
     )
 
+  const stepLabel = [t('steps.info'), t('steps.coordination'), t('steps.review')][step - 1]
+
   return (
     <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_392px]">
+      {/* Phone progress (44:977): step, Save draft, three segments. */}
+      <div className="-mt-1 flex flex-col gap-3 lg:hidden">
+        <div className="flex items-center justify-between gap-3">
+          <p className="type-label-m text-primary">{t('steps.progress', { n: step, label: stepLabel })}</p>
+          <button
+            type="button"
+            onClick={() => void saveDraft()}
+            disabled={busy}
+            className="type-label-m shrink-0 rounded-sm text-link hover:underline disabled:text-tertiary"
+          >
+            {t('create.saveDraft')}
+          </button>
+        </div>
+        <div aria-hidden className="grid grid-cols-3 gap-1">
+          {[1, 2, 3].map((n) => (
+            <span key={n} className={n <= step ? 'h-1 rounded-full bg-inverse' : 'h-1 rounded-full bg-subtle'} />
+          ))}
+        </div>
+      </div>
       <form
         noValidate
         onSubmit={(event) => {
@@ -356,8 +387,29 @@ function RequestWizard({ initial, municipalities, point, step, requestId, goTo, 
             />
           </WizardPanel>
         )}
+
+        <div className="fixed inset-x-0 bottom-0 z-20 flex gap-3 border-t border-default bg-surface px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
+          {step > 1 && (
+            <Button variant="secondary" onClick={() => goTo((step - 1) as Step)} disabled={busy}>
+              <ArrowLeft aria-hidden size={16} />
+              {t('create.back')}
+            </Button>
+          )}
+          <div className="flex-1">
+            <Button type="submit" variant="primary" icon={step === 3 ? 'send' : undefined} className="w-full" loading={step === 3 ? submit.isPending : save.isPending} disabled={busy}>
+              {step === 1
+                ? t('create.toCoordination')
+                : step === 2
+                  ? t('create.toReview')
+                  : latest?.status === 'needs_correction'
+                    ? t('create.resubmit')
+                    : t('create.submit')}
+            </Button>
+          </div>
+        </div>
       </form>
 
+      <div className="max-lg:hidden">
       <PublicPreview
         withMap={step === 3}
         data={{
@@ -373,6 +425,7 @@ function RequestWizard({ initial, municipalities, point, step, requestId, goTo, 
           contactVisibleTo: values.contact_visible_to,
         }}
       />
+      </div>
     </div>
   )
 }

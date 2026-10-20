@@ -5,7 +5,8 @@
     "coordination": "Coordination",
     "review": "Review & submit",
     "done": "{{label}} (completed)",
-    "current": "{{label}} (current step)"
+    "current": "{{label}} (current step)",
+    "progress": "Step {{n}} of 3 · {{label}}"
   },
   "create": {
     "title": "Create blood request",
@@ -30,7 +31,8 @@
     "submit": "Submit for review",
     "resubmit": "Resubmit for review",
     "submitFailed": "Couldn’t submit the request",
-    "loading": "Loading request…"
+    "loading": "Loading request…",
+    "mobileTitle": "New request"
   },
   "fields": {
     "bloodType": "Blood type",
