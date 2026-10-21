@@ -70,7 +70,7 @@ export function CoordOverviewPage() {
         }
       />
 
-      <div aria-busy={summary.isPending || undefined} className="grid gap-4 sm:grid-cols-3">
+      <div aria-busy={summary.isPending || undefined} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           icon="clipboard-check"
           label={t('overview.stats.pending')}
@@ -87,7 +87,22 @@ export function CoordOverviewPage() {
           }
         />
         <StatCard icon="list" label={t('overview.stats.active')} value={s?.active} note={t('overview.stats.activeNote')} />
-        <StatCard icon="hourglass" label={t('overview.stats.expiring')} value={s?.expiring_24h} note={t('overview.stats.expiringNote')} />
+        <StatCard icon="hourglass" label={t('overview.stats.expiring')} value={s?.expiring_24h} note={t('overview.stats.expiringNote', { hours: s?.reminder_hours ?? 6 })} />
+        <StatCard
+          icon="flag"
+          label={t('overview.stats.reports')}
+          value={s?.open_reports}
+          note={
+            s?.latest_report_at ? (
+              <Link to="/coord/reports" className="inline-flex items-center gap-1.5 hover:underline">
+                <span aria-hidden className="size-1.5 rounded-full bg-(--status-warning-fg)" />
+                {t('overview.stats.latestReport', { time: agoLabel(s.latest_report_at, t, now) })}
+              </Link>
+            ) : (
+              t('overview.stats.noReports')
+            )
+          }
+        />
       </div>
 
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_400px]">

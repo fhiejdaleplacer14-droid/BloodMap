@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\Admin\AdminController;
 use App\Http\Controllers\Api\Admin\AuditLogController;
+use App\Http\Controllers\Api\Admin\CoordinatorInviteController;
 use App\Http\Controllers\Api\Admin\RoleChangeController;
 use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\AssistantController;
@@ -10,9 +11,11 @@ use App\Http\Controllers\Api\CoordinatorActivityController;
 use App\Http\Controllers\Api\LookupController;
 use App\Http\Controllers\Api\MeController;
 use App\Http\Controllers\Api\PublicRequestController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\RequestController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\SavedRequestController;
+use App\Http\Controllers\Auth\InviteController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +29,7 @@ Route::get('/stats/public', [PublicRequestController::class, 'stats']);
 Route::get('/municipalities', [LookupController::class, 'municipalities']);
 Route::post('/assistant/messages', [AssistantController::class, 'message'])->middleware('throttle:assistant');
 Route::get('/coordination-points/public', [LookupController::class, 'publicCoordinationPoints']);
+Route::get('/invites/{token}', [InviteController::class, 'show'])->middleware('throttle:20,1');
 
 // ── Signed in ───────────────────────────────────────────────────────────
 Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
@@ -57,6 +61,7 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
     Route::post('/requests/{bloodRequest}/close', [RequestController::class, 'close']);
     Route::post('/requests/{bloodRequest}/extend', [RequestController::class, 'extend']);
     Route::get('/requests/{bloodRequest}/history', [RequestController::class, 'history']);
+    Route::post('/requests/{bloodRequest}/reports', [ReportController::class, 'store'])->middleware('throttle:10,60');
 
     // Coordinator (area) / admin
     Route::middleware('role:coordinator,admin')->group(function () {
@@ -64,6 +69,8 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
         Route::get('/coordinator/summary', [ReviewController::class, 'summary']);
         Route::get('/coordinator/activity', [CoordinatorActivityController::class, 'index']);
         Route::get('/coordinator/activity/export', [CoordinatorActivityController::class, 'export']);
+        Route::get('/coordinator/reports', [ReportController::class, 'index']);
+        Route::post('/coordinator/reports/{report}/resolve', [ReportController::class, 'resolve']);
         Route::post('/requests/{bloodRequest}/assign', [ReviewController::class, 'assign']);
         Route::post('/requests/{bloodRequest}/approve', [ReviewController::class, 'approve']);
         Route::post('/requests/{bloodRequest}/request-correction', [ReviewController::class, 'requestCorrection']);
@@ -76,6 +83,10 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
         Route::get('/summary', [AdminController::class, 'summary']);
         Route::get('/coordinators', [AdminController::class, 'coordinators']);
         Route::get('/settings', [AdminController::class, 'settings']);
+        Route::patch('/settings', [AdminController::class, 'updateSettings']);
+        Route::post('/coordinator-invites', [CoordinatorInviteController::class, 'store']);
+        Route::post('/coordinator-invites/{invite}/resend', [CoordinatorInviteController::class, 'resend']);
+        Route::delete('/coordinator-invites/{invite}', [CoordinatorInviteController::class, 'destroy']);
         Route::get('/users', [UserController::class, 'index']);
         Route::get('/users/export', [UserController::class, 'export']);
         Route::get('/users/{user}', [UserController::class, 'show']);

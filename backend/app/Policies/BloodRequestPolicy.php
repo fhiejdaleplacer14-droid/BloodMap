@@ -72,6 +72,12 @@ class BloodRequestPolicy
         return $this->active($user) && $request->status->isPubliclyVisible();
     }
 
+    /** "Report a problem" on a live listing; not on your own request (decision #94). */
+    public function report(User $user, BloodRequest $request): bool
+    {
+        return $this->active($user) && $request->status === RequestStatus::Active && $request->submitter_id !== $user->getKey();
+    }
+
     public function owns(User $user, BloodRequest $request): bool
     {
         return $request->submitter_id !== null && $request->submitter_id === $user->getKey();

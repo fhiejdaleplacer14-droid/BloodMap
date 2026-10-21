@@ -11,6 +11,7 @@ use App\Models\BloodRequest;
 use App\Models\User;
 use App\Notifications\RequestUpdate;
 use App\Services\AuditLogger;
+use App\Services\Settings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -70,7 +71,11 @@ class ReviewController extends Controller
             'all_open' => $this->tabQuery($user, 'all_open')->count(),
             'active' => $scoped()->publiclyListed()->count(),
             'expiring_24h' => $scoped()->publiclyListed()->whereBetween('expires_at', [now(), now()->addDay()])->count(),
+            'reminder_hours' => Settings::int('expiry.reminder_hours'),
             'oldest_pending_at' => $this->iso($scoped()->where('status', RequestStatus::PendingReview)->min('first_submitted_at')),
+            // "Open reports" (35:12, decision #94).
+            'open_reports' => ReportController::scoped($user)->where('status', 'open')->count(),
+            'latest_report_at' => $this->iso(ReportController::scoped($user)->where('status', 'open')->max('created_at')),
             'needs_review' => ManagedRequestResource::collection(
                 $scoped()->where('status', RequestStatus::PendingReview)->with(self::RELATIONS)->orderBy('first_submitted_at')->limit(4)->get()
             )->resolve($request),
@@ -84,7 +89,7 @@ class ReviewController extends Controller
 
     /**
      * Audit entries on requests in the coordinator's area (all areas for
-     * admins). Saves are donors' business and never included.
+     * admins). Saves and reports are donors' business and never included.
      *
      * @return Builder<AuditLog>
      */
@@ -92,7 +97,8 @@ class ReviewController extends Controller
     {
         return AuditLog::query()
             ->where('target_type', (new BloodRequest)->getMorphClass())
-            ->whereNotIn('action', ['request.saved', 'request.unsaved'])
+            // Reports are listed on Reports, where the reporter shows by reference only.
+            ->whereNotIn('action', ['request.saved', 'request.unsaved', 'request.reported'])
             ->when($user->role !== Role::Admin, fn (Builder $q) => $q->whereIn(
                 'target_id', BloodRequest::query()->inArea((int) $user->area_id)->select('id')
             ));

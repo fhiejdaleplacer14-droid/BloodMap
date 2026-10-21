@@ -8,14 +8,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Area;
 use App\Models\AuditLog;
 use App\Models\BloodRequest;
+use App\Models\CoordinatorInvite;
 use App\Models\Municipality;
 use App\Models\User;
+use App\Services\Settings;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 /**
@@ -116,39 +119,53 @@ class AdminController extends Controller
                     'is_demo' => $u->is_demo,
                 ];
             })->values(),
-            'meta' => ['uncovered_areas' => $uncovered],
+            'meta' => [
+                'uncovered_areas' => $uncovered,
+                // "Pending invite" rows (41:1289, decision #95).
+                'invites' => CoordinatorInvite::query()->pending()->with('area')->latest()->get()
+                    ->map(fn (CoordinatorInvite $i) => CoordinatorInviteController::present($i))->values(),
+            ],
         ]);
     }
 
     /**
      * GET /api/admin/settings — the values the platform runs with today and
-     * live health checks. Read-only: these live in code and the server
-     * environment (decision #72); secrets are never returned.
+     * live health checks. The editable ones come from Settings (decision
+     * #93); the rest live in code and the server environment. Secrets are
+     * never returned.
      */
     public function settings(): JsonResponse
     {
+        $s = Settings::all();
+
         return response()->json(['data' => [
+            // Editable values, flat by key (PATCH /api/admin/settings).
+            'values' => $s,
             'expiry' => [
                 'default' => 'desk_window_close',
                 'default_window_end' => BloodRequest::DEFAULT_WINDOW_END,
-                'max_extension_hours' => BloodRequest::MAX_EXTENSION_HOURS,
-                'reminder_hours' => 6,
+                'max_extension_hours' => $s['expiry.max_extension_hours'],
+                'reminder_hours' => $s['expiry.reminder_hours'],
                 'job_frequency_minutes' => 5,
             ],
             'notifications' => [
                 'owner_decisions' => true,
+                'correction_email' => $s['notifications.correction_email'],
                 'saver_updates' => 'per_user_preference',
-                'weekly_digest' => false,
+                'weekly_digest' => $s['notifications.weekly_digest'],
             ],
             'general' => [
                 'platform_name' => config('app.name'),
                 'timezone' => BloodRequest::LOCAL_TIME_ZONE,
                 'default_map_area' => 'nir',
+                'assistant' => $s['general.assistant'],
+                // An AI setting only takes effect with a key in the server environment.
+                'assistant_ai_available' => config('services.assistant.driver') === 'gemini' && filled(config('services.gemini.key')),
             ],
             'retention' => [
-                'deleted_accounts_days' => 30,
-                'deactivated_accounts_days' => 90,
-                'inactive_saved_days' => 30,
+                'deleted_accounts_days' => $s['retention.deleted_accounts_days'],
+                'deactivated_accounts_days' => $s['retention.deactivated_accounts_days'],
+                'inactive_saved_days' => $s['retention.inactive_saved_days'],
                 'location_precision' => 'municipality_centroid',
             ],
             'health' => $this->health(),
@@ -158,6 +175,43 @@ class AdminController extends Controller
                 'php' => PHP_VERSION,
             ],
         ]]);
+    }
+
+    /**
+     * PATCH /api/admin/settings — "Save changes" (41:2021). Only the editable
+     * keys in Settings::RULES; each change is audited, and retention changes
+     * need a reason.
+     */
+    public function updateSettings(Request $request): JsonResponse
+    {
+        $rules = collect(Settings::RULES)
+            ->mapWithKeys(fn (array $r, string $key) => ['values.'.str_replace('.', '\.', $key) => ['sometimes', ...$r]])
+            ->all();
+        $data = $request->validate(['values' => ['required', 'array'], 'reason' => ['nullable', 'string', 'max:500'], ...$rules]);
+
+        $values = [];
+        foreach (Settings::DEFAULTS as $key => $default) {
+            if (array_key_exists($key, $data['values'])) {
+                $value = $data['values'][$key];
+                $values[$key] = match (true) {
+                    is_bool($default) => (bool) $value,
+                    is_int($default) => (int) $value,
+                    default => (string) $value,
+                };
+            }
+        }
+
+        $current = Settings::all();
+        $retentionChanged = collect($values)->contains(fn ($v, string $k) => str_starts_with($k, Settings::NEEDS_REASON) && $current[$k] !== $v);
+        if ($retentionChanged && blank($data['reason'] ?? null)) {
+            throw ValidationException::withMessages(['reason' => 'Give a reason for changing data retention.']);
+        }
+
+        /** @var User $admin */
+        $admin = $request->user();
+        $changed = Settings::update($values, $admin, $data['reason'] ?? null);
+
+        return response()->json(['data' => ['changed' => $changed, 'values' => Settings::all()]]);
     }
 
     /** @return array<string, array<string, mixed>> */

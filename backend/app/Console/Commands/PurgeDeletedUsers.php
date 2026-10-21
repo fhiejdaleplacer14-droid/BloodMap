@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use App\Services\Settings;
 use Illuminate\Console\Command;
 
 /**
@@ -20,11 +21,11 @@ class PurgeDeletedUsers extends Command
     {
         $count = 0;
 
-        // Deletion requests after 30 days; deactivated accounts not restored within 90 days.
+        // Deletion requests after 30 days; deactivated accounts not restored within 90 days (System settings).
         User::query()
             ->where(fn ($q) => $q
-                ->where('deletion_requested_at', '<=', now()->subDays(30))
-                ->orWhere('deactivated_at', '<=', now()->subDays(90)))
+                ->where('deletion_requested_at', '<=', now()->subDays(Settings::int('retention.deleted_accounts_days')))
+                ->orWhere('deactivated_at', '<=', now()->subDays(Settings::int('retention.deactivated_accounts_days'))))
             ->chunkById(100, function ($users) use (&$count) {
                 foreach ($users as $user) {
                     $user->notifications()->delete();

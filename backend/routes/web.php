@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\InviteController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,7 @@ Route::post('/register', [AuthController::class, 'register'])->middleware('throt
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:6,1');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->middleware('throttle:6,1');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
+Route::post('/invites/{token}/accept', [InviteController::class, 'accept'])->middleware('throttle:6,1');
 
 Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])
     ->middleware(['signed', 'throttle:6,1'])

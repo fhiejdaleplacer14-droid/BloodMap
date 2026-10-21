@@ -29,15 +29,13 @@ const SUBMITTER: NavEntry[] = [
   { key: 'profile', to: '/app/profile', icon: 'user' },
 ]
 
-/**
- * Coordinator sidebar (35:12). "Reports" is left out until its flow and
- * endpoint exist (open item, decision #54).
- */
+/** Coordinator sidebar (35:12). Reports lists visitors' "Report a problem" flags (decision #94). */
 const COORDINATOR: NavEntry[] = [
   { key: 'coord.overview', to: '/coord', icon: 'home', end: true, permission: 'review.queue' },
   { key: 'coord.queue', to: '/coord/queue', icon: 'clipboard-check', permission: 'review.queue' },
   { key: 'coord.active', to: '/coord/active', icon: 'list', permission: 'review.queue' },
   { key: 'coord.closed', to: '/coord/closed', icon: 'lock', permission: 'review.queue' },
+  { key: 'coord.reports', to: '/coord/reports', icon: 'flag', permission: 'review.queue' },
   { key: 'coord.activity', to: '/coord/activity', icon: 'history', permission: 'review.activity' },
   { key: 'coord.profile', to: '/app/profile', icon: 'user' },
 ]
@@ -49,11 +47,12 @@ const ADMIN: NavEntry[] = [
   { key: 'admin.coordinators', to: '/admin/coordinators', icon: 'shield-check', permission: 'admin.coordinators' },
   { key: 'admin.requests', to: '/coord/active', icon: 'list', permission: 'review.queue' },
   { key: 'admin.queue', to: '/coord/queue', icon: 'clipboard-check', permission: 'review.queue' },
+  { key: 'admin.reports', to: '/coord/reports', icon: 'flag', permission: 'review.queue' },
   { key: 'admin.audit', to: '/admin/audit', icon: 'file-text', permission: 'admin.audit' },
   { key: 'admin.settings', to: '/admin/settings', icon: 'sliders', permission: 'admin.settings' },
 ]
 
-export type NavCounts = { unread?: number; active?: number; drafts?: number; queue?: number }
+export type NavCounts = { unread?: number; active?: number; drafts?: number; queue?: number; reports?: number }
 
 const COUNT_FOR: Record<string, keyof NavCounts> = {
   notifications: 'unread',
@@ -61,6 +60,8 @@ const COUNT_FOR: Record<string, keyof NavCounts> = {
   drafts: 'drafts',
   'coord.queue': 'queue',
   'admin.queue': 'queue',
+  'coord.reports': 'reports',
+  'admin.reports': 'reports',
 }
 
 export function isSubmitter(me: Me): boolean {

@@ -7,6 +7,7 @@ use App\Http\Resources\PublicRequestResource;
 use App\Models\BloodRequest;
 use App\Models\User;
 use App\Services\AuditLogger;
+use App\Services\Settings;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -26,8 +27,8 @@ class SavedRequestController extends Controller
 
         $saved = $user->savedRequests()
             ->whereIn('status', ['active', 'fulfilled', 'closed', 'expired'])
-            // "Inactive requests stay here for 30 days … then they're removed" (28:856).
-            ->where(fn ($q) => $q->where('status', 'active')->orWhere('blood_requests.updated_at', '>=', now()->subDays(30)))
+            // "Inactive requests stay here for 30 days … then they're removed" (28:856; System settings).
+            ->where(fn ($q) => $q->where('status', 'active')->orWhere('blood_requests.updated_at', '>=', now()->subDays(Settings::int('retention.inactive_saved_days'))))
             ->with(['municipality', 'coordinationPoint'])
             ->orderByPivot('created_at', 'desc')
             ->get()

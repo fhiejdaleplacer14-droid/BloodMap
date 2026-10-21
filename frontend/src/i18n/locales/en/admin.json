@@ -7,7 +7,8 @@
     "requests": "Blood Requests",
     "queue": "Verification Queue",
     "audit": "Audit Logs",
-    "settings": "System Settings"
+    "settings": "System Settings",
+    "reports": "Reports"
   },
   "bottom": {
     "home": "Home",
@@ -191,10 +192,10 @@
   },
   "coordinators": {
     "title": "Coordinator management",
-    "subtitle": "Who can review and publish, and where.",
+    "subtitle": "Who can review and publish, and where. Invite someone new, or give an existing account the Coordinator role.",
     "uncovered_one": "No coordinator covers {{areas}}. Requests there wait in the NIR-wide queue for an administrator.",
     "uncovered_other": "No coordinator covers {{areas}}. Requests there wait in the NIR-wide queue for an administrator.",
-    "assign": "Assign a coordinator",
+    "assign": "Change a role",
     "caption": "Coordinators",
     "columns": {
       "coordinator": "Coordinator",
@@ -248,28 +249,27 @@
   },
   "settings": {
     "title": "System settings",
-    "subtitle": "What the platform runs with today. Values live in code and the server environment and change through a deployment — secrets are never shown here.",
-    "readOnly": "Read-only",
+    "subtitle": "Changes apply platform-wide and are written to the audit log. Secrets live in the server environment, never here.",
     "expiry": {
       "title": "Request expiration",
       "body": "Requests leave the map automatically when they expire.",
       "default": "Default expiry",
       "defaultValue": "When the desk window closes on the needed-by date ({{end}} if none is given)",
-      "maxExtension": "Extension",
-      "maxExtensionValue": "Up to {{hours}} hours, once per approval",
-      "reminder": "Reminder before expiry",
-      "reminderValue": "{{hours}} hours",
       "reminderHelp": "Sent to owners and people who saved it.",
       "job": "Expiry job frequency",
       "jobValue": "Every {{minutes}} minutes",
-      "jobHelp": "Laravel scheduler · schedule:run"
+      "jobHelp": "Laravel scheduler · schedule:run",
+      "maxExtensionHours": "Extension limit (hours)",
+      "maxExtensionHelp": "Owners can extend once per approval, by up to this many hours.",
+      "reminderHours": "Reminder before expiry (hours)"
     },
     "notifications": {
       "title": "Notifications",
       "body": "Email and in-app. Sending is queued.",
-      "owner": "Owners are emailed when a request is approved, sent back or rejected",
-      "savers": "People who saved a request get updates by their own preference",
-      "digest": "Weekly digest to donors — not sent yet (not designed)"
+      "owner": "Owners are always emailed when a request is approved or rejected.",
+      "correction": "Email owners when a correction is requested",
+      "digest": "Weekly digest to donors (opt-in only, Mondays 08:00)",
+      "savers": "People who saved a request get updates by their own preferences. In-app notifications are always sent."
     },
     "general": {
       "title": "General",
@@ -277,15 +277,23 @@
       "timezone": "Timezone",
       "timezoneValue": "Asia/Manila (PHT, UTC+8)",
       "mapArea": "Default map area",
-      "mapAreaValue": "All of NIR"
+      "mapAreaValue": "All of NIR",
+      "assistant": "Assistant",
+      "assistantAi": "AI-written · approved help articles only",
+      "assistantArticles": "Approved help articles only (no AI)",
+      "assistantHelp": "AI answers use Google Gemini. Eligibility and live-request questions never reach the model.",
+      "assistantNoKey": "No Gemini key is set in the server environment, so the guide answers from help articles either way."
     },
     "retention": {
       "title": "Privacy and retention",
-      "body": "Defaults follow data-minimization.",
-      "deleted": "Deleted accounts removed after",
-      "deactivated": "Deactivated accounts removed after",
-      "saved": "Inactive saved requests hidden after",
-      "daysValue": "{{count}} days",
+      "body": "Defaults follow data-minimization. Changing these requires a reason.",
+      "deletedDays": "Deleted accounts removed after (days)",
+      "deactivatedDays": "Deactivated accounts removed after (days)",
+      "savedDays": "Inactive saved requests hidden after (days)",
+      "savedHelp": "Fulfilled, closed and expired requests leave donors’ saved lists after this.",
+      "reason": "Reason for the change",
+      "reasonHelp": "Recorded in the audit log with each retention change.",
+      "reasonRequired": "Give a reason for changing data retention.",
       "precision": "Location precision on public map",
       "precisionValue": "City / municipality centroid"
     },
@@ -316,6 +324,37 @@
       "api": "API",
       "frontendValue": "React 19 / Vite",
       "apiValue": "{{api}} · Laravel {{laravel}} · PHP {{php}}"
-    }
+    },
+    "save": "Save changes",
+    "saved": "Settings saved",
+    "savedBody_one": "{{count}} change applied and recorded in the audit log.",
+    "savedBody_other": "{{count}} changes applied and recorded in the audit log.",
+    "saveFailed": "Settings weren’t saved",
+    "range": "Enter a whole number from {{min}} to {{max}}."
+  },
+  "invites": {
+    "open": "Invite coordinator",
+    "title": "Invite a coordinator",
+    "body": "We email them a link to set their password. Their account starts as a coordinator for the area you choose.",
+    "name": "Full name",
+    "email": "Email address",
+    "area": "Assigned area",
+    "areaPlaceholder": "Choose an area",
+    "expiry": "The link works once and expires after 7 days. You can resend or revoke it from the list.",
+    "send": "Send invite",
+    "sent": "Invite sent",
+    "sentBody": "We emailed an invite link to {{email}}.",
+    "resent": "Invite resent",
+    "revoked": "Invite revoked",
+    "failed": "That didn’t work",
+    "failedBody": "Nothing was changed. Try again.",
+    "nameRequired": "Enter their full name.",
+    "emailRequired": "Enter a valid email address.",
+    "areaRequired": "Choose the area they will review.",
+    "pending": "Pending invite",
+    "expired": "Invite expired",
+    "invited": "Invited",
+    "resend": "Resend",
+    "revoke": "Revoke"
   }
 }

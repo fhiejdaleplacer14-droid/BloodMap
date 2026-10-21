@@ -39,7 +39,7 @@ class AccountController extends Controller
         'requests' => [
             'request.created', 'request.edited', 'request.submitted', 'request.fulfilled', 'request.closed',
             'request.extended', 'request.approved', 'request.correction_requested', 'request.rejected',
-            'request.assigned', 'request.contact_revealed',
+            'request.assigned', 'request.contact_revealed', 'request.reported',
         ],
     ];
 

@@ -6,7 +6,8 @@
     "active": "Active Requests",
     "closed": "Closed Requests",
     "activity": "Activity Log",
-    "profile": "Profile"
+    "profile": "Profile",
+    "reports": "Reports"
   },
   "bottom": {
     "home": "Home",
@@ -20,7 +21,8 @@
     "queue": "Review Queue",
     "active": "Active Requests",
     "closed": "Closed Requests",
-    "activity": "Activity Log"
+    "activity": "Activity Log",
+    "reports": "Reports"
   },
   "overview": {
     "title": "Coordination overview",
@@ -34,7 +36,10 @@
       "active": "Active requests",
       "activeNote": "In your assigned area",
       "expiring": "Expiring in 24 h",
-      "expiringNote": "Owners are reminded 6 h before"
+      "expiringNote": "Owners are reminded {{hours}} h before",
+      "reports": "Open reports",
+      "latestReport": "Latest reported {{time}}",
+      "noReports": "Nothing reported"
     },
     "needsReview": "Needs your review",
     "oldestFirst": "oldest first",
@@ -244,7 +249,9 @@
       "request.fulfilled": "Marked as fulfilled",
       "request.closed": "Closed request",
       "request.expired": "Expired request",
-      "request.contact_revealed": "Revealed desk contact"
+      "request.contact_revealed": "Revealed desk contact",
+      "report.resolved": "Resolved a report",
+      "report.dismissed": "Dismissed a report"
     },
     "context": {
       "reason": "Reason: {{reason}}",
@@ -253,6 +260,63 @@
       "expired": "expires_at reached",
       "assigned": "Assigned to {{name}}",
       "extended": "Now expires {{when}}"
+    }
+  },
+  "reports": {
+    "title": "Reports",
+    "subtitle": "Problems visitors flagged on live requests in your area. Check the listing, fix it with the desk if needed, then resolve or dismiss.",
+    "caption": "Reports",
+    "tabs": {
+      "open": "Open",
+      "closed": "Handled"
+    },
+    "columns": {
+      "request": "Request",
+      "reason": "Reason",
+      "reported": "Reported",
+      "reporter": "Reported by",
+      "outcome": "Outcome",
+      "actions": "Actions"
+    },
+    "reasons": {
+      "no_longer_needed": "No longer needed",
+      "wrong_details": "Wrong or outdated details",
+      "personal_information": "Shows personal information",
+      "suspicious": "Looks suspicious or fake",
+      "other": "Something else"
+    },
+    "reporter": {
+      "donor": "Donor",
+      "facility_submitter": "Facility submitter",
+      "coordinator": "Coordinator",
+      "admin": "Administrator",
+      "deleted": "Deleted account"
+    },
+    "outcome": {
+      "resolved": "Resolved",
+      "dismissed": "Dismissed"
+    },
+    "by": "by {{name}}",
+    "you": "you",
+    "review": "Open request",
+    "handle": "Handle",
+    "emptyOpen": "No open reports",
+    "emptyOpenBody": "When a visitor reports a problem with a live request in your area, it appears here.",
+    "emptyClosed": "Nothing handled yet",
+    "emptyClosedBody": "Reports you resolve or dismiss are kept here with the note you left.",
+    "dialog": {
+      "title": "Handle report on {{id}}",
+      "body": "Reports never change a request by themselves. Fix the listing from its review page if needed, then record what you decided.",
+      "reason": "Reported as",
+      "details": "Visitor’s note",
+      "outcome": "Outcome",
+      "resolved": "Resolved — I acted on it (edited, paused or closed the request with the desk)",
+      "dismissed": "Dismissed — nothing needed changing",
+      "note": "Note (optional)",
+      "noteHelp": "Recorded in the activity log. Don’t include personal details.",
+      "save": "Save outcome",
+      "done": "Report handled",
+      "failed": "Couldn’t save the outcome"
     }
   }
 }

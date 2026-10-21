@@ -45,6 +45,10 @@ export const router = createBrowserRouter([
         lazy: async () => ({ Component: (await import('../routes/auth/ForgotPasswordPage')).ForgotPasswordPage }),
       },
       {
+        path: 'invite/:token',
+        lazy: async () => ({ Component: (await import('../routes/auth/InvitePage')).InvitePage }),
+      },
+      {
         path: 'reset-password',
         lazy: async () => ({ Component: (await import('../routes/auth/ResetPasswordPage')).ResetPasswordPage }),
       },
@@ -148,6 +152,11 @@ export const router = createBrowserRouter([
                 path: 'requests/:id',
                 handle: { crumb: 'param', section: 'coord', focus: true },
                 lazy: async () => ({ Component: (await import('../routes/coord/ReviewPage')).ReviewPage }),
+              },
+              {
+                path: 'reports',
+                handle: { crumb: 'reports', section: 'coord' },
+                lazy: async () => ({ Component: (await import('../routes/coord/ReportsPage')).ReportsPage }),
               },
               {
                 path: 'activity',

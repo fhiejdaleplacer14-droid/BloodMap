@@ -230,7 +230,7 @@ function Conversation({ onClose, titleId, asDialog = false }: { onClose: () => v
                 <div className="flex flex-col gap-1.5">
                   <p className="type-label-s flex items-center gap-1.5 text-secondary">
                     <HelpChat aria-hidden size={14} />
-                    {t('label')}
+                    {t(answer.generated ? 'labelGenerated' : 'label')}
                   </p>
                   <div className="flex flex-col gap-2.5 rounded-lg rounded-tl-xs border border-default bg-surface px-3.5 py-3">
                     <p className="type-body-m whitespace-pre-line text-primary">{answer.answer}</p>

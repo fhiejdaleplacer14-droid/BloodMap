@@ -175,7 +175,32 @@
     "removedToast": "Removed from saved",
     "saveFailed": "Couldn’t update saved requests",
     "saveFailedBody": "Check your connection and try again.",
-    "mobileTitle": "Request details"
+    "mobileTitle": "Request details",
+    "report": {
+      "open": "Report a problem",
+      "title": "Report a problem with this request",
+      "body": "Your report goes to the coordinators for this area. The facility doesn’t see who reported it.",
+      "reason": "What’s wrong?",
+      "reasons": {
+        "no_longer_needed": "It’s no longer needed",
+        "wrong_details": "Details are wrong or outdated",
+        "personal_information": "It shows someone’s personal information",
+        "suspicious": "It looks suspicious or fake",
+        "other": "Something else"
+      },
+      "details": "Anything else coordinators should know? (optional)",
+      "detailsRequiredLabel": "Tell us what’s wrong",
+      "detailsHelp": "Don’t include your own or anyone else’s personal details.",
+      "reasonRequired": "Choose what’s wrong.",
+      "detailsRequired": "Tell us what’s wrong.",
+      "tooLong": "Keep it under 500 characters.",
+      "send": "Send report",
+      "sent": "Report sent",
+      "already": "You already reported this",
+      "sentBody": "A coordinator for this area will check the listing.",
+      "failed": "Your report wasn’t sent",
+      "failedBody": "Check your connection and try again."
+    }
   },
   "relative": {
     "in": {

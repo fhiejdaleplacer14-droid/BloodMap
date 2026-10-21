@@ -17,6 +17,7 @@
     "How can I protect my personal information?"
   ],
   "label": "BloodMap guide · From approved help articles",
+  "labelGenerated": "BloodMap guide · AI-written from approved help articles",
   "you": "You asked",
   "source": "From: Help › {{title}}",
   "openSource": "Open {{title}}",
@@ -26,7 +27,7 @@
   "inputLabel": "Your question",
   "send": "Send",
   "tooLong": "Keep your question under {{max}} characters.",
-  "disclaimer": "Answers come from approved help articles and can be incomplete. The guide can’t see private data or check if blood is available, and it isn’t medical advice.",
+  "disclaimer": "Answers come from approved help articles and can be incomplete. The guide can’t see private data or check if blood is available, and it isn’t medical advice. Don’t type personal details: questions may be processed by an AI service (demo).",
   "error": {
     "title": "The guide isn’t available right now",
     "body": "Your question wasn’t lost. You can retry, or read the help articles directly.",

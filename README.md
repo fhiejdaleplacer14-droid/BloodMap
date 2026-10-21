@@ -33,22 +33,23 @@ private phone number ever reaching the map.
 
 ## Highlights
 
-- ** Find a request in seconds.** Filter by blood type, status, posting date
+- **Find a request in seconds.** Filter by blood type, status, posting date
   and area, on a list or a live map, on desktop or phone.
-- ** Private by design.** Requests are placed at the municipality centroid,
+- **Private by design.** Requests are placed at the municipality centroid,
   never at an address or a facility's coordinates. Desk contacts are gated by
   role, coordinators see them masked until they choose to reveal them, and
   every reveal is audited.
-- ** Reviewed before it's public.** Coordinators approve requests, send them
+- **Reviewed before it's public.** Coordinators approve requests, send them
   back for correction or reject them, helped by automated checks for phone
   numbers, personal names, duplicates and missing desk hours.
-- ** A built-in guide.** It answers "how does this work?" questions from
+- **A built-in guide.** It answers "how does this work?" questions from
   approved help articles and cites its source. It never gives medical advice
-  or eligibility assessments. It needs no external AI API and costs nothing to
-  run.
-- ** An audit trail that can't be edited.** `audit_logs` is insert-only: a
+  or eligibility assessments: those questions get a fixed reply and never
+  reach a model. It runs on Google's free Gemini tier, falls back to the plain
+  help articles if that is unavailable, and works with no API key at all.
+- **An audit trail that can't be edited.** `audit_logs` is insert-only: a
   database trigger rejects every UPDATE and DELETE.
-- ** Accessible.** Every screen, for every role, is scanned against WCAG 2.2
+- **Accessible.** Every screen, for every role, is scanned against WCAG 2.2
   AA in light and dark mode on every push.
 
 ### Who uses it
@@ -56,10 +57,10 @@ private phone number ever reaching the map.
 | Role | What they can do |
 |------|------------------|
 | **Visitor** | Browse and filter requests, open the details, ask the guide. No account needed. |
-| **Donor** | Save requests, get notified when one changes, and see desk contacts after signing in. |
+| **Donor** | Save requests, get notified when one changes, see desk contacts after signing in, report a problem with a listing, and opt in to a weekly summary email. |
 | **Facility submitter** | Post requests through a guided wizard, fix requests sent back for correction, and close them when fulfilled. |
-| **Coordinator** | Work a regional review queue, approve or send back requests, and reveal contacts (audited). |
-| **Administrator** | Manage users and coordinator coverage, and read the audit log, platform metrics and system settings. |
+| **Coordinator** | Work a regional review queue, approve or send back requests, triage reported listings, and reveal contacts (audited). |
+| **Administrator** | Invite coordinators by email, manage users and coverage, read the audit log and platform metrics, and edit system settings (audited). |
 
 ## Screenshots
 
@@ -155,10 +156,11 @@ cd backend
 composer install
 cp .env.example .env
 php artisan key:generate
+# optional: set ASSISTANT_DRIVER=gemini and GEMINI_API_KEY in .env for the AI guide
 php artisan migrate --seed      # NIR geography + fictional demo data
 php artisan serve
 php artisan queue:work          # second terminal: emails & automated checks
-php artisan schedule:work       # third terminal: expiry every 5 min, reminders
+php artisan schedule:work       # third terminal: expiry every 5 min, reminders, weekly summary
 
 # 3. SPA  → http://localhost:5173
 cd frontend

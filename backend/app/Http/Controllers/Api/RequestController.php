@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Notifications\RequestUpdate;
 use App\Policies\BloodRequestPolicy;
 use App\Services\AuditLogger;
+use App\Services\Settings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -202,13 +203,14 @@ class RequestController extends Controller
         return $this->managed($bloodRequest);
     }
 
-    /** POST /api/requests/{id}/extend — max +72 h, once per coordinator approval (54:289). */
+    /** POST /api/requests/{id}/extend — max +72 h by default (System settings), once per coordinator approval (54:289). */
     public function extend(Request $request, BloodRequest $bloodRequest): ManagedRequestResource
     {
         $this->authorize('extend', $bloodRequest);
+        $max = Settings::int('expiry.max_extension_hours');
         $hours = (int) ($request->validate([
-            'hours' => ['sometimes', 'integer', 'min:1', 'max:'.BloodRequest::MAX_EXTENSION_HOURS],
-        ])['hours'] ?? BloodRequest::MAX_EXTENSION_HOURS);
+            'hours' => ['sometimes', 'integer', 'min:1', 'max:'.$max],
+        ])['hours'] ?? $max);
 
         $from = $bloodRequest->expires_at;
         $to = ($from ?? now())->copy()->addHours($hours);
@@ -234,7 +236,8 @@ class RequestController extends Controller
         $reviewer = $policy->reviews($viewer, $bloodRequest);
         abort_unless($reviewer || $policy->owns($viewer, $bloodRequest), 404);
 
-        $hidden = ['request.saved', 'request.unsaved', ...($reviewer ? [] : ['request.contact_revealed'])];
+        // Owners never see who reported their request, or that it was (decision #94).
+        $hidden = ['request.saved', 'request.unsaved', ...($reviewer ? [] : ['request.contact_revealed', 'request.reported', 'report.resolved', 'report.dismissed'])];
         $logs = AuditLog::query()
             ->where('target_type', $bloodRequest->getMorphClass())
             ->where('target_id', $bloodRequest->getKey())

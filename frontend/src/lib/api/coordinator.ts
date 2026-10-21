@@ -28,15 +28,36 @@ export type CoordinatorSummary = {
   all_open: number
   active: number
   expiring_24h: number
+  reminder_hours: number
   oldest_pending_at: string | null
+  open_reports: number
+  latest_report_at: string | null
   needs_review: ManagedRequest[]
   expiring_soon: ManagedRequest[]
   recently_updated: RecentUpdate[]
   activity: DayActivity[]
 }
 
+export type ReportReason = 'no_longer_needed' | 'wrong_details' | 'personal_information' | 'suspicious' | 'other'
+export type ReportTab = 'open' | 'closed'
+
+/** A visitor's "Report a problem" (decision #94). The reporter shows by reference or role only. */
+export type RequestReport = {
+  id: number
+  reason: ReportReason
+  details: string | null
+  status: 'open' | 'resolved' | 'dismissed'
+  request: { id: string; blood_type: string; status: string; municipality: string | null }
+  reporter: string | null
+  reported_at: string
+  resolved_by: string | null
+  resolution_note: string | null
+  resolved_at: string | null
+}
+
 const keys = {
   summary: ['coordinator', 'summary'] as const,
+  reports: (tab: ReportTab, page: number) => ['coordinator', 'reports', tab, page] as const,
   queue: (tab: ListTab, page: number) => ['coordinator', 'queue', tab, page] as const,
   activity: (filters: ActivityFilters) => ['coordinator', 'activity', filters] as const,
   history: (id: string) => ['coordinator', 'history', id] as const,
@@ -50,6 +71,32 @@ export function useCoordinatorSummary(enabled = true) {
     enabled,
     staleTime: 30_000,
     refetchInterval: 60_000,
+  })
+}
+
+/** GET /api/coordinator/reports?status — Reports (35:12), 20 per page. */
+export function useReports(tab: ReportTab, page: number) {
+  return useQuery({
+    queryKey: keys.reports(tab, page),
+    queryFn: async ({ signal }) =>
+      (
+        await api.get<{ data: RequestReport[]; meta: PaginationMeta & { counts: Record<ReportTab, number> } }>('/api/coordinator/reports', {
+          params: { status: tab, page },
+          signal,
+        })
+      ).data,
+    placeholderData: keepPreviousData,
+    staleTime: 15_000,
+  })
+}
+
+/** Resolve (acted on) or dismiss a report, with an optional note for the audit log. */
+export function useResolveReport() {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, resolution, note }: { id: number; resolution: 'resolved' | 'dismissed'; note?: string }) =>
+      (await api.post<{ data: RequestReport }>(`/api/coordinator/reports/${id}/resolve`, { resolution, note: note || undefined })).data.data,
+    onSuccess: () => void client.invalidateQueries({ queryKey: ['coordinator'] }),
   })
 }
 

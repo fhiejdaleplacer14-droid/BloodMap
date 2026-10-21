@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { BloodTypeTag } from '../../components/domain/BloodTypeTag'
@@ -26,6 +26,7 @@ import {
   remainingUntil,
 } from '../../lib/datetime'
 import { displayBloodType, type PublicRequest } from '../../lib/request'
+import { ReportDialog } from './ReportDialog'
 
 const ArrowLeft = icons['arrow-left']
 const MapPin = icons['map-pin']
@@ -103,6 +104,7 @@ export function RequestDetailsPanel({ id, resultCount, onBack, hrefFor, onFindNe
   const { data: me } = useMe()
   const detail = useRequestDetail(id)
   const toggleSaved = useToggleSaved(id)
+  const [reporting, setReporting] = useState(false)
   const request = detail.data
   const loadedId = request?.id
 
@@ -408,8 +410,20 @@ export function RequestDetailsPanel({ id, resultCount, onBack, hrefFor, onFindNe
           </p>
         )}
 
+        {request.can.report && (
+          <button
+            type="button"
+            onClick={() => setReporting(true)}
+            className="type-label-s inline-flex w-fit items-center gap-1.5 rounded-sm text-secondary hover:text-primary hover:underline"
+          >
+            <icons.flag aria-hidden size={14} />
+            {t('detail.report.open')}
+          </button>
+        )}
+
         {receded && <NearbyActive request={request} hrefFor={hrefFor} />}
       </article>
+      {request.can.report && <ReportDialog requestId={request.id} open={reporting} onOpenChange={setReporting} />}
 
       <div className="flex items-center gap-2 border-t border-default bg-surface px-6 py-4 max-sm:px-4">
         {receded ? (

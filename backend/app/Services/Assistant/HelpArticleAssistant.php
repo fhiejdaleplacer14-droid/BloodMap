@@ -27,7 +27,14 @@ final class HelpArticleAssistant implements AssistantEngine
         'How can I protect my personal information?',
     ];
 
-    public function answer(string $question): array
+    /**
+     * The fixed replies that must never be generated: eligibility or health
+     * questions and questions about a request's live state. null when the
+     * question is neither, so any engine can run this before anything else.
+     *
+     * @return array{answer: string, sources: list<array{id: string, title: string, path: string}>, safety_note: string|null, matched: bool, generated: bool, suggestions: list<string>}|null
+     */
+    public function guard(string $question): ?array
     {
         $text = $this->normalize($question);
 
@@ -42,6 +49,17 @@ final class HelpArticleAssistant implements AssistantEngine
             ];
         }
 
+        return null;
+    }
+
+    public function answer(string $question): array
+    {
+        if ($guarded = $this->guard($question)) {
+            return $guarded;
+        }
+
+        $text = $this->normalize($question);
+
         $best = null;
         $bestScore = 0;
         foreach (HelpArticles::ALL as $id => $article) {
@@ -52,17 +70,23 @@ final class HelpArticleAssistant implements AssistantEngine
         }
 
         if ($best === null || $bestScore < self::THRESHOLD) {
-            return [
-                'answer' => 'I couldn’t find that in the approved help articles, so I won’t guess. Try one of these questions, or read Safety and guidelines.',
-                'sources' => [],
-                'safety_note' => null,
-                'matched' => false,
-                'generated' => false,
-                'suggestions' => self::SUGGESTIONS,
-            ];
+            return $this->noMatch();
         }
 
         return $this->reply($best);
+    }
+
+    /** @return array{answer: string, sources: list<array{id: string, title: string, path: string}>, safety_note: string|null, matched: bool, generated: bool, suggestions: list<string>} */
+    public function noMatch(): array
+    {
+        return [
+            'answer' => 'I couldn’t find that in the approved help articles, so I won’t guess. Try one of these questions, or read Safety and guidelines.',
+            'sources' => [],
+            'safety_note' => null,
+            'matched' => false,
+            'generated' => false,
+            'suggestions' => self::SUGGESTIONS,
+        ];
     }
 
     /**

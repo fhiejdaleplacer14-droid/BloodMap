@@ -154,7 +154,11 @@
       "request.submitted": "Submitted a request for review",
       "request.fulfilled": "Marked a request fulfilled",
       "request.closed": "Closed a request",
-      "request.extended": "Extended a request"
+      "request.extended": "Extended a request",
+      "request.reported": "Reported a problem with a request",
+      "report.resolved": "Resolved a report",
+      "report.dismissed": "Dismissed a report",
+      "coordinator.invite_accepted": "Accepted a coordinator invite"
     }
   },
   "profile": {

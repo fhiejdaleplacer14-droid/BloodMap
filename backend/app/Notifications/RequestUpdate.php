@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Models\BloodRequest;
 use App\Models\User;
+use App\Services\Settings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -37,6 +38,10 @@ class RequestUpdate extends Notification implements ShouldQueue
         $isOwner = $this->request->submitter_id === $notifiable->getKey();
         $preference = self::SAVER_PREFERENCE[$this->kind] ?? null;
         $email = $isOwner || ($preference && ($notifiable->resolvedPreferences()[$preference] ?? false));
+        // "Notify owners when a correction is requested" (41:2021) can switch that email off.
+        if ($this->kind === 'needs_correction' && ! Settings::bool('notifications.correction_email')) {
+            $email = false;
+        }
 
         // Deactivated accounts get no email (29:1215).
         $reachable = $notifiable->deletion_requested_at === null && $notifiable->deactivated_at === null;
@@ -48,10 +53,11 @@ class RequestUpdate extends Notification implements ShouldQueue
     {
         $id = $this->request->public_id;
         $url = rtrim((string) config('app.frontend_url'), '/').'/requests/'.$id;
+        $replace = ['id' => $id, 'hours' => Settings::int('expiry.reminder_hours')];
 
         return (new MailMessage)
-            ->subject(__("notifications.request.{$this->kind}.subject", ['id' => $id]))
-            ->line(__("notifications.request.{$this->kind}.line", ['id' => $id]))
+            ->subject(__("notifications.request.{$this->kind}.subject", $replace))
+            ->line(__("notifications.request.{$this->kind}.line", $replace))
             ->when($this->request->correction_note && $this->kind === 'needs_correction',
                 fn (MailMessage $m) => $m->line($this->request->correction_note))
             ->action(__('notifications.request.action'), $url);

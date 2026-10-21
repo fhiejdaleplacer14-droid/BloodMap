@@ -28,6 +28,17 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // The guide's answer engine: 'articles' (fixed help-article text, no API)
+    // or 'gemini' (Google Gemini, free tier, still limited to the articles).
+    'assistant' => [
+        'driver' => env('ASSISTANT_DRIVER', 'articles'),
+    ],
+
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        'model' => env('GEMINI_MODEL', 'gemini-2.5-flash-lite'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

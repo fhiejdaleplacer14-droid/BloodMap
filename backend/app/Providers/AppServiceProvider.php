@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Services\Assistant\AssistantEngine;
+use App\Services\Assistant\GeminiAssistant;
 use App\Services\Assistant\HelpArticleAssistant;
+use App\Services\Settings;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
@@ -16,8 +18,10 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        // The guide answers from approved help articles; swap here for an LLM-backed engine (decision #77).
-        $this->app->bind(AssistantEngine::class, HelpArticleAssistant::class);
+        // The guide answers from approved help articles (decision #77); with a Gemini key it phrases the answer with a model (decision #92).
+        $this->app->bind(AssistantEngine::class, fn () => config('services.assistant.driver') === 'gemini' && filled(config('services.gemini.key')) && Settings::string('general.assistant') === 'ai'
+            ? $this->app->make(GeminiAssistant::class)
+            : $this->app->make(HelpArticleAssistant::class));
     }
 
     public function boot(): void

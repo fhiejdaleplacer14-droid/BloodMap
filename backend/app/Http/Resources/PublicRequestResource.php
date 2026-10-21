@@ -61,7 +61,7 @@ class PublicRequestResource extends JsonResource
             'is_saved' => $viewer !== null && $this->isSavedBy($viewer),
             'can' => [
                 'save' => $viewer !== null && $policy->save($viewer, $this->resource),
-                'report' => $viewer !== null && $this->status === RequestStatus::Active,
+                'report' => $viewer !== null && $policy->report($viewer, $this->resource),
             ],
         ];
     }

@@ -20,6 +20,7 @@ const SCREENS: Record<'guest' | keyof typeof ACCOUNTS, Screen[]> = {
     { path: '/login', ready: heading('Welcome back') },
     { path: '/register', ready: heading('Create your account') },
     { path: '/forgot-password', ready: heading('Reset your password') },
+    { path: '/invite/not-a-real-token', ready: heading('This invite link isn’t valid') },
   ],
   donor: [
     { path: '/app', ready: heading(/^Good (morning|afternoon|evening)/) },
@@ -38,6 +39,7 @@ const SCREENS: Record<'guest' | keyof typeof ACCOUNTS, Screen[]> = {
     { path: '/coord/queue', ready: heading('Review queue') },
     { path: '/coord/requests/BM-2026-0026', ready: heading('Review BM-2026-0026') },
     { path: '/coord/activity', ready: heading('Activity log') },
+    { path: '/coord/reports', ready: heading('Reports') },
   ],
   admin: [
     { path: '/admin', ready: heading('Platform overview') },

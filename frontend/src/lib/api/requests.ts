@@ -3,6 +3,7 @@ import type { PaginationMeta } from '../../components/ui/Pagination'
 import type { SearchQuery } from '../explorer/params'
 import type { Province, PublicRequest } from '../request'
 import { api, errorStatus } from './client'
+import type { ReportReason } from './coordinator'
 
 export type Paginated<T> = { data: T[]; meta: PaginationMeta }
 
@@ -128,5 +129,18 @@ export function useMunicipalities() {
     queryKey: ['municipalities'],
     queryFn: async ({ signal }) => (await api.get<{ data: Municipality[] }>('/api/municipalities', { signal })).data.data,
     staleTime: 60 * 60_000,
+  })
+}
+
+/** POST /api/requests/{id}/reports — "Report a problem" (decision #94). Repeat reports return the open one. */
+export function useReportRequest() {
+  return useMutation({
+    mutationFn: async ({ id, reason, details }: { id: string; reason: ReportReason; details?: string }) =>
+      (
+        await api.post<{ data: { id: number; status: 'open'; duplicate: boolean } }>(`/api/requests/${encodeURIComponent(id)}/reports`, {
+          reason,
+          details: details || undefined,
+        })
+      ).data.data,
   })
 }

@@ -4,9 +4,9 @@ namespace App\Services\Assistant;
 
 /**
  * The BloodMap guide's answer engine (POST /api/assistant/messages, 51:561).
- * Today it is HelpArticleAssistant (no model, no API key). An LLM-backed
- * engine can replace it later behind the same contract, still limited to
- * the approved help articles.
+ * HelpArticleAssistant needs no model or API key; GeminiAssistant is the
+ * LLM-backed engine behind the same contract, still limited to the approved
+ * help articles. AppServiceProvider picks one from ASSISTANT_DRIVER.
  */
 interface AssistantEngine
 {

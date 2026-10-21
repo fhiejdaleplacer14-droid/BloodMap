@@ -60,6 +60,17 @@ export type CoordinatorRow = {
   is_demo: boolean
 }
 
+/** "Pending invite" (41:1289, decision #95). */
+export type CoordinatorInvite = {
+  id: number
+  name: string
+  email: string
+  area: { id: number; name: string; short_name: string }
+  invited_at: string
+  expires_at: string
+  expired: boolean
+}
+
 export type AuditRow = {
   id: number
   created_at: string
@@ -76,10 +87,23 @@ export type AuditRow = {
 
 export type AuditFilters = { from?: string; to?: string; actor?: string; action?: string; resource?: string; page: number }
 
+/** Editable keys (PATCH /api/admin/settings, decision #93). */
+export type SettingValues = {
+  'expiry.max_extension_hours': number
+  'expiry.reminder_hours': number
+  'notifications.correction_email': boolean
+  'notifications.weekly_digest': boolean
+  'general.assistant': 'ai' | 'articles'
+  'retention.deleted_accounts_days': number
+  'retention.deactivated_accounts_days': number
+  'retention.inactive_saved_days': number
+}
+
 export type AdminSettings = {
+  values: SettingValues
   expiry: { default: string; default_window_end: string; max_extension_hours: number; reminder_hours: number; job_frequency_minutes: number }
   notifications: { owner_decisions: boolean; saver_updates: string; weekly_digest: boolean }
-  general: { platform_name: string; timezone: string; default_map_area: string }
+  general: { platform_name: string; timezone: string; default_map_area: string; assistant: 'ai' | 'articles'; assistant_ai_available: boolean }
   retention: { deleted_accounts_days: number; deactivated_accounts_days: number; inactive_saved_days: number; location_precision: string }
   health: {
     api: { status: HealthStatus }
@@ -158,7 +182,10 @@ export function useAdminCoordinators() {
     queryKey: ['admin', 'coordinators'],
     queryFn: async ({ signal }) =>
       (
-        await api.get<{ data: CoordinatorRow[]; meta: { uncovered_areas: { id: number; name: string; short_name: string }[] } }>(
+        await api.get<{
+          data: CoordinatorRow[]
+          meta: { uncovered_areas: { id: number; name: string; short_name: string }[]; invites: CoordinatorInvite[] }
+        }>(
           '/api/admin/coordinators',
           { signal },
         )
@@ -186,6 +213,39 @@ export function useAdminSettings() {
   return useQuery({
     queryKey: ['admin', 'settings'],
     queryFn: async ({ signal }) => (await api.get<{ data: AdminSettings }>('/api/admin/settings', { signal })).data.data,
+  })
+}
+
+/** "Save changes" — only changed keys are sent; retention changes carry a reason. */
+export function useUpdateSettings() {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: async (body: { values: Partial<SettingValues>; reason?: string }) =>
+      (await api.patch<{ data: { changed: string[]; values: SettingValues } }>('/api/admin/settings', body)).data.data,
+    onSuccess: () => void client.invalidateQueries({ queryKey: ['admin'] }),
+  })
+}
+
+/** Invite, resend or revoke a coordinator invite. Every one is audited server-side. */
+export function useCoordinatorInviteAction() {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: async (
+      action: { kind: 'invite'; name: string; email: string; area_id: number } | { kind: 'resend' | 'revoke'; id: number },
+    ) => {
+      switch (action.kind) {
+        case 'invite':
+          await api.post('/api/admin/coordinator-invites', { name: action.name, email: action.email, area_id: action.area_id })
+          return
+        case 'resend':
+          await api.post(`/api/admin/coordinator-invites/${action.id}/resend`)
+          return
+        case 'revoke':
+          await api.delete(`/api/admin/coordinator-invites/${action.id}`)
+          return
+      }
+    },
+    onSuccess: () => void client.invalidateQueries({ queryKey: ['admin'] }),
   })
 }
 

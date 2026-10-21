@@ -102,7 +102,7 @@ function Shell({ me }: { me: Me }) {
         className="max-lg:hidden"
         roleLabel={roleLabel(me, tNav)}
         roleIcon={isReviewer(me) ? 'shield-check' : 'user'}
-        items={workspaceNav(me, t, { unread, active: counts?.active, drafts: counts?.draft, queue: summary?.all_open })}
+        items={workspaceNav(me, t, { unread, active: counts?.active, drafts: counts?.draft, queue: summary?.all_open, reports: summary?.open_reports })}
         helpItem={{ to: '/#safety', label: t('nav.help'), icon: 'help-chat' }}
       />
       <div className="flex min-w-0 flex-1 flex-col">

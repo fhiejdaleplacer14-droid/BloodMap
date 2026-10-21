@@ -6,6 +6,7 @@ use App\Enums\RequestStatus;
 use App\Models\BloodRequest;
 use App\Models\User;
 use App\Notifications\RequestUpdate;
+use App\Services\Settings;
 use Illuminate\Console\Command;
 
 /**
@@ -26,7 +27,7 @@ class RemindExpiringRequests extends Command
             ->where('status', RequestStatus::Active)
             ->whereNull('paused_at')
             ->whereNull('expiry_reminder_sent_at')
-            ->whereBetween('expires_at', [now(), now()->addHours(6)])
+            ->whereBetween('expires_at', [now(), now()->addHours(Settings::int('expiry.reminder_hours'))])
             ->with(['savers', 'submitter', 'municipality'])
             ->chunkById(100, function ($requests) use (&$count) {
                 foreach ($requests as $request) {
