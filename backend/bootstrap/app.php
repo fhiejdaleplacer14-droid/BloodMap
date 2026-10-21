@@ -17,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Sanctum SPA cookie auth for requests from SANCTUM_STATEFUL_DOMAINS.
         $middleware->statefulApi();
+        // Behind the platform's TLS proxy the app sees http; trust X-Forwarded-* so
+        // URLs, secure cookies and signed email links use https (TRUSTED_PROXIES, default all).
+        $middleware->trustProxies(at: env('TRUSTED_PROXIES', '*') === '*' ? '*' : explode(',', (string) env('TRUSTED_PROXIES')));
         $middleware->alias([
             'account.active' => EnsureAccountActive::class,
             'role' => EnsureRole::class,
@@ -24,5 +27,5 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // The SPA always gets JSON errors (422 / 401 / 403 / 404 / 409 / 429).
-        $exceptions->shouldRenderJsonWhen(fn (Request $request) => $request->is('api/*', 'login', 'logout', 'register', 'forgot-password', 'reset-password', 'email/*') || $request->expectsJson());
+        $exceptions->shouldRenderJsonWhen(fn (Request $request) => $request->is('api/*', 'login', 'logout', 'register', 'forgot-password', 'reset-password', 'email/*', 'invites/*') || $request->expectsJson());
     })->create();

@@ -143,3 +143,42 @@ jobs:
           name: playwright-report
           path: frontend/playwright-report/
           retention-days: 14
+
+  image:
+    name: Docker image · build and boot check
+    runs-on: ubuntu-latest
+    needs: [frontend, backend]
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: bloodmap
+          POSTGRES_USER: bloodmap
+          POSTGRES_PASSWORD: secret
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U bloodmap -d bloodmap"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build
+        run: docker build -t bloodmap:ci .
+
+      # Boots the image against a fresh database and checks the app, API and headers answer.
+      - name: Boot and smoke test
+        run: |
+          docker run -d --name app --network host \
+            -e APP_KEY="base64:$(openssl rand -base64 32)" -e APP_URL=http://localhost:8080 \
+            -e DB_HOST=127.0.0.1 -e DB_DATABASE=bloodmap -e DB_USERNAME=bloodmap -e DB_PASSWORD=secret \
+            -e SEED_DEMO_DATA=true bloodmap:ci
+          for i in $(seq 1 30); do curl -fs http://localhost:8080/up >/dev/null && break; sleep 2; done
+          curl -fsS http://localhost:8080/up >/dev/null
+          curl -fsS http://localhost:8080/requests | grep -q '<div id="root">'
+          curl -fsS http://localhost:8080/api/requests | grep -q '"data"'
+          curl -fsSI http://localhost:8080/ | grep -qi 'content-security-policy'
+          curl -sS -o /dev/null -w '%{http_code}' -X POST http://localhost:8080/login -H 'Accept: application/json' | grep -q 419
+
+      - name: Container logs
+        if: ${{ !cancelled() }}
+        run: docker logs app

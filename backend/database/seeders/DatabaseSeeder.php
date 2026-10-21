@@ -10,8 +10,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(GeographySeeder::class);
 
-        // Fictional, is_demo-flagged records. Never seeded in production.
-        if (! app()->isProduction()) {
+        // Fictional, is_demo-flagged records. Never seeded in production unless SEED_DEMO_DATA=true.
+        if (! app()->isProduction() || config('app.seed_demo')) {
             $this->call(DemoSeeder::class);
         }
     }

@@ -17,6 +17,7 @@
   <a href="#screenshots">Screenshots</a> ·
   <a href="#local-setup">Run it locally</a> ·
   <a href="#demo-accounts">Demo accounts</a> ·
+  <a href="docs/deployment.md">Deploy</a> ·
   <a href="docs/decisions.md">Design decisions</a>
 </p>
 
@@ -131,8 +132,10 @@ private phone number ever reaching the map.
 .
 ├── backend/                 Laravel API
 ├── frontend/                React SPA
-├── docs/                    Design decisions and README assets
+├── deploy/                  Production image config (nginx, supervisor, entrypoint, env template)
+├── docs/                    Design decisions, deployment guide and README assets
 ├── docker/postgres/init/    First-start scripts for the local Postgres container
+├── Dockerfile               One production image: SPA + API on one origin
 ├── docker-compose.yml       Local PostgreSQL 17
 ├── .env.example             Values docker-compose reads (copy to .env)
 └── .github/workflows/ci.yml
@@ -186,6 +189,15 @@ uses the password in `DEMO_PASSWORD`.
 | `lina.t@example.org` | Coordinator | Negros Oriental |
 | `admin@example.org` | Administrator | |
 | `admin2@example.org` | Administrator | Second admin for promotions to Administrator |
+
+## Deployment
+
+The root `Dockerfile` builds one image that serves the app and the API from
+the same address. It runs nginx, PHP, the queue worker and the scheduler, and
+migrates on start. You need a hosted PostgreSQL database, an SMTP sender and
+a host that runs Docker over HTTPS. See [docs/deployment.md](docs/deployment.md)
+for the steps and [deploy/production.env.example](deploy/production.env.example)
+for the variables.
 
 ## API
 

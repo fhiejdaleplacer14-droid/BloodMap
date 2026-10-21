@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'BloodMap NIR'),
 
     /*
     |--------------------------------------------------------------------------
@@ -57,8 +57,11 @@ return [
     // The React SPA (links in emails, post-verification redirect).
     'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
 
-    // Password for every seeded demo account (never seeded in production).
+    // Password for every seeded demo account.
     'demo_password' => env('DEMO_PASSWORD', 'BloodMap-demo-2026!'),
+
+    // Fictional demo data is never seeded in production unless this is on (public demo sites).
+    'seed_demo' => (bool) env('SEED_DEMO_DATA', false),
 
     /*
     |--------------------------------------------------------------------------

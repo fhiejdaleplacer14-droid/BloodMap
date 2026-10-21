@@ -1,0 +1,88 @@
+# Rendered by entrypoint.sh (only ${PORT} is substituted).
+# One origin: the SPA is static; the API and Sanctum endpoints go to PHP.
+pid /tmp/nginx.pid;
+error_log /dev/stderr warn;
+worker_processes auto;
+events { worker_connections 1024; }
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+    access_log /dev/stdout;
+    server_tokens off;
+    sendfile on;
+    client_max_body_size 2m;
+
+    gzip on;
+    gzip_types text/css application/javascript application/json image/svg+xml;
+
+    # The SPA has pages at /login, /register, /forgot-password and /reset-password
+    # that share a path with the form posts to the API: browsers GET the page, the
+    # SPA POSTs the form. Only writes on those paths go to PHP.
+    map $request_method $is_write {
+        default 0;
+        POST    1;
+        PUT     1;
+        PATCH   1;
+        DELETE  1;
+    }
+
+    # Behind the platform's TLS proxy; trust its scheme for redirects and headers.
+    map $http_x_forwarded_proto $public_scheme {
+        default $scheme;
+        https   https;
+    }
+
+    server {
+        listen ${PORT};
+        server_name _;
+
+        # Security headers. Maps use OpenStreetMap tiles; Leaflet sets inline styles.
+        # No add_header inside locations: it would drop all of these (caching uses "expires").
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Frame-Options "DENY" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Permissions-Policy "geolocation=(self), camera=(), microphone=()" always;
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.tile.openstreetmap.org https://tile.openstreetmap.org; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" always;
+
+        # API, Sanctum, health check and signed email links → Laravel.
+        location ~ ^/(api|sanctum|up|email/verify)(/|$) {
+            rewrite ^ /index.php last;
+        }
+
+        # Auth form posts and invite acceptance → Laravel; GETs are SPA pages.
+        location ~ ^/(login|logout|register|forgot-password|reset-password|email/verification-notification|invites/[^/]+/accept)$ {
+            root /var/www/spa;
+            if ($is_write) {
+                rewrite ^ /index.php last;
+            }
+            expires -1;
+            try_files /index.html =404;
+        }
+
+        location = /index.php {
+            root /var/www/html/public;
+            fastcgi_pass 127.0.0.1:9000;
+            include /etc/nginx/fastcgi_params;
+            fastcgi_param SCRIPT_FILENAME $document_root/index.php;
+            fastcgi_param HTTPS $https;
+            fastcgi_param HTTP_X_FORWARDED_PROTO $public_scheme;
+            fastcgi_read_timeout 60s;
+        }
+
+        # Hashed build assets are immutable.
+        location /assets/ {
+            root /var/www/spa;
+            expires max;
+            try_files $uri =404;
+        }
+
+        # Everything else is the SPA (client-side routing).
+        location / {
+            root /var/www/spa;
+            expires -1;
+            try_files $uri /index.html;
+        }
+    }
+}
